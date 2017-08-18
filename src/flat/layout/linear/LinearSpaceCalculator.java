@@ -93,6 +93,13 @@ class LinearSpaceCalculator {
         componentForEach((index, component) -> buildCompDimen(index, getWeightedDimension(index, areaRatioOfWeight, errorValueDimen)));
     }
 
+    /**
+     * @param index component index at container
+     * @param areaRatioOfWeight value of division available size into sum of component weight
+     * @param errorValueDimen value of error that when get areaRatioOfWeight value lost data
+     * @return calculated weighted dimension
+     */
+
     private Dimension getWeightedDimension(int index, Dimension areaRatioOfWeight, Dimension errorValueDimen){
         ComputableDimension weightedCompDimen = new ComputableDimension();
         Dimension compDimen = container.getComponent(index).getPreferredSize();
