@@ -618,10 +618,10 @@ public class FlatColorPicker {
                 if(!isHexColorString(HEX_COLOR_VALUE.getText())){
                     new FlatDialog.Builder()
                             .setTitle("에러")
-                            .setMessage("잘못된 색상 형식입니다.")
+                            .setContent("잘못된 색상 형식입니다.")
                             .setButtonBackgroundColor(THEME_COLOR)
                             .setLocationCenterTo(FlatColorPicker.this.PICKER_VIEW.getJFrame())
-                            .setOnClickEvent((obj)->{HEX_COLOR_VALUE.setText("");})
+                            .setOnClickListener((obj)->{HEX_COLOR_VALUE.setText("");})
                             .build().show();
                 }else setSelectedColor(Color.decode("#"+HEX_COLOR_VALUE.getText()));
             });

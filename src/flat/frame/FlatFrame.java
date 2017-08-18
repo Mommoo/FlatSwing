@@ -250,9 +250,9 @@ public final class FlatFrame {
 		}
 	}
 
-	private class DragEventListener extends MouseAdapter{
+	private class DragEventListener extends MouseAdapter {
 		private int pressX, pressY;
-		private int moveX,moveY;
+		private int moveX, moveY;
 
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -261,11 +261,10 @@ public final class FlatFrame {
 		}
 
 		@Override
-		public void mouseDragged(MouseEvent e){
+		public void mouseDragged(MouseEvent e) {
 			moveX = e.getX() - pressX;
 			moveY = e.getY() - pressY;
 			COMMON_FRAME.setLocation(COMMON_FRAME.getLocation().x + moveX, COMMON_FRAME.getLocation().y + moveY);
 		}
 	}
-
 }

@@ -1,6 +1,7 @@
 package flat.image;
 
 import flat.component.FlatComponent;
+import flat.frame.FlatDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,7 +54,6 @@ public class FlatImagePanel extends FlatComponent {
 
             ImageIcon imageIcon = new ImageIcon(this.image);
             setIcon(this.image, imageIcon.getIconWidth(), imageIcon.getIconHeight());
-
         }
     }
 }
