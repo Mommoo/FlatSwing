@@ -79,7 +79,7 @@ class LinearSpaceCalculator {
     }
 
     private void weightBuild(){
-        Dimension divisibleAreaDimen =  getDivisibleAreaDimen();
+        Dimension divisibleAreaDimen = getDivisibleAreaDimen();
 
         Dimension areaRatioOfWeight =  new ComputableDimension(divisibleAreaDimen)
                 .divDimension(weightSum,weightSum);
@@ -146,12 +146,14 @@ class LinearSpaceCalculator {
         } else if (index == 0){
             occupiedAreaDimen.setZeroDimension();
         }
+        LinearConstraints linearConstraints = linearConstraintsMap.get(container.getComponent(index));
+        boolean isCenter = linearConstraints != null && linearConstraints.getLinearSpace() == LinearSpace.WRAP_CENTER_CONTENT;
 
         layoutCompDimenList
                 .get(index)
                 .setOccupiedSizeDimen(occupiedAreaDimen)
                 .setComponentSizeDimen(compDimen)
-                .setCenter(linearConstraintsMap.get(container.getComponent(index)).getLinearSpace() == LinearSpace.WRAP_CENTER_CONTENT);
+                .setCenter(isCenter);
     }
 
     private List<Component> getWeightAbsentCompList(){

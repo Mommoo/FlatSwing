@@ -31,7 +31,7 @@ class LinearSpaceInspector {
     }
 
     private void autoWeightSumIfAbsent(){
-        if (calculator.getWeightSum() <= 0) calculator.setWeightSum(addedWeight);
+        if (addedWeight > 0) calculator.setWeightSum(addedWeight);
     }
 
     void setData(Container container, Orientation orientation){

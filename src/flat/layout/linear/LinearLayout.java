@@ -19,6 +19,10 @@ public class LinearLayout implements LayoutManager2 {
         this(orientation, GAP);
     }
 
+    public LinearLayout(int gap){
+        this(Orientation.HORIZONTAL, gap);
+    }
+
     public LinearLayout(Orientation orientation, int gap){
         setOrientation(orientation);
         orientation.setGap(gap);
