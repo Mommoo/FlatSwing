@@ -12,7 +12,7 @@ import java.awt.*;
 public class Example {
     public static void main(String[] args){
         FlatFrame frame = new FlatFrame();
-        frame.setSize(500,500);
+        frame.setSize(500,500 + FlatFrame.getTitleBarHeight());
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
         frame.setResizable(true);
