@@ -39,7 +39,7 @@ class LinearSpaceCalculator {
         linearConstraintsMap.put(component, linearConstraints);
     }
 
-    int removeComponentWeight(Component component){
+    int removeLinearConstraints(Component component){
         LinearConstraints linearConstraints = linearConstraintsMap.get(component);
         if (linearConstraints == null) return 0;
         else linearConstraintsMap.remove(component);
@@ -68,7 +68,10 @@ class LinearSpaceCalculator {
     }
     private void componentForEach(BiConsumer<Integer,Component> componentConsumer){
         int index = 0;
+        System.out.println("map size : " + linearConstraintsMap.size());
         for (Component comp : container.getComponents()){
+            System.out.println(comp.hashCode());
+            System.out.println("map item : " + linearConstraintsMap.get(comp));
             componentConsumer.accept(index, comp);
             index++;
         }
@@ -83,7 +86,7 @@ class LinearSpaceCalculator {
 
         Dimension areaRatioOfWeight =  new ComputableDimension(divisibleAreaDimen)
                 .divDimension(weightSum,weightSum);
-
+        System.out.println(divisibleAreaDimen+","+weightSum);
         Dimension calculatedDivisibleArea = new ComputableDimension(areaRatioOfWeight)
                 .mulDimension(weightSum,weightSum);
 
@@ -103,12 +106,13 @@ class LinearSpaceCalculator {
     private Dimension getWeightedDimension(int index, Dimension areaRatioOfWeight, Dimension errorValueDimen){
         ComputableDimension weightedCompDimen = new ComputableDimension();
         Dimension compDimen = container.getComponent(index).getPreferredSize();
+
         LinearConstraints linearConstraints = linearConstraintsMap.get(container.getComponent(index));
 
         if (linearConstraints == null) {
             return compDimen;
         }
-
+        System.out.println(linearConstraints.getWeight());
         weightedCompDimen
                 .setZeroDimension()
                 .addDimension(areaRatioOfWeight)

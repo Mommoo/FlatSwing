@@ -15,7 +15,7 @@ class LinearSpaceInspector {
 
     private void inspectValidState(){
         Exception exception = null;
-
+        System.out.println(addedWeight +","+calculator.getWeightSum());
         if (calculator.getWeightSum() < addedWeight){
             exception = new MismatchException();
         }
@@ -52,7 +52,7 @@ class LinearSpaceInspector {
     }
 
     void removeComponent(Component comp){
-        int previousCompWeight = calculator.removeComponentWeight(comp);
+        int previousCompWeight = calculator.removeLinearConstraints(comp);
         addedWeight -= previousCompWeight;
     }
 

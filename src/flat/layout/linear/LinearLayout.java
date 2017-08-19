@@ -96,7 +96,7 @@ public class LinearLayout implements LayoutManager2 {
 
         if (!(constraints instanceof LinearConstraints)) return;
 
-        spaceInspector.setLinearConstraints(comp, (LinearConstraints) constraints);
+        spaceInspector.setLinearConstraints(comp, ((LinearConstraints) constraints).clone());
     }
 
     @Override
