@@ -13,9 +13,13 @@ class LinearSpaceInspector {
 
     LinearSpaceInspector(){ }
 
-    private void inspectValidState(){
+    private void inspectValidState(Container container){
+
+        setConstraintsIfAbsent(container);
+        setWeightSumIfAbsent();
+
         Exception exception = null;
-        System.out.println(addedWeight +","+calculator.getWeightSum());
+
         if (calculator.getWeightSum() < addedWeight){
             exception = new MismatchException();
         }
@@ -30,16 +34,22 @@ class LinearSpaceInspector {
         }
     }
 
-    private void autoWeightSumIfAbsent(){
+    private void setConstraintsIfAbsent(Container container){
+        for (Component component : container.getComponents()){
+            if (!calculator.isExistConstraints(component)) setLinearConstraints(component, new LinearConstraints());
+        }
+    }
+
+    private void setWeightSumIfAbsent(){
         if (addedWeight > 0) calculator.setWeightSum(addedWeight);
     }
 
     void setData(Container container, Orientation orientation){
-        autoWeightSumIfAbsent();
-        inspectValidState();
+        inspectValidState(container);
         this.container = container;
         this.orientation = orientation;
         calculator.setData(this.container,this.orientation);
+
     }
 
     void setWeightSum(int weightSum){

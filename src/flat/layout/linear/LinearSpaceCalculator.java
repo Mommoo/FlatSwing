@@ -14,7 +14,6 @@ import java.util.function.BiConsumer;
 class LinearSpaceCalculator {
     private Container container;
     private Orientation orientation;
-    private LinearSpaceRatioMode linearSpaceRatioMode = LinearSpaceRatioMode.NORMAL;
     private int weightSum;
 
     private Map<Component, LinearConstraints> linearConstraintsMap = new HashMap<>();
@@ -26,21 +25,32 @@ class LinearSpaceCalculator {
     void setData(Container container, Orientation orientation){
         this.container = container;
         this.orientation = orientation;
-        buildLayoutCompDimen();
+
+        initList();
+
+        if (weightSum == 0){
+            buildPreferredCompDimen();
+            return;
+        }
+
+        buildPreferredAndWeightCompDimen();
     }
 
     void setWeightSum(int weightSum){
-        this.linearSpaceRatioMode = LinearSpaceRatioMode.WEIGHT;
         this.weightSum = weightSum;
     }
 
     void setLinearConstraints(Component component, LinearConstraints linearConstraints){
-        this.linearSpaceRatioMode = LinearSpaceRatioMode.WEIGHT;
         linearConstraintsMap.put(component, linearConstraints);
+    }
+
+    boolean isExistConstraints(Component component){
+        return linearConstraintsMap.get(component) != null;
     }
 
     int removeLinearConstraints(Component component){
         LinearConstraints linearConstraints = linearConstraintsMap.get(component);
+
         if (linearConstraints == null) return 0;
         else linearConstraintsMap.remove(component);
 
@@ -49,12 +59,6 @@ class LinearSpaceCalculator {
 
     int getWeightSum(){
         return this.weightSum;
-    }
-
-    private void buildLayoutCompDimen(){
-        initList();
-        if (linearSpaceRatioMode == LinearSpaceRatioMode.NORMAL) normalBuild();
-        else weightBuild();
     }
 
     private void initList(){
@@ -66,79 +70,68 @@ class LinearSpaceCalculator {
             }
         }
     }
+
+    private void buildPreferredCompDimen(){
+        componentForEach((index, component) -> buildCompDimen(index, component.getPreferredSize(), new Dimension(0,0)));
+    }
+
+    private void buildPreferredAndWeightCompDimen(){
+        Dimension divisibleAreaDimen = getDivisibleAreaDimen();
+
+        Dimension weightRatioDimen =  new ComputableDimension(divisibleAreaDimen)
+                .divDimension(weightSum,weightSum);
+
+        Dimension errorValueDimen = getErrorValueDimen(divisibleAreaDimen, weightRatioDimen);
+
+        componentForEach((index, component) -> buildCompDimen(index, getWeightedDimension(index, weightRatioDimen),errorValueDimen));
+    }
+
+    private Dimension getErrorValueDimen(Dimension divisibleAreaDimen, Dimension weightRatioDimen){
+        Dimension calculatedDivisibleArea = new ComputableDimension(weightRatioDimen)
+                .mulDimension(weightSum,weightSum);
+
+        return new ComputableDimension(divisibleAreaDimen)
+                .subDimension(calculatedDivisibleArea);
+    }
+
     private void componentForEach(BiConsumer<Integer,Component> componentConsumer){
         int index = 0;
-        System.out.println("map size : " + linearConstraintsMap.size());
         for (Component comp : container.getComponents()){
-            System.out.println(comp.hashCode());
-            System.out.println("map item : " + linearConstraintsMap.get(comp));
             componentConsumer.accept(index, comp);
             index++;
         }
     }
 
-    private void normalBuild(){
-        componentForEach((index, component)-> buildCompDimen(index, component.getPreferredSize()));
-    }
-
-    private void weightBuild(){
-        Dimension divisibleAreaDimen = getDivisibleAreaDimen();
-
-        Dimension areaRatioOfWeight =  new ComputableDimension(divisibleAreaDimen)
-                .divDimension(weightSum,weightSum);
-        System.out.println(divisibleAreaDimen+","+weightSum);
-        Dimension calculatedDivisibleArea = new ComputableDimension(areaRatioOfWeight)
-                .mulDimension(weightSum,weightSum);
-
-        Dimension errorValueDimen = new ComputableDimension(divisibleAreaDimen)
-                .subDimension(calculatedDivisibleArea);
-
-        componentForEach((index, component) -> buildCompDimen(index, getWeightedDimension(index, areaRatioOfWeight, errorValueDimen)));
-    }
-
     /**
      * @param index component index at container
-     * @param areaRatioOfWeight value of division available size into sum of component weight
-     * @param errorValueDimen value of error that when get areaRatioOfWeight value lost data
+     * @param areaRatioOfWeight value of division available size into sum of component weight;
      * @return calculated weighted dimension
      */
 
-    private Dimension getWeightedDimension(int index, Dimension areaRatioOfWeight, Dimension errorValueDimen){
+    private Dimension getWeightedDimension(int index, Dimension areaRatioOfWeight){
         ComputableDimension weightedCompDimen = new ComputableDimension();
         Dimension compDimen = container.getComponent(index).getPreferredSize();
 
         LinearConstraints linearConstraints = linearConstraintsMap.get(container.getComponent(index));
 
-        if (linearConstraints == null) {
-            return compDimen;
+        if (linearConstraints.getWeight() == 0) {
+            weightedCompDimen.setSize(compDimen);
         }
-        System.out.println(linearConstraints.getWeight());
-        weightedCompDimen
-                .setZeroDimension()
-                .addDimension(areaRatioOfWeight)
-                .mulDimension(linearConstraints.getWeight(), linearConstraints.getWeight());
-
-        boolean isMatchParent = linearConstraints.getLinearSpace() == LinearSpace.MATCH_PARENT;
-
-        if (orientation == Orientation.HORIZONTAL) {
-            weightedCompDimen.height = isMatchParent ? getAvailableDimen().height : compDimen.height;
-        } else {
-            weightedCompDimen.width  = isMatchParent ? getAvailableDimen().width : compDimen.width;
-        }
-
-        if (index == container.getComponentCount() -1){
-            if (orientation == Orientation.HORIZONTAL) weightedCompDimen.addDimension(errorValueDimen.width, 0);
-            else weightedCompDimen.addDimension(0, errorValueDimen.height);
+        else {
+            weightedCompDimen
+                    .setZeroDimension()
+                    .addDimension(areaRatioOfWeight)
+                    .mulDimension(linearConstraints.getWeight(), linearConstraints.getWeight());
         }
 
         return weightedCompDimen;
     }
 
-    private void buildCompDimen(int index, Dimension compDimen){
+    private void buildCompDimen(int index, Dimension basicDimen, Dimension errorValueDimen){
+        ComputableDimension componentDimen = new ComputableDimension(basicDimen);
         ComputableDimension occupiedAreaDimen = new ComputableDimension();
 
-        occupiedAreaDimen
-                .addDimension(new Dimension(orientation.getGap(),orientation.getGap()));
+        occupiedAreaDimen.addDimension(new Dimension(orientation.getGap(),orientation.getGap()));
 
         if (index > 0){
             LinearCompDimen previousLinearCompDimen = layoutCompDimenList.get(index - 1);
@@ -150,32 +143,58 @@ class LinearSpaceCalculator {
         } else if (index == 0){
             occupiedAreaDimen.setZeroDimension();
         }
+
         LinearConstraints linearConstraints = linearConstraintsMap.get(container.getComponent(index));
-        boolean isCenter = linearConstraints != null && linearConstraints.getLinearSpace() == LinearSpace.WRAP_CENTER_CONTENT;
+
+
+        buildLinearSpace(linearConstraints, componentDimen, basicDimen);
+
+        addErrorValueAtLastComp(index, componentDimen, errorValueDimen);
+
+        boolean isCenter = linearConstraints.getLinearSpace() == LinearSpace.WRAP_CENTER_CONTENT;
 
         layoutCompDimenList
                 .get(index)
                 .setOccupiedSizeDimen(occupiedAreaDimen)
-                .setComponentSizeDimen(compDimen)
+                .setComponentSizeDimen(componentDimen)
                 .setCenter(isCenter);
     }
 
-    private List<Component> getWeightAbsentCompList(){
-        List<Component> weightAbsentCompList = new ArrayList<>();
+    private void buildLinearSpace(LinearConstraints linearConstraints,Dimension componentDimen ,Dimension basicDimen){
+        boolean isMatchParent = linearConstraints.getLinearSpace() == LinearSpace.MATCH_PARENT;
+
+        if (orientation == Orientation.HORIZONTAL) {
+            componentDimen.height = isMatchParent ? getAvailableDimen().height : basicDimen.height;
+        } else {
+            componentDimen.width  = isMatchParent ? getAvailableDimen().width : basicDimen.width;
+        }
+    }
+
+    private void addErrorValueAtLastComp(int index, ComputableDimension componentDimen, Dimension errorValueDimen){
+        if (index == container.getComponentCount() -1){
+            if (orientation == Orientation.HORIZONTAL) componentDimen.addDimension(errorValueDimen.width, 0);
+            else componentDimen.addDimension(0, errorValueDimen.height);
+        }
+    }
+
+    private List<Component> getNoWeightCompList(){
+        List<Component> noWeightCompList = new ArrayList<>();
 
         componentForEach((index, component)->{
-            if (linearConstraintsMap.get(component) == null){
-                weightAbsentCompList.add(component);
+            LinearConstraints constraints = linearConstraintsMap.get(component);
+            if (constraints.getWeight() == 0){
+                noWeightCompList.add(component);
             }
         });
-        return weightAbsentCompList;
+
+        return noWeightCompList;
     }
 
     private Dimension getDivisibleAreaDimen(){
-        List<Component> weightAbsentCompList = getWeightAbsentCompList();
+        List<Component> noWeightCompList = getNoWeightCompList();
 
         ComputableDimension divisibleAreaDimen = new ComputableDimension(getAvailableDimen());
-        weightAbsentCompList.forEach(component -> divisibleAreaDimen.subDimension(component.getPreferredSize()));
+        noWeightCompList.forEach(component -> divisibleAreaDimen.subDimension(component.getPreferredSize()));
 
         int gapCnt = container.getComponentCount() - 1;
         divisibleAreaDimen.subDimension(orientation.getGap() * gapCnt, orientation.getGap() * gapCnt);

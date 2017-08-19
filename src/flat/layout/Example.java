@@ -8,7 +8,6 @@ import flat.layout.linear.constraints.LinearSpace;
 
 import javax.swing.*;
 import java.awt.*;
-
 public class Example {
     public static void main(String[] args){
         FlatFrame frame = new FlatFrame();
@@ -16,7 +15,7 @@ public class Example {
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
         frame.setResizable(true);
-        frame.getContainer().add(new LinearLayoutPanel2());
+        frame.getContainer().add(new LinearLayoutPanel());
         frame.show();
     }
 
@@ -29,19 +28,15 @@ public class Example {
 
         private void setLinearLayout(){
             LinearLayout linearLayout = new LinearLayout();
-            linearLayout.setOrientation(Orientation.VERTICAL);
+            linearLayout.setOrientation(Orientation.HORIZONTAL);
             linearLayout.setGap(15);
             setLayout(linearLayout);
         }
 
         private void addComponent(){
-            LinearConstraints linearConstraints = new LinearConstraints();
-            linearConstraints.setWeight(1);
-            linearConstraints.setLinearSpace(LinearSpace.MATCH_PARENT);
-            add(createColorRect(Color.RED, "FIRST"), linearConstraints);
-            add(createColorRect(Color.GREEN, "SECOND"), new LinearConstraints().setWeight(10).setLinearSpace(LinearSpace.MATCH_PARENT));
+            add(createColorRect(Color.RED, "FIRST"), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            add(createColorRect(Color.GREEN, "SECOND"), new LinearConstraints().setWeight(3).setLinearSpace(LinearSpace.MATCH_PARENT));
             add(createColorRect(Color.YELLOW, "THIRD"), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            add(createColorRect(Color.PINK, "FORTH"), new LinearConstraints().setWeight(3).setLinearSpace(LinearSpace.MATCH_PARENT));
         }
     }
 
@@ -50,9 +45,7 @@ public class Example {
             setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
             setLinearLayout();
             LinearConstraints linearConstraints = new LinearConstraints();
-            JPanel panel = createRowPanel(Color.RED, Color.WHITE, Color.BLUE);
-            panel.setBackground(Color.red);
-            add(panel, linearConstraints.setWeight(3).setLinearSpace(LinearSpace.MATCH_PARENT));
+            add(createRowPanel(Color.RED, Color.WHITE, Color.BLUE), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
             add(createRowPanel(Color.PINK, Color.GRAY, Color.YELLOW), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
             add(createRowPanel(Color.GREEN, Color.ORANGE, Color.MAGENTA), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
         }
@@ -66,11 +59,11 @@ public class Example {
 
         private JPanel createRowPanel(Color color1, Color color2, Color color3){
             JPanel panel = new JPanel();
-//            panel.setLayout(new LinearLayout(15));
-//            LinearConstraints linearConstraints = new LinearConstraints();
-//            panel.add(createColorRect(color1,""), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-//            panel.add(createColorRect(color2,""), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-//            panel.add(createColorRect(color3,""), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.setLayout(new LinearLayout(15));
+            LinearConstraints linearConstraints = new LinearConstraints();
+            panel.add(createColorRect(color1,""), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createColorRect(color2,""), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createColorRect(color3,""), linearConstraints.setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
             return panel;
         }
     }
