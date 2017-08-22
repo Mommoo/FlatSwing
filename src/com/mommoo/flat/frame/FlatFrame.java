@@ -74,7 +74,7 @@ public final class FlatFrame {
 		TITLE_BAR.setTitleColor(color);
 	}
 	
-	public Color getTitleColor(Color color){
+	public Color getTitleColor(){
 		return TITLE_BAR.getTitleColor();
 	}
 	

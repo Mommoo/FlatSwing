@@ -89,8 +89,8 @@ public class FlatMenuButton extends FlatButton{
 		super.mouseReleased(e);
 		if (!isMouseExited){
 			if(onClickListener != null) {
-				DEFAULT_CLICK_EVENT.onClick(DEFAULT_CLICK_EVENT);
-				onClickListener.onClick(DEFAULT_CLICK_EVENT);
+				DEFAULT_CLICK_EVENT.onClick(e.getComponent());
+				onClickListener.onClick(e.getComponent());
 			}
 		}
 	}

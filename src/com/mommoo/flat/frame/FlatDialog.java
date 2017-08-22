@@ -1,9 +1,13 @@
 package com.mommoo.flat.frame;
 
-import com.mommoo.flat.button.FlatButton;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.dialog.TextInfo;
 import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.layout.linear.LinearLayout;
+import com.mommoo.flat.layout.linear.Orientation;
+import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+import com.mommoo.util.ColorManager;
 import com.mommoo.util.FontManager;
 import com.mommoo.util.KeyManager;
 import com.mommoo.util.ScreenManager;
@@ -29,20 +33,24 @@ public class FlatDialog {
 	private FlatDialog(Builder builder){
 		this.builder = builder;
 		initFrame();
-		getContainer().setLayout(new BorderLayout());
-		getContainer().add(createTitleLabel(builder),   BorderLayout.NORTH);
-		getContainer().add(createContentLabel(builder), BorderLayout.CENTER);
-		getContainer().add(createButtonPanel(builder),  BorderLayout.SOUTH);
-		COMMON_FRAME.pack();
 
-		setBackGroundColor(builder.dialogBackgroundColor);
+		LinearConstraints constraints = new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT);
+
+		Container container = getContainer();
+
+		container.setLayout(new LinearLayout(Orientation.VERTICAL));
+		container.setBackground(builder.dialogBackgroundColor);
+
+		container.add(createTitleLabel(),   constraints);
+		container.add(builder.upperView,           constraints);
+		container.add(createContentLabel(), constraints);
+		container.add(builder.lowerView,           constraints);
+		container.add(createButtonPanel(),  constraints);
 	}
 	
 	private void initFrame(){
 		COMMON_FRAME.setType(JFrame.Type.UTILITY);
 		COMMON_FRAME.setAlwaysOnTop(true);
-		COMMON_FRAME.getCustomizablePanel().setLayout(new BorderLayout());
-		COMMON_FRAME.getCustomizablePanel().setPreferredSize(new Dimension(builder.dialogWidth,SCREEN_MANAGER.getScreenHeight()));
 		COMMON_FRAME.getCustomizablePanel().setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
 	}
 
@@ -55,64 +63,60 @@ public class FlatDialog {
 
 			((JTextComponent) component).setText(textInfo.getText());
 
-		} else if (component instanceof FlatButton){
-
-			((FlatButton) component).setText(textInfo.getText());
-			((FlatButton) component).setThemeColor(textInfo.getBackgroundColor());
 		}
 	}
 
-	private Component createTitleLabel(Builder builder){
+	private Component createTitleLabel(){
 		FlatLabel TITLE_LABEL = new FlatLabel();
-		TITLE_LABEL.setBorder(BorderFactory.createEmptyBorder(0, 0, PADDING, 0));
 		initComponent(TITLE_LABEL, builder.titleInfo);
+		TITLE_LABEL.setTextAreaFitHeightToWidth(builder.dialogWidth);
 		return TITLE_LABEL;
 	}
 
-	private Component createContentLabel(Builder builder){
+	private Component createContentLabel(){
 		FlatLabel CONTENT = new FlatLabel();
-		CONTENT.setBorder(BorderFactory.createEmptyBorder(0, 0, PADDING, 0));
-		CONTENT.setLineHeight(builder.lineHeight);
 		initComponent(CONTENT, builder.contentInfo);
+		CONTENT.setLineHeight(builder.lineHeight);
+		CONTENT.setTextAreaFitHeightToWidth(builder.dialogWidth);
+
 		return CONTENT;
 	}
 
-	private Component createButtonPanel(Builder builder){
+	private Component createButtonPanel(){
 		JPanel BTN_PARENT_PANEL = new JPanel();
 		BTN_PARENT_PANEL.setBackground(builder.contentInfo.getBackgroundColor());
 		BTN_PARENT_PANEL.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		BTN_PARENT_PANEL.add(createButton(builder));
+		BTN_PARENT_PANEL.add(createButton());
 
 		return BTN_PARENT_PANEL;
 	}
 
-	private Component createButton(Builder builder){
-		FlatButton BTN = new FlatButton();
-		initComponent(BTN, builder.buttonTextInfo);
-		BTN.setBorder(BorderFactory.createEmptyBorder(10,15,10,15));
-		BTN.setOnClickListener(c-> {
-			builder.onClickListener.onClick(BTN);
-			COMMON_FRAME.dispose();
-		});
+	private Component createButton(){
+		FlatLabel label = new FlatLabel();
+		initComponent(label, builder.buttonTextInfo);
+		label.setBorder(BorderFactory.createEmptyBorder(0,15,0,15));
+		label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-		addKeyListener(BTN);
-		return BTN;
+		OnClickListener onClickListener = component -> {
+			builder.onClickListener.onClick(label);
+			COMMON_FRAME.dispose();
+		};
+
+		label.setOnClickListener(onClickListener);
+
+		addKeyListener(() -> onClickListener.onClick(label));
+		return label;
 	}
 
-	private JPanel getContainer(){
+	private Container getContainer(){
 		return COMMON_FRAME.getCustomizablePanel();
 	}
 
-	private void addKeyListener(FlatButton BTN){
-		KeyManager.KeyEventListener eventListener = BTN::doClick;
+	private void addKeyListener(KeyManager.KeyEventListener eventListener){
 		KeyManager.addEnterKeyListener(COMMON_FRAME.getCustomizablePanel(), eventListener);
 		for(Component component : COMMON_FRAME.getCustomizablePanel().getComponents()){
 			KeyManager.addEnterKeyListener(component, eventListener);
 		}
-	}
-
-	private void setBackGroundColor(Color color){
-		getContainer().setBackground(color);
 	}
 
 	public String getTitle(){
@@ -156,6 +160,8 @@ public class FlatDialog {
 		private TextInfo contentInfo = new TextInfo();
 		private TextInfo buttonTextInfo = new TextInfo();
 
+		private JPanel upperView = new JPanel(), lowerView = new JPanel();
+
 		private Color dialogBackgroundColor = Color.WHITE;
 
 		private int dialogWidth = FLAT_DIALOG_WIDTH;
@@ -167,9 +173,14 @@ public class FlatDialog {
 		private FrameLocation frameLocation;
 
 		public Builder(){
-			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
-			contentInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, 24));
-			buttonTextInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, 30));
+			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, 44));
+			contentInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, 20));
+
+			upperView.setPreferredSize(new Dimension(0,0));
+			lowerView.setPreferredSize(new Dimension(0,0));
+
+			buttonTextInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, 18));
+			buttonTextInfo.setTextColor(ColorManager.getColorAccent());
 			buttonTextInfo.setText("OK");
 		}
 
@@ -213,6 +224,16 @@ public class FlatDialog {
 			return this;
 		}
 
+		public Builder setUpperView(JPanel view){
+			upperView = view;
+			return this;
+		}
+
+		public Builder setLowerView(JPanel view){
+			lowerView = view;
+			return this;
+		}
+
 		public Builder setButtonText(String text){
 			buttonTextInfo.setText(text);
 			return this;
@@ -242,17 +263,6 @@ public class FlatDialog {
 			this.lineHeight = lineHeight;
 			return this;
 		}
-
-//		public FlatViewDialog.Builder setView(JPanel panel){
-//			final JPanel WRAP_PANEL = new JPanel();
-//			WRAP_PANEL.setLayout(new BorderLayout());
-//			WRAP_PANEL.setBackground(new Color(1.0f,1.0f,1.0f,0f));
-//			WRAP_PANEL.setPreferredSize(new Dimension(panel.getPreferredSize().width,panel.getPreferredSize().height+FlatDialog.PADDING));
-//			WRAP_PANEL.setBorder(BorderFactory.createEmptyBorder(0,0,FlatDialog.PADDING,0));
-//			WRAP_PANEL.add(panel,BorderLayout.CENTER);
-//			FLAT_DIALOG.COMMON_FRAME.getCustomizablePanel().add(WRAP_PANEL,BorderLayout.CENTER);
-//			return this;
-//		}
 
 		public Builder setLocationRelativeTo(Component c){
 			locationComponent = c;
@@ -300,6 +310,7 @@ public class FlatDialog {
 				return new Point(targetCompPoint.x + (targetCompSize.width - frameSize.width)/2, targetCompPoint.y + (targetCompSize.height - frameSize.height)/2);
 
 			case CENTER_AT_SCREEN :
+
 				return new Point((SCREEN_MANAGER.getScreenWidth() - frameSize.width)/2, (SCREEN_MANAGER.getWindowHeight() - frameSize.height)/2);
 
 			case RELATIVE_AT_COMPONENT:
@@ -312,28 +323,20 @@ public class FlatDialog {
 		}
 	}
 
-	private int calculateDialogHeight(){
-		int dialogHeight = PADDING * 2;
-
-		for(Component component : getContainer().getComponents()){
-			dialogHeight += component.getPreferredSize().height;
-		}
-		return dialogHeight;
-	}
-
 	public void show(){
-		COMMON_FRAME.setSize(new Dimension(builder.dialogWidth, calculateDialogHeight()));
+		COMMON_FRAME.pack();
 		COMMON_FRAME.setLocation(getProperLocation());
 		COMMON_FRAME.setVisible(true);
 	}
 
 	public static void main(String[] args){
 		new FlatDialog.Builder()
-				.setTitle("TEST")
+				.setTitle("Beautiful Dialog!")
 				.setContent("This is test message\n" +
 						"When dialog message length increase, this dialog area is wider automatically \n" +
 						"So, you don't consider that width or height size\n" +
 						"Just use it!")
+				.setDialogWidth(500)
 				.setLocationScreenCenter()
 				.setLineHeight(40)
 				.build()

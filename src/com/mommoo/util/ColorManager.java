@@ -15,4 +15,8 @@ public class ColorManager {
     public static Color getFlatComponentDefaultColor(){
         return Color.decode("#eeeeee");
     }
+
+    public static Color getColorAccent(){
+        return Color.decode("#E91E63");
+    }
 }

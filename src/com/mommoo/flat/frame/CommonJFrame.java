@@ -51,7 +51,7 @@ final class CommonJFrame extends JFrame {
 	private void attachUserCustomPanel() {
 		JPanel container = (JPanel)getContentPane();
 		container.setBorder(BorderFactory.createEmptyBorder(shadowDip,shadowDip,shadowDip,shadowDip));
-		container.add(customizablePanel,BorderLayout.CENTER);
+		container.add(customizablePanel, BorderLayout.CENTER);
 	}
 
 	private void drawShadow(Graphics2D g2) {
@@ -165,7 +165,7 @@ final class CommonJFrame extends JFrame {
 	
 	@Override
 	public void setSize(int width, int height) {
-		super.setSize(width + shadowDip * 2,height + shadowDip * 2);		
+		super.setSize(width + shadowDip * 2,height + shadowDip * 2);
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class FlatMenu extends FlatLabel implements MouseListener {
 
     public FlatMenu(String menuText){
         setText(menuText);
-        setColumns(22);
+//        setColumns(22);
         setDragEnabled(false);
         setBorder(BorderFactory.createEmptyBorder(PADDING*2,PADDING*2,PADDING*2,PADDING*2));
         setCursor(HAND_CURSOR);
