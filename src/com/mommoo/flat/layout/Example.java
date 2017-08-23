@@ -15,9 +15,7 @@ public class Example {
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
         frame.setResizable(true);
-        JLabel panel = new JLabel("test");
-        panel.setBackground(Color.RED);
-        frame.getContainer().add(panel);
+        frame.getContainer().add(new LinearLayoutPanel());
         frame.show();
     }
 

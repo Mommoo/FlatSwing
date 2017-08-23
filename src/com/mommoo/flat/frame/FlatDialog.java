@@ -341,5 +341,7 @@ public class FlatDialog {
 				.setLineHeight(40)
 				.build()
 				.show();
+
+		System.out.println(System.getProperty("user.home"));
 	}
 }

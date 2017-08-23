@@ -70,7 +70,6 @@ public class LinearLayout implements LayoutManager2 {
 
     @Override
     public Dimension minimumLayoutSize(Container parent) {
-        System.out.println("mini");
         Dimension dimension = new Dimension(0,0);
         Insets insets = parent.getInsets();
 
