@@ -15,39 +15,24 @@ import java.awt.image.BufferedImageOp;
  */
 public class FlatImagePanel extends FlatPanel {
     private Image image;
+    private Image resizedImage;
     private ImageOption option;
     private int imageWidth, imageHeight;
     private MediaTracker mediaTracker = new MediaTracker(this);
 
-    private Dimension getImageSize(){
+    private Dimension getImageSize(Image image){
         ImageIcon imageIcon = new ImageIcon(image);
         return new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight());
     }
 
-    private Dimension getBasicImageSize(){
-        Dimension imageDimen;
-
-        if (imageWidth != 0 && imageHeight != 0) imageDimen = getImageSize();
-        else imageDimen = new Dimension(imageWidth, imageHeight);
-
-        Insets insets = getInsets();
-
-        int availableWidth = getWidth() - insets.left - insets.right;
-        int availableHeight = getHeight() - insets.top - insets.bottom;
-
-        if (availableWidth < imageDimen.width){
-            imageDimen.width = availableWidth;
-        }
-
-        if (availableHeight < imageDimen.height){
-            imageDimen.height = availableHeight;
-        }
-
-        return imageDimen;
+    public void setImage(Image image){
+        Dimension imageDimen = getImageSize(image);
+        setImage(image, imageDimen.width, imageDimen.height, ImageOption.BASIC_IMAGE_SIZE);
     }
 
-    public void setImage(Image image){
-        setImage(image, ImageOption.BASIC_IMAGE_SIZE);
+    public void setImage(Image image, ImageOption option){
+        Dimension imageDimen = getImageSize(image);
+        setImage(image, imageDimen.width, imageDimen.height, option);
     }
 
     public void setImage(Image image, int width, int height){
@@ -57,14 +42,10 @@ public class FlatImagePanel extends FlatPanel {
     public void setImage(Image image, int width, int height, ImageOption option){
         this.imageWidth = width;
         this.imageHeight = height;
-        setImage(image, option);
-    }
-
-    public void setImage(Image image, ImageOption option){
         this.image = image;
         this.option = option;
-        Dimension imageSize = getBasicImageSize();
-
+        this.resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        awaitImageDraw(this.resizedImage);
         repaint();
     }
 
@@ -76,36 +57,35 @@ public class FlatImagePanel extends FlatPanel {
     public void paint(Graphics g) {
         super.paint(g);
 
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+
         Insets insets = getInsets();
 
         int imageX = insets.left;
         int imageY = insets.top;
 
-        Dimension imageSize = getBasicImageSize();
-
-        int imageWidth = imageSize.width;
-        int imageHeight = imageSize.height;
+        int availableWidth = getWidth() - insets.left - insets.right;
+        int availableHeight = getHeight() - insets.top - insets.bottom;
 
         if (option == ImageOption.BASIC_IMAGE_SIZE){
 
 
         } else if (option == ImageOption.BASIC_IMAGE_SIZE_CENTER){
 
-            imageX += (getWidth() - imageWidth)/2;
-            imageY += (getHeight() - imageHeight)/2;
+            imageX += (availableWidth  - imageWidth)/2;
+            imageY += (availableHeight - imageHeight)/2;
 
         } else if (option == ImageOption.MATCH_PARENT){
 
-            imageWidth = getWidth() - insets.left - insets.right;
-            imageHeight = getHeight() - insets.top - insets.bottom;
+            imageWidth = availableWidth;
+            imageHeight = availableHeight;
 
         }
 
-        Image image = this.image.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
-
-        awaitImageDraw(image);
-
-        g.drawImage(image, imageX, imageY, null);
+        g2d.clipRect(imageX, imageY, availableWidth, availableHeight);
+        g2d.drawImage(resizedImage, imageX, imageY, imageWidth, imageHeight, null);
     }
 
     private void awaitImageDraw(Image image){
@@ -123,11 +103,12 @@ public class FlatImagePanel extends FlatPanel {
     public static void main(String[] args){
         FlatFrame flatFrame = new FlatFrame();
         flatFrame.setSize(500,500);
+        flatFrame.setResizable(true);
         flatFrame.setLocationOnScreenCenter();
 
         FlatImagePanel imagePanel = new FlatImagePanel();
         imagePanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
-        imagePanel.setImage(ImageManager.TEST, ImageOption.MATCH_PARENT);
+        imagePanel.setImage(ImageManager.TEST);
 
         flatFrame.getContainer().add(imagePanel);
 

@@ -6,6 +6,9 @@ import com.mommoo.flat.frame.titlebar.navigation.controller.NavigationControlPan
 import com.mommoo.flat.frame.titlebar.navigation.listener.NavigationControlListener;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
+import com.mommoo.flat.layout.linear.LinearLayout;
+import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
@@ -13,7 +16,7 @@ import java.awt.*;
 
 class CommonTitleBar extends FlatPanel {
 	private static final int TITLE_BAR_HEIGHT = 50;
-	private static final int TITLE_BAR_LEFT_PADDING = 10;
+	private static final int TITLE_BAR_SIDE_PADDING = 10;
 	private static final int TITLE_TEXT_FONT_SIZE = TITLE_BAR_HEIGHT/3;
 
 	private final TitleLabel TITLE_LABEL = new TitleLabel(TITLE_TEXT_FONT_SIZE);
@@ -22,41 +25,19 @@ class CommonTitleBar extends FlatPanel {
 	private FlatImagePanel mainIcon;
 
 	CommonTitleBar() {
-		setLayout(new GridBagLayout());
-		setBorder(BorderFactory.createEmptyBorder(0,TITLE_BAR_LEFT_PADDING,0,10));
+		setLayout(new LinearLayout(15));
+		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
 		createMainIcon();
-		addTitleLabel();
-		addControlPanel();
+		add(TITLE_LABEL, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+		add(controlPanel, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT));
 	}
 
 	private void createMainIcon(){
 		Dimension mainIconDimen = new Dimension(3*TITLE_BAR_HEIGHT/5, 3*TITLE_BAR_HEIGHT/5);
 		mainIcon = new FlatImagePanel();
 		mainIcon.setPreferredSize(mainIconDimen);
-		mainIcon.setMinimumSize(mainIconDimen);
 	}
-	
-	private void addTitleLabel(){
-		addComponent(TITLE_LABEL,1,0,1,1,1,0);
-	}
-	
-	private void addControlPanel(){
-		addComponent(controlPanel,2,0,1,1,0,0);
-	}
-	
-	private void addComponent(JComponent jComponent,
-			int gridX, int gridY, int gridWidth, int gridHeight, double weightX, double weightY){
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = gridX;
-		gbc.gridy = gridY;
-		gbc.gridwidth = gridWidth;
-		gbc.gridheight = gridHeight;
-		gbc.weightx = weightX;
-		gbc.weighty = weightY;
-		this.add(jComponent,gbc);
-	}
-	
+
 	void setTitle(String title){
 		TITLE_LABEL.setText(title);
 	}
@@ -66,9 +47,13 @@ class CommonTitleBar extends FlatPanel {
 	}
 	
 	void setIconImage(Image image){
-		mainIcon.setImage(image, ImageOption.MATCH_PARENT);
-		if (!isComponentContained(mainIcon)){
-			addComponent(mainIcon,0,0,1,1,0,0);
+		mainIcon.setImage(image, 3*TITLE_BAR_HEIGHT/5, 3*TITLE_BAR_HEIGHT/5);
+
+		if (isComponentContained(mainIcon)){
+			mainIcon.revalidate();
+			mainIcon.repaint();
+		}else {
+			add(mainIcon, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT), 0);
 		}
 	}
 
@@ -76,14 +61,11 @@ class CommonTitleBar extends FlatPanel {
 		if (isComponentContained(mainIcon)) remove(mainIcon);
 	}
 
-	void setThemeColor(Color color){
+	@Override
+	public void setBackground(Color color){
 		super.setBackground(color);
-		mainIcon.setBackground(color);
-		controlPanel.setButtonColor(color);
-	}
-	
-	Color getThemeColor(){
-		return super.getBackground();
+		if (mainIcon != null) mainIcon.setBackground(color);
+		if (controlPanel != null) controlPanel.setButtonColor(color);
 	}
 
 	void setButtonIconColor(Color color){
@@ -133,8 +115,9 @@ class CommonTitleBar extends FlatPanel {
 		SwingUtilities.invokeLater(()->{
 			FlatFrame f = new FlatFrame();
 			f.setSize(700,500);
+			f.setProcessIconImage(ImageManager.TEST);
 			f.setEnableSizeButton(true);
-			f.setImageIcon(ImageManager.TEST);
+			f.setResizable(true);
 			f.setTitle("A Beautiful Frame. You can customizing you want!");
 			f.setLocationOnScreenCenter();
 			f.show();

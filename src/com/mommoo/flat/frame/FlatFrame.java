@@ -29,7 +29,7 @@ public final class FlatFrame {
 	private void initFrame(){
 		setThemeColor(DEFAULT_THEME_COLOR);
 		setLocation(0,0);
-		setImageIcon(ImageManager.TEST);
+		setIconImage(ImageManager.TEST);
 	}
 
 	private void initUserCustomizablePanel(){
@@ -54,7 +54,7 @@ public final class FlatFrame {
 	}
 
 	public void setThemeColor(Color color){
-		TITLE_BAR.setThemeColor(color);
+		TITLE_BAR.setBackground(color);
 		USER_CUSTOMIZABLE_PANEL.setBackground(color.brighter());
 	}
 
@@ -83,11 +83,11 @@ public final class FlatFrame {
 	}
 	
 	public void setTitleBarColor(Color color){
-		TITLE_BAR.setThemeColor(color);
+		TITLE_BAR.setBackground(color);
 	}
 
 	public Color getTitleBarColor(){
-		return TITLE_BAR.getThemeColor();
+		return TITLE_BAR.getBackground();
 	}
 
 	public void setMenuButtonColor(Color color){
@@ -97,15 +97,17 @@ public final class FlatFrame {
 	public Color getMenuButtonColor(){
 		return TITLE_BAR.getButtonIconColor();
 	}
-	
-	public void setImageIcon(Image image){
-		if (image == null) return;
+
+	public void setProcessIconImage(Image image){
 		this.COMMON_FRAME.setIconImage(image);
+	}
+	
+	public void setIconImage(Image image){
+		if (image == null) return;
 		this.TITLE_BAR.setIconImage(image);
 	}
 
-	public void removeImageIcon(){
-		this.COMMON_FRAME.setIconImage(null);
+	public void removeIconImage(){
 		this.TITLE_BAR.removeIconImage();
 	}
 
