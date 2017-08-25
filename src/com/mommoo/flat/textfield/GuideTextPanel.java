@@ -53,6 +53,8 @@ public class GuideTextPanel extends FlatPanel {
 
     private void addTextFieldFocusListener(FlatTextField flatTextField){
         flatTextField.getTextField().addFocusListener(new FocusListener() {
+            private Color previousForegroundColor = flatTextField.getForeground();
+
             @Override
             public void focusGained(FocusEvent e) {
                 GUIDE_LABEL.setForeground(flatTextField.getFocusGainedColor());
@@ -60,7 +62,7 @@ public class GuideTextPanel extends FlatPanel {
 
             @Override
             public void focusLost(FocusEvent e) {
-                GUIDE_LABEL.setForeground(flatTextField.getFocusLostColor());
+                GUIDE_LABEL.setForeground(previousForegroundColor);
             }
         });
     }
