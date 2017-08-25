@@ -66,7 +66,7 @@ class CommonTitleBar extends FlatPanel {
 	}
 	
 	void setIconImage(Image image){
-		mainIcon.setIcon(image, ImageOption.MATCH_PARENT);
+		mainIcon.setImage(image, ImageOption.MATCH_PARENT);
 		if (!isComponentContained(mainIcon)){
 			addComponent(mainIcon,0,0,1,1,0,0);
 		}

@@ -1,58 +1,136 @@
 package com.mommoo.flat.image;
 
 import com.mommoo.flat.component.FlatComponent;
+import com.mommoo.flat.component.FlatPanel;
+import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 
 /**
  * Created by mommoo on 2017-07-09.
  */
-public class FlatImagePanel extends FlatComponent {
+public class FlatImagePanel extends FlatPanel {
     private Image image;
     private ImageOption option;
-    private boolean isNeedToPaint;
+    private int imageWidth, imageHeight;
+    private MediaTracker mediaTracker = new MediaTracker(this);
 
-    public void setIcon(Image image, int width, int height){
-        setIcon(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+    private Dimension getImageSize(){
+        ImageIcon imageIcon = new ImageIcon(image);
+        return new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight());
     }
 
-    public void setIcon(Image image, int width, int height, ImageOption option){
-        setIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH), option);
+    private Dimension getBasicImageSize(){
+        Dimension imageDimen;
+
+        if (imageWidth != 0 && imageHeight != 0) imageDimen = getImageSize();
+        else imageDimen = new Dimension(imageWidth, imageHeight);
+
+        Insets insets = getInsets();
+
+        int availableWidth = getWidth() - insets.left - insets.right;
+        int availableHeight = getHeight() - insets.top - insets.bottom;
+
+        if (availableWidth < imageDimen.width){
+            imageDimen.width = availableWidth;
+        }
+
+        if (availableHeight < imageDimen.height){
+            imageDimen.height = availableHeight;
+        }
+
+        return imageDimen;
     }
 
-    public void setIcon(Image image, ImageOption option){
+    public void setImage(Image image){
+        setImage(image, ImageOption.BASIC_IMAGE_SIZE);
+    }
+
+    public void setImage(Image image, int width, int height){
+        setImage(image, width, height, ImageOption.BASIC_IMAGE_SIZE);
+    }
+
+    public void setImage(Image image, int width, int height, ImageOption option){
+        this.imageWidth = width;
+        this.imageHeight = height;
+        setImage(image, option);
+    }
+
+    public void setImage(Image image, ImageOption option){
         this.image = image;
         this.option = option;
-        this.isNeedToPaint = true;
+        Dimension imageSize = getBasicImageSize();
+
         repaint();
     }
 
+    public Image getImage(){
+        return image;
+    }
+
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
 
-        if (option != null && option == ImageOption.BASIC_IMAGE_SIZE_CENTER){
-            ImageIcon imageIcon = new ImageIcon(this.image);
-            int imageX = (getWidth() - imageIcon.getIconWidth())/2;
-            int imageY = (getHeight() - imageIcon.getIconHeight())/2;
-            g.drawImage(image, imageX, imageY, null);
+        Insets insets = getInsets();
+
+        int imageX = insets.left;
+        int imageY = insets.top;
+
+        Dimension imageSize = getBasicImageSize();
+
+        int imageWidth = imageSize.width;
+        int imageHeight = imageSize.height;
+
+        if (option == ImageOption.BASIC_IMAGE_SIZE){
+
+
+        } else if (option == ImageOption.BASIC_IMAGE_SIZE_CENTER){
+
+            imageX += (getWidth() - imageWidth)/2;
+            imageY += (getHeight() - imageHeight)/2;
+
+        } else if (option == ImageOption.MATCH_PARENT){
+
+            imageWidth = getWidth() - insets.left - insets.right;
+            imageHeight = getHeight() - insets.top - insets.bottom;
+
         }
 
-        if (option == null || !isNeedToPaint){
-            return;
+        Image image = this.image.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+
+        awaitImageDraw(image);
+
+        g.drawImage(image, imageX, imageY, null);
+    }
+
+    private void awaitImageDraw(Image image){
+        mediaTracker.addImage(image, 0);
+
+        try {
+            mediaTracker.waitForID(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        isNeedToPaint = false;
+        mediaTracker.removeImage(image);
+    }
 
-        if (option == ImageOption.MATCH_PARENT){
+    public static void main(String[] args){
+        FlatFrame flatFrame = new FlatFrame();
+        flatFrame.setSize(500,500);
+        flatFrame.setLocationOnScreenCenter();
 
-            setIcon(this.image, getWidth(), getHeight());
+        FlatImagePanel imagePanel = new FlatImagePanel();
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
+        imagePanel.setImage(ImageManager.TEST, ImageOption.MATCH_PARENT);
 
-        } else if (option == ImageOption.BASIC_IMAGE_SIZE){
+        flatFrame.getContainer().add(imagePanel);
 
-            ImageIcon imageIcon = new ImageIcon(this.image);
-            setIcon(this.image, imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        }
+        flatFrame.show();
     }
 }

@@ -1,4 +1,4 @@
-package com.mommoo.flat.layout;
+package com.mommoo.flat.layout.linear;
 
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.layout.linear.LinearLayout;
@@ -9,6 +9,9 @@ import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import javax.swing.*;
 import java.awt.*;
 public class Example {
+
+    private Example(){}
+
     public static void main(String[] args){
         FlatFrame frame = new FlatFrame();
         frame.setSize(500,500 + FlatFrame.getTitleBarHeight());

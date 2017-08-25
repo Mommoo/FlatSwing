@@ -122,6 +122,10 @@ class LinearSpaceCalculator {
                     .setZeroDimension()
                     .addDimension(areaRatioOfWeight)
                     .mulDimension(linearConstraints.getWeight(), linearConstraints.getWeight());
+
+            if (orientation == Orientation.VERTICAL) weightedCompDimen.width = compDimen.width;
+            else weightedCompDimen.height = compDimen.height;
+
         }
 
         return weightedCompDimen;

@@ -1,5 +1,6 @@
 package com.mommoo.flat.textfield;
 
+import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
@@ -12,7 +13,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
 
-public class FlatTextField extends JPanel{
+public class FlatTextField extends FlatPanel {
 	private static final int DEFAULT_BORDER_WIDTH = 2;
 
 	private int borderWidth = DEFAULT_BORDER_WIDTH;
@@ -61,13 +62,6 @@ public class FlatTextField extends JPanel{
 				});
 	}
 
-	private boolean isContainedImagePanel(){
-		for (Component component : getComponents()){
-			if (component == imagePanel) return true;
-		}
-		return false;
-	}
-
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -85,20 +79,15 @@ public class FlatTextField extends JPanel{
 	}
 
 	public void setImageIcon(Image image){
-		imagePanel.setIcon(image, ImageOption.MATCH_PARENT);
-		if (!isContainedImagePanel()) add(imagePanel, BorderLayout.WEST);
+		imagePanel.setImage(image, ImageOption.MATCH_PARENT);
+		imagePanel.setBackground(getBackground());
+		if (!isComponentContained(imagePanel)) add(imagePanel, BorderLayout.WEST);
 		repaintComponent();
 	}
 	
 	public void setHint(String hint){
 		this.isSetHint = true;
 		this.textFieldProxy.setHint(hint);
-	}
-
-	public void setMargin(Insets insets){
-		this.textFieldProxy
-				.getTextField()
-				.setBorder(BorderFactory.createEmptyBorder(insets.top,insets.left,insets.bottom,insets.right));
 	}
 
 	public void addKeyListener(KeyListener listener){
@@ -136,8 +125,6 @@ public class FlatTextField extends JPanel{
 		boolean isEqualsHintForegroundColor = this.textFieldProxy.getHintColor().equals(textFieldProxy.getTextField().getForeground());
 		return isSetHint && isEqualsHintText && isEqualsHintForegroundColor;
 	}
-
-
 
 	public void setText(String text){
 		textFieldProxy.setText(text);
@@ -199,6 +186,8 @@ public class FlatTextField extends JPanel{
 		FlatTextField passwordTextField = new FlatTextField(true);
 		passwordTextField.setImageIcon(ImageManager.WRITE);
 		passwordTextField.setHint("write password");
+
+		passwordTextField.setBackground(Color.BLUE);
 
 		FlatFrame frame = new FlatFrame();
 		frame.setTitle("FlatTextField test");

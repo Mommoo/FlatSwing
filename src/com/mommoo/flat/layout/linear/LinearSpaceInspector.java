@@ -90,6 +90,7 @@ class LinearSpaceInspector {
 
         if (isHorizontal){
             int occupiedWidth = linearCompDimen.getOccupiedSizeDimen().width;
+
             if (availableWidth <= width + occupiedWidth){
                 width = availableWidth - occupiedWidth;
             }
