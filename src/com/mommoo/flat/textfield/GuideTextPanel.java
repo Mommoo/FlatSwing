@@ -40,7 +40,7 @@ public class GuideTextPanel extends FlatPanel {
     }
 
     private void initGuideLabel(){
-        GUIDE_LABEL.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        GUIDE_LABEL.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
         GUIDE_LABEL.setFont(FontManager.getNanumGothicFont(Font.BOLD, 14).deriveFont(getAttribute()));
         GUIDE_LABEL.setOpaque(false);
     }
