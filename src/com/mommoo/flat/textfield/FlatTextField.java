@@ -4,6 +4,10 @@ import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
+import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.layout.linear.LinearLayout;
+import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.util.ColorManager;
 import com.mommoo.util.ImageManager;
 
@@ -20,18 +24,17 @@ public class FlatTextField extends FlatPanel {
 	private Color focusGainedColor = Color.PINK, focusLostColor = Color.LIGHT_GRAY;
 
 	private boolean isSetHint;
-	private boolean repaintComponent;
 
-	private FlatImagePanel imagePanel = new FlatImagePanel();
+	private final FlatImagePanel imagePanel = new FlatImagePanel();
 	private TextFieldProxy textFieldProxy;
 
 	public FlatTextField(boolean passwordMode){
 		createProperTextFieldProxy(passwordMode);
-		setLayout(new BorderLayout());
+		setLayout(new LinearLayout());
 		setBorder(BorderFactory.createMatteBorder(0, 0, borderWidth, 0, focusLostColor));
 		setBackground(ColorManager.getFlatComponentDefaultColor());
 		setTextFieldFocusListener();
-		add(this.textFieldProxy.getTextField(), BorderLayout.CENTER);
+		add(this.textFieldProxy.getTextField(), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 	}
 
 	public FlatTextField(String text, boolean passwordMode){
@@ -42,6 +45,8 @@ public class FlatTextField extends FlatPanel {
 	private void createProperTextFieldProxy(boolean isPasswordMode){
 		if (isPasswordMode) this.textFieldProxy = new PasswordTextField();
 		else this.textFieldProxy = new NormalTextField();
+
+		this.textFieldProxy.getTextField().setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
 	}
 
 	private void setTextFieldFocusListener(){
@@ -63,26 +68,25 @@ public class FlatTextField extends FlatPanel {
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (!repaintComponent) return;
+	public void paint(Graphics g) {
+		super.paint(g);
 
-		int imageSize = getMinimumSize().height;
-		imagePanel.setSize(imageSize, imageSize);
-		imagePanel.setLocation(0,(getHeight() - imageSize)/2);
-		this.textFieldProxy.getTextField().setLocation(imageSize,this.textFieldProxy.getTextField().getLocation().y);
-	}
+		Insets insets = getInsets();
 
-	private void repaintComponent(){
-		repaintComponent = true;
-		repaint();
+		int availableWidth = getWidth() - insets.left - insets.right;
+		int availableHeight = getHeight() - insets.top - insets.bottom;
+
+		int standardSize = availableWidth >= availableHeight ? availableHeight : availableWidth;
+		int padding = standardSize/5;
+		imagePanel.setBorder(BorderFactory.createEmptyBorder(padding,padding,padding,padding));
+		imagePanel.setPreferredSize(new Dimension(standardSize, standardSize));
 	}
 
 	public void setImageIcon(Image image){
 		imagePanel.setImage(image, ImageOption.MATCH_PARENT);
 		imagePanel.setBackground(getBackground());
-		if (!isComponentContained(imagePanel)) add(imagePanel, BorderLayout.WEST);
-		repaintComponent();
+		if (!isComponentContained(imagePanel)) add(imagePanel, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT), 0);
+		repaint();
 	}
 	
 	public void setHint(String hint){
@@ -114,16 +118,28 @@ public class FlatTextField extends FlatPanel {
 	public void setFocusGainedColor(Color color){
 		this.focusGainedColor = color;
 	}
+
+	public Color getFocusGainedColor(){
+		return this.focusGainedColor;
+	}
 	
 	public void setFocusLostColor(Color color){
 		this.focusLostColor = color;
 		super.setBorder(BorderFactory.createMatteBorder(0, 0, borderWidth, 0, focusLostColor));
 	}
 
+	public Color getFocusLostColor(){
+		return this.focusLostColor;
+	}
+
 	private boolean isCurrentHintAppeared(){
 		boolean isEqualsHintText = this.textFieldProxy.getHint().equals(textFieldProxy.getTextField().getText());
 		boolean isEqualsHintForegroundColor = this.textFieldProxy.getHintColor().equals(textFieldProxy.getTextField().getForeground());
 		return isSetHint && isEqualsHintText && isEqualsHintForegroundColor;
+	}
+
+	JTextField getTextField(){
+		return textFieldProxy.getTextField();
 	}
 
 	public void setText(String text){
@@ -155,11 +171,11 @@ public class FlatTextField extends FlatPanel {
 	}
 
 	/*
-         * There is a situation that When this super class load, setBackground method invoked
-         * But, in that time, child class member is loaded not yet
-         * Therefore, if not any do something, invoked null-pointer error
-         * So, to prevent above error, we need to null checking
-         * */
+	 * There is a situation that When this super class load, setBackground method invoked
+	 * But, in that time, child class member is loaded not yet
+	 * Therefore, if not any do something, invoked null-pointer error
+	 * So, to prevent above error, we need to null checking
+	 * */
 	@Override
 	public void setBackground(Color color){
 		super.setBackground(color);
@@ -186,7 +202,6 @@ public class FlatTextField extends FlatPanel {
 		FlatTextField passwordTextField = new FlatTextField(true);
 		passwordTextField.setImageIcon(ImageManager.WRITE);
 		passwordTextField.setHint("write password");
-
 		passwordTextField.setBackground(Color.BLUE);
 
 		FlatFrame frame = new FlatFrame();
@@ -197,6 +212,7 @@ public class FlatTextField extends FlatPanel {
 		frame.getContainer().setLayout(new GridLayout(2,1,0,25));
 		frame.getContainer().add(normalTextField);
 		frame.getContainer().add(passwordTextField);
+		frame.setResizable(true);
 		frame.show();
 	}
 }

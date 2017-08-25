@@ -8,7 +8,6 @@ import java.awt.*;
 
 abstract class TextFieldProxy {
     private static final ScreenManager SM = ScreenManager.getInstance();
-    private static final int PADDING = SM.dip2px(10);
     private static final int TEXT_FONT_SIZE = SM.dip2px(10);
     private static final Color DEFAULT_HINT_COLOR = Color.decode("#999999");
 
@@ -27,7 +26,7 @@ abstract class TextFieldProxy {
     }
 
     private void initTextField(){
-        this.targetTextField.setBorder(BorderFactory.createEmptyBorder(0, PADDING,0, PADDING));
+        this.targetTextField.setBorder(BorderFactory.createEmptyBorder(0, 0,0, 0));
         this.targetTextField.setFont(FontManager.getNanumGothicFont(Font.PLAIN,TEXT_FONT_SIZE));
     }
 
