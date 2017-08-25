@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 class LinearSpaceCalculator {
     private Container container;
     private Orientation orientation;
+    private int gap;
     private int weightSum;
 
     private Map<Component, LinearConstraints> linearConstraintsMap = new HashMap<>();
@@ -22,10 +23,10 @@ class LinearSpaceCalculator {
 
     LinearSpaceCalculator(){ }
 
-    void setData(Container container, Orientation orientation){
+    void setData(Container container, Orientation orientation, int gap){
         this.container = container;
         this.orientation = orientation;
-
+        this.gap = gap;
         initList();
 
         if (weightSum == 0){
@@ -135,7 +136,7 @@ class LinearSpaceCalculator {
         ComputableDimension componentDimen = new ComputableDimension(basicDimen);
         ComputableDimension occupiedAreaDimen = new ComputableDimension();
 
-        occupiedAreaDimen.addDimension(new Dimension(orientation.getGap(),orientation.getGap()));
+        occupiedAreaDimen.addDimension(new Dimension(gap, gap));
 
         if (index > 0){
             LinearCompDimen previousLinearCompDimen = layoutCompDimenList.get(index - 1);
@@ -201,7 +202,7 @@ class LinearSpaceCalculator {
         noWeightCompList.forEach(component -> divisibleAreaDimen.subDimension(component.getPreferredSize()));
 
         int gapCnt = container.getComponentCount() - 1;
-        divisibleAreaDimen.subDimension(orientation.getGap() * gapCnt, orientation.getGap() * gapCnt);
+        divisibleAreaDimen.subDimension(gap * gapCnt, gap * gapCnt);
 
         return divisibleAreaDimen;
     }

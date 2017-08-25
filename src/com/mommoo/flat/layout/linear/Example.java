@@ -5,6 +5,8 @@ import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+import com.mommoo.flat.textfield.FlatTextField;
+import com.mommoo.flat.textfield.GuideTextPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,16 +15,17 @@ public class Example {
     private Example(){}
 
     public static void main(String[] args){
+
         FlatFrame frame = new FlatFrame();
         frame.setSize(500,500 + FlatFrame.getTitleBarHeight());
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
-        frame.setResizable(true);
         frame.getContainer().add(new LinearLayoutPanel());
         frame.show();
     }
 
     private static class LinearLayoutPanel extends JPanel {
+        private LinearLayout linearLayout;
         private LinearLayoutPanel(){
             setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
             setLinearLayout();
@@ -30,8 +33,8 @@ public class Example {
         }
 
         private void setLinearLayout(){
-            LinearLayout linearLayout = new LinearLayout();
-            linearLayout.setOrientation(Orientation.HORIZONTAL);
+            linearLayout = new LinearLayout();
+            linearLayout.setOrientation(Orientation.VERTICAL);
             linearLayout.setGap(15);
             setLayout(linearLayout);
         }

@@ -11,6 +11,8 @@ public class LinearLayout implements LayoutManager2 {
     private LinearSpaceInspector spaceInspector = new LinearSpaceInspector();
     private boolean once;
 
+    private int gap;
+
     public LinearLayout(){
         this(Orientation.HORIZONTAL, GAP);
     }
@@ -24,8 +26,8 @@ public class LinearLayout implements LayoutManager2 {
     }
 
     public LinearLayout(Orientation orientation, int gap){
-        setOrientation(orientation);
-        orientation.setGap(gap);
+        this.orientation = orientation;
+        this.gap = gap;
     }
 
     @Override
@@ -50,8 +52,7 @@ public class LinearLayout implements LayoutManager2 {
         dimension.width += insets.left + insets.right;
         dimension.height += insets.top + insets.bottom;
 
-        int occupiedGapSize = (parent.getComponentCount() - 1) * orientation.getGap();
-
+        int occupiedGapSize = (parent.getComponentCount() - 1) * gap;
 
         /* Add gap size */
         if (orientation == Orientation.HORIZONTAL) {
@@ -113,7 +114,7 @@ public class LinearLayout implements LayoutManager2 {
     public void layoutContainer(Container parent) {
         fixComponentSizeAtOnce(parent);
 
-        spaceInspector.setData(parent,orientation);
+        spaceInspector.setData(parent, orientation, gap);
 
         int index = 0;
         for (Component comp : parent.getComponents()){
@@ -135,11 +136,11 @@ public class LinearLayout implements LayoutManager2 {
     }
 
     public void setGap(int gap){
-        this.orientation.setGap(gap);
+        this.gap = gap;
     }
 
     public int getGap(){
-        return this.orientation.getGap();
+        return this.gap;
     }
 
     public void setWeightSum(int weightSum){

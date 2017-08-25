@@ -70,7 +70,7 @@ public class FlatTextField extends FlatPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-
+		if (image == null) return;
 		Insets insets = getInsets();
 
 		int availableWidth = getWidth() - insets.left - insets.right;
@@ -78,12 +78,15 @@ public class FlatTextField extends FlatPanel {
 
 		int standardSize = availableWidth >= availableHeight ? availableHeight : availableWidth;
 		int padding = standardSize/5;
+		imagePanel.setImage(image, standardSize - padding * 2, standardSize - padding * 2);
 		imagePanel.setBorder(BorderFactory.createEmptyBorder(padding,padding,padding,padding));
 		imagePanel.setPreferredSize(new Dimension(standardSize, standardSize));
 	}
 
+	private Image image;
+
 	public void setImageIcon(Image image){
-		imagePanel.setImage(image, ImageOption.MATCH_PARENT);
+		this.image = image;
 		imagePanel.setBackground(getBackground());
 		if (!isComponentContained(imagePanel)) add(imagePanel, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT), 0);
 		repaint();

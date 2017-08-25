@@ -46,11 +46,11 @@ class LinearSpaceInspector {
         }
     }
 
-    void setData(Container container, Orientation orientation){
+    void setData(Container container, Orientation orientation, int gap){
         inspectValidState(container);
         this.container = container;
         this.orientation = orientation;
-        calculator.setData(this.container,this.orientation);
+        calculator.setData(this.container,this.orientation, gap);
 
     }
 

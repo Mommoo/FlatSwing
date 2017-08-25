@@ -35,7 +35,8 @@ public class GuideTextPanel extends FlatPanel {
     }
 
     private void initGuideTextPanel(){
-        setLayout(new LinearLayout(Orientation.VERTICAL, 0));
+        LinearLayout linearLayout = new LinearLayout(Orientation.VERTICAL, 0);
+        setLayout(linearLayout);
         setBackground(flatTextField.getBackground());
     }
 
@@ -109,8 +110,9 @@ public class GuideTextPanel extends FlatPanel {
 
         GuideTextPanel guideTextPanel = new GuideTextPanel(flatTextField);
         guideTextPanel.setGuideText("good".toUpperCase());
-
+        guideTextPanel.setBackground(Color.RED);
         flatFrame.getContainer().add(guideTextPanel);
+        flatFrame.setResizable(true);
 
         flatFrame.show();
 
