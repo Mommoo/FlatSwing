@@ -25,11 +25,16 @@ class CommonTitleBar extends FlatPanel {
 	private FlatImagePanel mainIcon;
 
 	CommonTitleBar() {
-		setLayout(new LinearLayout(15));
-		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
+		init();
 		createMainIcon();
 		add(TITLE_LABEL, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 		add(controlPanel, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT));
+	}
+
+	private void init(){
+		setOpaque(true);
+		setLayout(new LinearLayout(15));
+		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
 	}
 
 	private void createMainIcon(){

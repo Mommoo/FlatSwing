@@ -150,6 +150,7 @@ public class FlatTextField extends FlatPanel {
 	}
 
 	public String getText(){
+		if (isCurrentHintAppeared()) return "";
 		return textFieldProxy.getText();
 	}
 
@@ -205,7 +206,7 @@ public class FlatTextField extends FlatPanel {
 		FlatTextField passwordTextField = new FlatTextField(true);
 		passwordTextField.setImageIcon(ImageManager.WRITE);
 		passwordTextField.setHint("write password");
-		passwordTextField.setBackground(Color.BLUE);
+		System.out.println(passwordTextField.getText());
 
 		FlatFrame frame = new FlatFrame();
 		frame.setTitle("FlatTextField test");

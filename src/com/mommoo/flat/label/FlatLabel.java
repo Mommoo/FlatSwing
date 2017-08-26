@@ -1,5 +1,6 @@
 package com.mommoo.flat.label;
 
+import com.mommoo.flat.component.MouseClickAdapter;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.util.FontManager;
@@ -50,7 +51,7 @@ public class FlatLabel extends JTextPane{
 	}
 
 	public void setOnClickListener(OnClickListener onClickListener){
-		this.addMouseListener(new FlatLabelMouseListener(onClickListener));
+		addMouseListener(new MouseClickAdapter(onClickListener));
 	}
 
 	public void setTextAreaFitHeightToWidth(int textAreaWidth){
@@ -131,6 +132,7 @@ public class FlatLabel extends JTextPane{
 		flatLabel.setLineHeight(100);
 		flatLabel.setFont(flatLabel.getFont().deriveFont(36.0f));
 		flatLabel.setText("A Beautiful Label, this is automatically line jump if string width longer than label width. You just use it well!");
+		flatLabel.setOnClickListener(component -> System.out.println(((FlatLabel)component).getText()));
 		flatLabel.setTextAlignment(FlatLabelAlign.CENTER);
 
 		flatLabel.setTextAreaFitHeightToWidth(400);
