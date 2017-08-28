@@ -196,7 +196,15 @@ public final class FlatFrame {
 	}
 
 	public void setOnMinimizeListener(OnMinimizeListener onMinimizeListener){
+		this.controlListener.onMinimizeListener = onMinimizeListener;
+	}
 
+	public void setOnChangeListener(OnSizeChangeListener onSizeChangeListener){
+		this.controlListener.onSizeChangeListener = onSizeChangeListener;
+	}
+
+	public void setOnExitListener(OnExitListener onExitListener){
+		this.controlListener.onExitListener = onExitListener;
 	}
 
 	public JFrame getJFrame(){
@@ -224,18 +232,6 @@ public final class FlatFrame {
 		private OnExitListener onExitListener = ()->{};
 		private OnSizeChangeListener onSizeChangeListener = (dimen, location) -> {};
 		private OnMinimizeListener onMinimizeListener = () -> {};
-
-		private void setOnExitListener(OnExitListener onExitListener){
-			this.onExitListener = onExitListener;
-		}
-
-		private void setOnSizeChangeListener(OnSizeChangeListener onSizeChangeListener){
-			this.onSizeChangeListener = onSizeChangeListener;
-		}
-
-		private void setOnMinimizeListener(OnMinimizeListener onMinimizeListener){
-			this.onMinimizeListener = onMinimizeListener;
-		}
 
 		@Override
 		public void onNavigationClick(NavigationButtonType buttonType) {
