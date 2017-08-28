@@ -207,6 +207,10 @@ public final class FlatFrame {
 		this.controlListener.onExitListener = onExitListener;
 	}
 
+	public void setTitleBarVisible(boolean visible){
+		this.TITLE_BAR.setVisible(visible);
+	}
+
 	public JFrame getJFrame(){
 		return COMMON_FRAME;
 	}
