@@ -43,6 +43,11 @@ abstract class TextFieldProxy {
         setHintText();
     }
 
+    void clear(){
+        setText("");
+        setHint(this.hint);
+    }
+
     String getHint(){
         return this.hint;
     }

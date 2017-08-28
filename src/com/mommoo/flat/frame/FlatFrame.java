@@ -1,5 +1,8 @@
 package com.mommoo.flat.frame;
 
+import com.mommoo.flat.frame.listener.OnExitListener;
+import com.mommoo.flat.frame.listener.OnMinimizeListener;
+import com.mommoo.flat.frame.listener.OnSizeChangeListener;
 import com.mommoo.flat.frame.titlebar.navigation.button.NavigationButtonType;
 import com.mommoo.flat.frame.titlebar.navigation.listener.NavigationControlListener;
 import com.mommoo.util.ImageManager;
@@ -17,6 +20,7 @@ public final class FlatFrame {
 	private final JPanel USER_CUSTOMIZABLE_PANEL = new JPanel();
 
 	private boolean isCenterLocation, isWindowExit, isEnableSizeButton;
+	private ControlListener controlListener = new ControlListener();
 
 	public FlatFrame() {
 		initFrame();
@@ -50,7 +54,7 @@ public final class FlatFrame {
 	}
 
 	private void setTitleBarControlListener(){
-		TITLE_BAR.setControlListener(new ControlListener());
+		TITLE_BAR.setControlListener(controlListener);
 	}
 
 	public void setThemeColor(Color color){
@@ -191,6 +195,10 @@ public final class FlatFrame {
 		isEnableSizeButton = isEnable;
 	}
 
+	public void setOnMinimizeListener(OnMinimizeListener onMinimizeListener){
+
+	}
+
 	public JFrame getJFrame(){
 		return COMMON_FRAME;
 	}
@@ -208,15 +216,33 @@ public final class FlatFrame {
 	}
 
 	private class ControlListener implements NavigationControlListener {
-
 		private ScreenManager screenManager = ScreenManager.getInstance();
 		private boolean isSizeUp;
 		private Point frameLocation;
 		private Dimension frameSize;
 
-		@Override public void onNavigationClick(NavigationButtonType buttonType) {
+		private OnExitListener onExitListener = ()->{};
+		private OnSizeChangeListener onSizeChangeListener = (dimen, location) -> {};
+		private OnMinimizeListener onMinimizeListener = () -> {};
+
+		private void setOnExitListener(OnExitListener onExitListener){
+			this.onExitListener = onExitListener;
+		}
+
+		private void setOnSizeChangeListener(OnSizeChangeListener onSizeChangeListener){
+			this.onSizeChangeListener = onSizeChangeListener;
+		}
+
+		private void setOnMinimizeListener(OnMinimizeListener onMinimizeListener){
+			this.onMinimizeListener = onMinimizeListener;
+		}
+
+		@Override
+		public void onNavigationClick(NavigationButtonType buttonType) {
 			switch (buttonType){
 				case MINI :
+
+					onMinimizeListener.onMinimize();
 
 					COMMON_FRAME.setState(Frame.ICONIFIED);
 
@@ -240,9 +266,13 @@ public final class FlatFrame {
 						FlatFrame.this.setLocation(frameLocation);
 					}
 
+					onSizeChangeListener.onSizeChanged(FlatFrame.this.getSize(), FlatFrame.this.getLocation());
+
 					break;
 
 				case EXIT :
+
+					onExitListener.onExit();
 
 					if (isWindowExit) System.exit(1);
 					else COMMON_FRAME.dispose();

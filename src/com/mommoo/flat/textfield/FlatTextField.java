@@ -154,6 +154,10 @@ public class FlatTextField extends FlatPanel {
 		return textFieldProxy.getText();
 	}
 
+	public void clear(){
+		textFieldProxy.clear();
+	}
+
 	@Override
 	public void requestFocus() {
 		textFieldProxy.getTextField().requestFocus();
@@ -206,7 +210,6 @@ public class FlatTextField extends FlatPanel {
 		FlatTextField passwordTextField = new FlatTextField(true);
 		passwordTextField.setImageIcon(ImageManager.WRITE);
 		passwordTextField.setHint("write password");
-		System.out.println(passwordTextField.getText());
 
 		FlatFrame frame = new FlatFrame();
 		frame.setTitle("FlatTextField test");
