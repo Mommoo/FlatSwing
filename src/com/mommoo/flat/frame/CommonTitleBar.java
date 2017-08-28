@@ -51,15 +51,18 @@ class CommonTitleBar extends FlatPanel {
 		return TITLE_LABEL.getText();
 	}
 	
-	void setIconImage(Image image){
-		mainIcon.setImage(image, 3*TITLE_BAR_HEIGHT/5, 3*TITLE_BAR_HEIGHT/5);
-
-		if (isComponentContained(mainIcon)){
-			mainIcon.revalidate();
-			mainIcon.repaint();
-		}else {
-			add(mainIcon, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT), 0);
-		}
+	public static void main(String[] args){
+		SwingUtilities.invokeLater(()->{
+			FlatFrame f = new FlatFrame();
+			f.setSize(700,500);
+			f.setProcessIconImage(ImageManager.TEST);
+			f.setEnableSizeButton(true);
+			f.setResizable(true);
+			f.getContainer().setBackground(Color.RED);
+			f.setTitle("A Beautiful Frame. You can customizing you want!");
+			f.setLocationOnScreenCenter();
+			f.show();
+		});
 	}
 
 	void removeIconImage(){
@@ -116,16 +119,14 @@ class CommonTitleBar extends FlatPanel {
 		return TITLE_BAR_HEIGHT;
 	}
 
-	public static void main(String[] args){
-		SwingUtilities.invokeLater(()->{
-			FlatFrame f = new FlatFrame();
-			f.setSize(700,500);
-			f.setProcessIconImage(ImageManager.TEST);
-			f.setEnableSizeButton(true);
-			f.setResizable(true);
-			f.setTitle("A Beautiful Frame. You can customizing you want!");
-			f.setLocationOnScreenCenter();
-			f.show();
-		});
+	void setIconImage(Image image){
+		mainIcon.setImage(image, ImageOption.MATCH_PARENT);
+
+		if (isComponentContained(mainIcon)){
+			mainIcon.revalidate();
+			mainIcon.repaint();
+		}else {
+			add(mainIcon, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT), 0);
+		}
 	}
 }

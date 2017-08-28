@@ -7,6 +7,8 @@ import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 
@@ -17,40 +19,42 @@ public class FlatImagePanel extends FlatPanel {
     private Image image;
     private Image resizedImage;
     private ImageOption option;
-    private int imageWidth, imageHeight;
+
     private MediaTracker mediaTracker = new MediaTracker(this);
 
-    private Dimension getImageSize(Image image){
-        ImageIcon imageIcon = new ImageIcon(image);
-        return new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-    }
+    private boolean reDraw = true;
 
-    public void setImage(Image image){
-        Dimension imageDimen = getImageSize(image);
-        setImage(image, imageDimen.width, imageDimen.height, ImageOption.BASIC_IMAGE_SIZE);
+    public static void main(String[] args){
+        FlatFrame flatFrame = new FlatFrame();
+        flatFrame.setSize(500,500);
+        flatFrame.setResizable(true);
+        flatFrame.setLocationOnScreenCenter();
+
+        FlatImagePanel imagePanel = new FlatImagePanel();
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
+        imagePanel.setImage(ImageManager.TEST, ImageOption.MATCH_PARENT);
+
+        flatFrame.getContainer().add(imagePanel);
+
+        flatFrame.show();
     }
 
     public void setImage(Image image, ImageOption option){
-        Dimension imageDimen = getImageSize(image);
-        setImage(image, imageDimen.width, imageDimen.height, option);
-    }
-
-    public void setImage(Image image, int width, int height){
-        setImage(image, width, height, ImageOption.BASIC_IMAGE_SIZE);
-    }
-
-    public void setImage(Image image, int width, int height, ImageOption option){
-        this.imageWidth = width;
-        this.imageHeight = height;
         this.image = image;
         this.option = option;
-        this.resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        awaitImageDraw(this.resizedImage);
-        repaint();
     }
 
     public Image getImage(){
         return image;
+    }
+
+    public void setImage(Image image){
+        setImage(image, ImageOption.BASIC_IMAGE_SIZE);
+    }
+
+    public void reDraw(){
+        reDraw = true;
+        repaint();
     }
 
     @Override
@@ -63,6 +67,8 @@ public class FlatImagePanel extends FlatPanel {
 
         Insets insets = getInsets();
 
+        Image image = this.image;
+
         int imageX = insets.left;
         int imageY = insets.top;
 
@@ -71,21 +77,25 @@ public class FlatImagePanel extends FlatPanel {
 
         if (option == ImageOption.BASIC_IMAGE_SIZE){
 
-
         } else if (option == ImageOption.BASIC_IMAGE_SIZE_CENTER){
 
-            imageX += (availableWidth  - imageWidth)/2;
-            imageY += (availableHeight - imageHeight)/2;
+            Dimension imageDimension = getImageDimension();
+            imageX += (availableWidth  - imageDimension.width)/2;
+            imageY += (availableHeight - imageDimension.height)/2;
 
         } else if (option == ImageOption.MATCH_PARENT){
 
-            imageWidth = availableWidth;
-            imageHeight = availableHeight;
+            if (reDraw){
+                resizedImage = this.image.getScaledInstance(availableWidth, availableHeight, Image.SCALE_SMOOTH);
+                awaitImageDraw(resizedImage);
+                reDraw = false;
+            }
 
+            image = resizedImage;
         }
 
         g2d.clipRect(imageX, imageY, availableWidth, availableHeight);
-        g2d.drawImage(resizedImage, imageX, imageY, imageWidth, imageHeight, null);
+        g2d.drawImage(image,imageX,imageY,null);
     }
 
     private void awaitImageDraw(Image image){
@@ -100,18 +110,8 @@ public class FlatImagePanel extends FlatPanel {
         mediaTracker.removeImage(image);
     }
 
-    public static void main(String[] args){
-        FlatFrame flatFrame = new FlatFrame();
-        flatFrame.setSize(500,500);
-        flatFrame.setResizable(true);
-        flatFrame.setLocationOnScreenCenter();
-
-        FlatImagePanel imagePanel = new FlatImagePanel();
-        imagePanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
-        imagePanel.setImage(ImageManager.TEST);
-
-        flatFrame.getContainer().add(imagePanel);
-
-        flatFrame.show();
+    private Dimension getImageDimension(){
+        ImageIcon imageIcon = new ImageIcon(image);
+        return new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight());
     }
 }

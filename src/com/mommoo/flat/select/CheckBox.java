@@ -1,96 +1,66 @@
 package com.mommoo.flat.select;
 
+import com.mommoo.flat.component.FlatPanel;
+import com.mommoo.flat.component.MouseClickAdapter;
 import com.mommoo.flat.component.OnClickListener;
+import com.mommoo.flat.image.FlatImagePanel;
+import com.mommoo.flat.image.ImageOption;
 import com.mommoo.util.ImageManager;
+import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-class CheckBox extends JPanel implements MouseListener {
-    private static int R = 255, G = 255, B = 255;
-    private static int SUB_NUMBER = 20;
-    private static final Color BACKGROUND_COLOR = new Color(R,G,B);
-    private static final Color FOCUSED_COLOR = new Color(R-SUB_NUMBER,G-SUB_NUMBER,B-SUB_NUMBER);
-    private static final Color PRESSED_COLOR = new Color(R-SUB_NUMBER*2,G-SUB_NUMBER*2,B-SUB_NUMBER*2);
-
-
-    private boolean isMouseExited,isClicked;
-    private int imageSize;
-    private Image check = ImageManager.CHECK;
+class CheckBox extends FlatPanel{
+    private static final ScreenManager screenManager = ScreenManager.getInstance();
+    private static final Dimension CHECK_BOX_DIMENSION = new Dimension(screenManager.dip2px(15), screenManager.dip2px(15));
 
     private OnClickListener onClickListener;
-    private boolean isCallBack;
+    private boolean isClicked;
+
+    private MouseClickAdapter userMouseClickAdapter;
 
     CheckBox(){
-        addMouseListener(this);
-        setBackground(BACKGROUND_COLOR);
+        initCheckBox();
+        Component checkImage = createCheckImage();
+        add(checkImage);
+        initOnClickListener(checkImage);
+        addMouseListener(new HoverColorChangeListener());
+        addMouseListener(new MouseClickAdapter(onClickListener));
+
     }
 
-    @Override
-    protected void paintComponent(Graphics g){
-        super.paintComponent(g);
+    private void initCheckBox(){
+        setOpaque(true);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        setBackground(Color.WHITE);
+    }
 
-        final Graphics2D GRAPHICS_2D = (Graphics2D) g;
-        final int WIDTH = getWidth();
-        final int HEIGHT = getHeight();
+    private Component createCheckImage(){
+        FlatImagePanel checkImage = new FlatImagePanel();
+        checkImage.setImage(ImageManager.CHECK, ImageOption.MATCH_PARENT);
+        checkImage.setVisible(false);
 
-        GRAPHICS_2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        GRAPHICS_2D.setColor(Color.BLACK);
-        GRAPHICS_2D.drawRect(0, 0, WIDTH-1, HEIGHT-1);
+        return checkImage;
+    }
 
-        if(imageSize != HEIGHT){
-            check = check.getScaledInstance(HEIGHT, HEIGHT, Image.SCALE_SMOOTH);
-            imageSize = HEIGHT;
-        }
-
-        if(isCallBack){
+    private void initOnClickListener(Component checkImage){
+        onClickListener = comp->{
+            checkImage.setVisible(!checkImage.isVisible());
             isClicked = !isClicked;
-            callBack();
-        }
-        if(isClicked){
-            GRAPHICS_2D.drawImage(check, 0,0,this);
-        }
-
-
+        };
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
+    void doClick(){
+        this.onClickListener.onClick(this);
+        if (this.userMouseClickAdapter != null) this.userMouseClickAdapter.getOnClickListener().onClick(this);
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        setBackground(PRESSED_COLOR);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if(!isMouseExited) isCallBack = true;
-        setBackground(BACKGROUND_COLOR);
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        isMouseExited = false;
-        setBackground(FOCUSED_COLOR);
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        isMouseExited = true;
-        isCallBack = false;
-        setBackground(BACKGROUND_COLOR);
-    }
-
-    private void callBack(){
-        if(!isMouseExited){
-            if(onClickListener != null) onClickListener.onClick(this);
-        }
-        isCallBack = false;
+    public void setOnClickListener(OnClickListener onClickListener){
+        if (userMouseClickAdapter != null) removeMouseListener(userMouseClickAdapter);
+        this.userMouseClickAdapter = new MouseClickAdapter(onClickListener);
+        addMouseListener(this.userMouseClickAdapter);
     }
 
     void setChecked(boolean check){
@@ -101,17 +71,19 @@ class CheckBox extends JPanel implements MouseListener {
         return isClicked;
     }
 
-    void setOnClickListener(OnClickListener onClickListener){
-        this.onClickListener = onClickListener;
+    @Override
+    public Dimension getMaximumSize() {
+        return CHECK_BOX_DIMENSION;
     }
 
-    MouseListener getMouseListener(){
-        return this;
+    @Override
+    public Dimension getPreferredSize() {
+        return CHECK_BOX_DIMENSION;
     }
 
     @Override
     public Dimension getMinimumSize() {
-        return new Dimension(50,50);
+        return CHECK_BOX_DIMENSION;
     }
 }
 

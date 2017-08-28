@@ -18,6 +18,7 @@ import java.awt.*;
 public class FlatLabel extends JTextPane{
 	private static final int TEXT_FONT_SIZE = ScreenManager.getInstance().dip2px(10);
 	private int lineHeight = 0;
+	private MouseClickAdapter mouseClickAdapter;
 
 	public FlatLabel(){
 		init();
@@ -51,7 +52,9 @@ public class FlatLabel extends JTextPane{
 	}
 
 	public void setOnClickListener(OnClickListener onClickListener){
-		addMouseListener(new MouseClickAdapter(onClickListener));
+		if (this.mouseClickAdapter != null) removeMouseListener(this.mouseClickAdapter);
+		this.mouseClickAdapter = new MouseClickAdapter(onClickListener);
+		addMouseListener(mouseClickAdapter);
 	}
 
 	public void setTextAreaFitHeightToWidth(int textAreaWidth){

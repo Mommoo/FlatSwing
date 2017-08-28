@@ -11,6 +11,10 @@ public class MouseClickAdapter extends MouseAdapter{
         this.onClickListener = onClickListener;
     }
 
+    public OnClickListener getOnClickListener() {
+        return onClickListener;
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);

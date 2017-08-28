@@ -78,7 +78,8 @@ public class FlatTextField extends FlatPanel {
 
 		int standardSize = availableWidth >= availableHeight ? availableHeight : availableWidth;
 		int padding = standardSize/5;
-		imagePanel.setImage(image, standardSize - padding * 2, standardSize - padding * 2);
+//		imagePanel.setImage(image, standardSize - padding * 2, standardSize - padding * 2);
+		imagePanel.setImage(image, ImageOption.MATCH_PARENT);
 		imagePanel.setBorder(BorderFactory.createEmptyBorder(padding,padding,padding,padding));
 		imagePanel.setPreferredSize(new Dimension(standardSize, standardSize));
 	}
