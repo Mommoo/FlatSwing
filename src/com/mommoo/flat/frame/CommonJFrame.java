@@ -132,7 +132,7 @@ final class CommonJFrame extends JFrame {
 	public void setLocation(Point p){
 		this.setLocation(p.x,p.y);
 	}
-	
+
 	@Override
 	public Point getLocation(){
 		return new Point(super.getLocation().x + shadowDip,super.getLocation().y + shadowDip);
@@ -205,11 +205,13 @@ final class CommonJFrame extends JFrame {
 	}
 	
 	public static void main(String args[]){
-		CommonJFrame jf = new CommonJFrame();
+//		CommonJFrame jf = new CommonJFrame();
+		JFrame jf = new JFrame();
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.setSize(500,500);
 		jf.setLocation(300,300);
-		jf.customizablePanel.setLayout(new BorderLayout());
-		jf.customizablePanel.add(new JButton("버튼"));
+		jf.setLayout(new BorderLayout());
+		jf.add(new JButton("버튼"));
 		jf.setVisible(true);
 	}
 }

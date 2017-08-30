@@ -23,7 +23,7 @@ public class FlatTextField extends FlatPanel {
 	private int borderWidth = DEFAULT_BORDER_WIDTH;
 	private Color focusGainedColor = Color.PINK, focusLostColor = Color.LIGHT_GRAY;
 
-	private boolean isSetHint;
+	private boolean isSetHint, once;
 
 	private final FlatImagePanel imagePanel = new FlatImagePanel();
 	private TextFieldProxy textFieldProxy;
@@ -70,7 +70,11 @@ public class FlatTextField extends FlatPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		if (image == null) return;
+
+		if (image == null || once) return;
+
+		once = true;
+
 		Insets insets = getInsets();
 
 		int availableWidth = getWidth() - insets.left - insets.right;
@@ -78,10 +82,11 @@ public class FlatTextField extends FlatPanel {
 
 		int standardSize = availableWidth >= availableHeight ? availableHeight : availableWidth;
 		int padding = standardSize/5;
-//		imagePanel.setImage(image, standardSize - padding * 2, standardSize - padding * 2);
-		imagePanel.setImage(image, ImageOption.MATCH_PARENT);
-		imagePanel.setBorder(BorderFactory.createEmptyBorder(padding,padding,padding,padding));
-		imagePanel.setPreferredSize(new Dimension(standardSize, standardSize));
+
+		this.imagePanel.setImage(image, ImageOption.MATCH_PARENT);
+		this.imagePanel.setBorder(BorderFactory.createEmptyBorder(padding,padding,padding,padding));
+		this.imagePanel.setPreferredSize(new Dimension(standardSize, standardSize));
+
 	}
 
 	private Image image;

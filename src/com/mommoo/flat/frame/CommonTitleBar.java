@@ -50,7 +50,7 @@ class CommonTitleBar extends FlatPanel {
 	String getTitle(){
 		return TITLE_LABEL.getText();
 	}
-	
+
 	public static void main(String[] args){
 		SwingUtilities.invokeLater(()->{
 			FlatFrame f = new FlatFrame();
