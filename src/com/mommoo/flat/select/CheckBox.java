@@ -16,7 +16,6 @@ class CheckBox extends FlatPanel{
     private static final Dimension CHECK_BOX_DIMENSION = new Dimension(screenManager.dip2px(15), screenManager.dip2px(15));
 
     private OnClickListener onClickListener;
-    private boolean isClicked;
 
     private MouseClickAdapter userMouseClickAdapter;
 
@@ -46,10 +45,7 @@ class CheckBox extends FlatPanel{
     }
 
     private void initOnClickListener(Component checkImage){
-        onClickListener = comp->{
-            checkImage.setVisible(!checkImage.isVisible());
-            isClicked = !isClicked;
-        };
+        onClickListener = comp-> checkImage.setVisible(!checkImage.isVisible());
     }
 
     void doClick(){
@@ -63,12 +59,12 @@ class CheckBox extends FlatPanel{
         addMouseListener(this.userMouseClickAdapter);
     }
 
-    void setChecked(boolean check){
-        this.isClicked = check;
+    boolean isChecked(){
+        return getComponent(0).isVisible();
     }
 
-    boolean isChecked(){
-        return isClicked;
+    void setChecked(boolean check){
+        getComponent(0).setVisible(check);
     }
 
     @Override

@@ -72,6 +72,7 @@ public class FlatCheckBox extends FlatPanel {
 	public static void main(String[] args){
 		FlatCheckBox flatCheckBox = new FlatCheckBox("beautiful check box");
 		flatCheckBox.setAnchored(true);
+		flatCheckBox.setChecked(true);
 
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatCheckBox Test");
