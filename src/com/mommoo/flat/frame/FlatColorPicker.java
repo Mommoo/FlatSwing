@@ -31,6 +31,7 @@ public class FlatColorPicker {
     public interface Observer{
         public void update();
     }
+
     private static final ScreenManager SCREEN_MANAGER = ScreenManager.getInstance();
     private static final int FLAT_COLOR_PICKER_WIDTH = SCREEN_MANAGER.getScreenWidth()/3;
     private static final int FLAT_COLOR_PICKER_HEIGHT = 2*FLAT_COLOR_PICKER_WIDTH/3;
@@ -140,6 +141,14 @@ public class FlatColorPicker {
 
     public void show(){
         PICKER_VIEW.show();
+    }
+
+    public static int getWidth(){
+        return FLAT_COLOR_PICKER_WIDTH;
+    }
+
+    public static int getHeight(){
+        return FLAT_COLOR_PICKER_HEIGHT;
     }
 
     class VerticalHueView extends JPanel implements Observer,MouseListener,MouseMotionListener{

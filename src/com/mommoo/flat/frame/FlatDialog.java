@@ -155,6 +155,36 @@ public class FlatDialog {
 		return COMMON_FRAME.getLocation();
 	}
 
+	private Point getProperLocation(){
+
+		Dimension frameSize = COMMON_FRAME.getSize();
+
+		switch(builder.frameLocation){
+			case NONE :
+
+				return new Point(0, 0);
+
+			case CENTER_AT_COMPONENT :
+
+				Point targetCompPoint = builder.locationComponent.getLocation();
+				Dimension targetCompSize = builder.locationComponent.getSize();
+
+				return new Point(targetCompPoint.x + (targetCompSize.width - frameSize.width)/2, targetCompPoint.y + (targetCompSize.height - frameSize.height)/2);
+
+			case CENTER_AT_SCREEN :
+
+				return new Point((SCREEN_MANAGER.getScreenWidth() - frameSize.width)/2, (SCREEN_MANAGER.getWindowHeight() - frameSize.height)/2);
+
+			case RELATIVE_AT_COMPONENT:
+
+				COMMON_FRAME.setLocationRelativeTo(builder.locationComponent);
+				return COMMON_FRAME.getLocation();
+
+			default:
+				return null;
+		}
+	}
+
 	public static class Builder{
 		private TextInfo titleInfo = new TextInfo();
 		private TextInfo contentInfo = new TextInfo();
@@ -170,7 +200,7 @@ public class FlatDialog {
 		private OnClickListener onClickListener = o -> {};
 
 		private Component locationComponent;
-		private FrameLocation frameLocation;
+		private FrameLocation frameLocation = FrameLocation.NONE;
 
 		public Builder(){
 			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, 44));
@@ -294,32 +324,6 @@ public class FlatDialog {
 
 		public FlatDialog build(){
 			return new FlatDialog(this);
-		}
-	}
-
-	private Point getProperLocation(){
-
-		Dimension frameSize = COMMON_FRAME.getSize();
-
-		switch(builder.frameLocation){
-			case CENTER_AT_COMPONENT :
-
-				Point targetCompPoint = builder.locationComponent.getLocation();
-				Dimension targetCompSize = builder.locationComponent.getSize();
-
-				return new Point(targetCompPoint.x + (targetCompSize.width - frameSize.width)/2, targetCompPoint.y + (targetCompSize.height - frameSize.height)/2);
-
-			case CENTER_AT_SCREEN :
-
-				return new Point((SCREEN_MANAGER.getScreenWidth() - frameSize.width)/2, (SCREEN_MANAGER.getWindowHeight() - frameSize.height)/2);
-
-			case RELATIVE_AT_COMPONENT:
-
-				COMMON_FRAME.setLocationRelativeTo(builder.locationComponent);
-				return COMMON_FRAME.getLocation();
-
-			default:
-				return null;
 		}
 	}
 

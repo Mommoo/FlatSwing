@@ -22,6 +22,7 @@ public class FlatCheckBox extends FlatPanel {
 		add(CHECK_BOX);
 		add(GUIDE_LABEL);
 		this.GUIDE_LABEL.setText(guideText);
+		this.GUIDE_LABEL.setOpaque(false);
 	}
 
 	private void initFlatCheckBox(){

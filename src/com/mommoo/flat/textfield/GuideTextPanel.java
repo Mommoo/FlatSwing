@@ -106,7 +106,7 @@ public class GuideTextPanel extends FlatPanel {
 
         FlatTextField flatTextField = new FlatTextField(false);
         flatTextField.setHint("hint");
-        flatTextField.setImageIcon(ImageManager.CHECK);
+        flatTextField.setIconImage(ImageManager.CHECK);
 
         GuideTextPanel guideTextPanel = new GuideTextPanel(flatTextField);
         guideTextPanel.setGuideText("good".toUpperCase());
