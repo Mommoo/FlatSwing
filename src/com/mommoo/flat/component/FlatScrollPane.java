@@ -1,7 +1,7 @@
 package com.mommoo.flat.component;
 
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.text.label.FlatLabel;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;

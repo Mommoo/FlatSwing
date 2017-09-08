@@ -1,4 +1,4 @@
-package com.mommoo.flat.textfield;
+package com.mommoo.flat.text.textfield;
 
 import javax.swing.*;
 

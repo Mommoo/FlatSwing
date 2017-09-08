@@ -3,13 +3,12 @@ package com.mommoo.flat.select;
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
 
 public class FlatCheckBox extends FlatPanel {
 	private static final int GAP = ScreenManager.getInstance().dip2px(8);

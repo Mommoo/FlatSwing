@@ -1,22 +1,18 @@
-package com.mommoo.flat.label;
+package com.mommoo.flat.text.textarea;
 
 import javax.swing.text.*;
 
-public class WrapEditorKet extends StyledEditorKit{
+class FlatWrapEditorKit extends StyledEditorKit {
     private ViewFactory defaultFactory = new WrapColumnFactory();
 
-    @Override
     public ViewFactory getViewFactory() {
         return defaultFactory;
     }
 
-    private class WrapColumnFactory implements ViewFactory{
-
-        @Override
+    private class WrapColumnFactory implements ViewFactory {
         public View create(Element elem) {
             String kind = elem.getName();
-
-            if (kind != null){
+            if (kind != null) {
                 if (kind.equals(AbstractDocument.ContentElementName)) {
                     return new WrapLabelView(elem);
                 } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
@@ -29,7 +25,6 @@ public class WrapEditorKet extends StyledEditorKit{
                     return new IconView(elem);
                 }
             }
-
             return new LabelView(elem);
         }
     }
@@ -39,7 +34,35 @@ public class WrapEditorKet extends StyledEditorKit{
             super(elem);
         }
 
-        @Override
+        public View breakView(int axis, int p0, float pos, float len) {
+            if (axis == View.X_AXIS) {
+                checkPainter();
+                int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
+
+                if (p0 == getStartOffset() && p1 == getEndOffset()) {
+                    return this;
+                }
+
+                return createFragment(p0, p1);
+            }
+            return this;
+        }
+
+        public int getBreakWeight(int axis, float pos, float len) {
+            if (axis == View.X_AXIS) {
+                checkPainter();
+                int p0 = getStartOffset();
+                int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
+
+
+                if (p1 == p0) {
+                    return View.BadBreakWeight;
+                }
+                return View.GoodBreakWeight;
+            }
+            return View.GoodBreakWeight;
+        }
+
         public float getMinimumSpan(int axis) {
             switch (axis) {
                 case View.X_AXIS:
@@ -50,6 +73,7 @@ public class WrapEditorKet extends StyledEditorKit{
                     throw new IllegalArgumentException("Invalid axis: " + axis);
             }
         }
-
     }
 }
+
+

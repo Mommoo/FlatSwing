@@ -2,7 +2,7 @@ package com.mommoo.flat.list;
 
 import com.mommoo.flat.component.FlatScrollPane;
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.text.label.FlatLabel;
 
 import javax.swing.*;
 import javax.swing.border.Border;

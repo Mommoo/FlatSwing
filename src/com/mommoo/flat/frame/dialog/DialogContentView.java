@@ -1,6 +1,6 @@
 package com.mommoo.flat.frame.dialog;
 
-import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;

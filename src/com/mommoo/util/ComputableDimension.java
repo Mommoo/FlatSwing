@@ -67,4 +67,13 @@ public class ComputableDimension extends Dimension{
         this.height = 0;
         return this;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Dimension)) return false;
+
+        Dimension targetDimen = (Dimension) obj;
+
+        return this.width == targetDimen.width && this.height == targetDimen.height;
+    }
 }

@@ -1,8 +1,8 @@
-package com.mommoo.flat.textfield;
+package com.mommoo.flat.text.textfield;
 
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;

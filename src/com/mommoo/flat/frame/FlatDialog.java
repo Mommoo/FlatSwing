@@ -2,7 +2,7 @@ package com.mommoo.flat.frame;
 
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.dialog.TextInfo;
-import com.mommoo.flat.label.FlatLabel;
+import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
@@ -66,20 +66,27 @@ public class FlatDialog {
 		}
 	}
 
+	public static void main(String[] args){
+		new FlatDialog.Builder()
+				.setTitle("Beautiful Dialog!")
+				.setContent("This is test message\n" +
+						"When dialog message length increase, this dialog area is wider automatically \n" +
+						"So, you don't consider that width or height size\n" +
+						"Just use it!")
+				.setDialogWidth(500)
+				.setLocationScreenCenter()
+				.setLineSpacing(1.4f)
+				.build()
+				.show();
+
+		System.out.println(System.getProperty("user.home"));
+	}
+
 	private Component createTitleLabel(){
 		FlatLabel TITLE_LABEL = new FlatLabel();
 		initComponent(TITLE_LABEL, builder.titleInfo);
-		TITLE_LABEL.setTextAreaFitHeightToWidth(builder.dialogWidth);
+		TITLE_LABEL.setPreferredSize(new Dimension(builder.dialogWidth, TITLE_LABEL.getFitHeightToWidth(builder.dialogWidth)));
 		return TITLE_LABEL;
-	}
-
-	private Component createContentLabel(){
-		FlatLabel CONTENT = new FlatLabel();
-		initComponent(CONTENT, builder.contentInfo);
-		CONTENT.setLineHeight(builder.lineHeight);
-		CONTENT.setTextAreaFitHeightToWidth(builder.dialogWidth);
-
-		return CONTENT;
 	}
 
 	private Component createButtonPanel(){
@@ -185,6 +192,20 @@ public class FlatDialog {
 		}
 	}
 
+	private Component createContentLabel(){
+		FlatLabel CONTENT = new FlatLabel();
+		initComponent(CONTENT, builder.contentInfo);
+		CONTENT.setLineSpacing(builder.lineSpacing);
+		CONTENT.setPreferredSize(new Dimension(builder.dialogWidth, CONTENT.getFitHeightToWidth(builder.dialogWidth)));
+		return CONTENT;
+	}
+
+	public void show(){
+		COMMON_FRAME.pack();
+		COMMON_FRAME.setLocation(getProperLocation());
+		COMMON_FRAME.setVisible(true);
+	}
+
 	public static class Builder{
 		private TextInfo titleInfo = new TextInfo();
 		private TextInfo contentInfo = new TextInfo();
@@ -195,7 +216,7 @@ public class FlatDialog {
 		private Color dialogBackgroundColor = Color.WHITE;
 
 		private int dialogWidth = FLAT_DIALOG_WIDTH;
-		private int lineHeight = -1;
+		private float lineSpacing;
 
 		private OnClickListener onClickListener = o -> {};
 
@@ -289,8 +310,8 @@ public class FlatDialog {
 			return this;
 		}
 
-		public Builder setLineHeight(int lineHeight){
-			this.lineHeight = lineHeight;
+		public Builder setLineSpacing(float lineSpacing){
+			this.lineSpacing = lineSpacing;
 			return this;
 		}
 
@@ -325,27 +346,5 @@ public class FlatDialog {
 		public FlatDialog build(){
 			return new FlatDialog(this);
 		}
-	}
-
-	public void show(){
-		COMMON_FRAME.pack();
-		COMMON_FRAME.setLocation(getProperLocation());
-		COMMON_FRAME.setVisible(true);
-	}
-
-	public static void main(String[] args){
-		new FlatDialog.Builder()
-				.setTitle("Beautiful Dialog!")
-				.setContent("This is test message\n" +
-						"When dialog message length increase, this dialog area is wider automatically \n" +
-						"So, you don't consider that width or height size\n" +
-						"Just use it!")
-				.setDialogWidth(500)
-				.setLocationScreenCenter()
-				.setLineHeight(40)
-				.build()
-				.show();
-
-		System.out.println(System.getProperty("user.home"));
 	}
 }

@@ -1,12 +1,8 @@
 package com.mommoo.flat.layout.linear;
 
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.flat.layout.linear.LinearLayout;
-import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
-import com.mommoo.flat.textfield.FlatTextField;
-import com.mommoo.flat.textfield.GuideTextPanel;
 
 import javax.swing.*;
 import java.awt.*;
