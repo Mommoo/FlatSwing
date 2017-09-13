@@ -7,6 +7,7 @@ import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.FontManager;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ import java.awt.*;
 public class FlatTextArea extends JTextPane {
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
     private FlatAutoResizeListener flatAutoResizeListener;
-    private boolean once;
+    private ComputableDimension previousSize = new ComputableDimension(0,0);
     private MouseClickAdapter mouseClickAdapter;
 
     public FlatTextArea() {
@@ -89,7 +90,10 @@ public class FlatTextArea extends JTextPane {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if (getWidth() != 0) flatAutoResizeListener.setHeightFitToWidth();
+                if (getWidth() != 0){
+                    flatAutoResizeListener.setHeightFitToWidth();
+                }
+//                pre = getPreferredSize();
             }
         };
     }
@@ -169,9 +173,11 @@ public class FlatTextArea extends JTextPane {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        if (once) return;
 
-        once = true;
+        if (previousSize.getSize().equals(getSize())) return;
+
+        previousSize.setSize(getSize());
+
         flatAutoResizeListener.setHeightFitToWidth();
     }
 
