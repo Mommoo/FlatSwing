@@ -15,6 +15,7 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
     FlatVerticalScrollPane(){
         setViewportView(VIEW_PORT);
         setHorizontalScrollBarPolicy(FlatScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        setBorder(BorderFactory.createEmptyBorder());
         setThemeColor(ColorManager.getColorAccent());
 
         VIEW_PORT.setScrollListener(scrollSensitivity -> {

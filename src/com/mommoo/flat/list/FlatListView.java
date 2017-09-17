@@ -4,6 +4,7 @@ import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
 import com.mommoo.flat.text.textarea.FlatTextArea;
+import com.mommoo.util.FontManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,33 +32,6 @@ public class FlatListView<T extends Component> {
         addItems(items);
     }
 
-    public static void main(String[] args){
-        FlatFrame frame = new FlatFrame();
-        frame.setTitle("Beautiful FlatList");
-        frame.setSize(500, 500);
-
-        FlatListView<FlatTextArea> list2 = new FlatListView<>();
-        for (int i = 0 ; i < 100 ; i ++){
-            FlatTextArea area = new FlatTextArea("index : " + i);
-            area.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-            list2.addItem(area);
-        }
-
-        list2.setOnSelectionListener((beginIndex, endIndex, selectionList) -> {
-            System.out.println("selected index from : " + beginIndex +", to : " + endIndex);
-        });
-
-        list2.setOnDragListener((beginIndex, endIndex, selectionList) -> {
-            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
-        });
-
-        frame.getContainer().add(list2.getComponent());
-        list2.setDivider(Color.BLACK, 2);
-
-        frame.setLocationOnScreenCenter();
-        frame.setResizable(true);
-        frame.show();
-    }
 
     public Component getComponent() {
         return SCROLL_PANE;
@@ -139,6 +113,36 @@ public class FlatListView<T extends Component> {
         SCROLL_PANE.getViewPort().select(startIndex, endIndex);
     }
 
+    public static void main(String[] args){
+        FlatFrame frame = new FlatFrame();
+        frame.setTitle("Beautiful FlatList");
+        frame.setSize(500, 500);
+
+        FlatListView<FlatTextArea> list2 = new FlatListView<>();
+        Font font = FontManager.getNanumGothicFont(Font.PLAIN, 10);
+        for (int i = 0 ; i < 100 ; i ++){
+            FlatTextArea area = new FlatTextArea("index : " + i);
+            area.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+            area.setFont(font);
+            list2.addItem(area);
+        }
+
+        list2.setOnSelectionListener((beginIndex, endIndex, selectionList) -> {
+            System.out.println("selected index from : " + beginIndex +", to : " + endIndex);
+        });
+
+        list2.setOnDragListener((beginIndex, endIndex, selectionList) -> {
+            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
+        });
+
+        frame.getContainer().add(list2.getComponent());
+        list2.setDivider(Color.BLACK, 1);
+
+        frame.setLocationOnScreenCenter();
+        frame.setResizable(true);
+        frame.show();
+    }
+
     public boolean isMultiSelectionMode(){
         return SCROLL_PANE.getViewPort().isMultiSelectionMode();
     }
@@ -186,4 +190,9 @@ public class FlatListView<T extends Component> {
     public void removeMouseMotionListener(MouseMotionListener mouseMotionListener){
         SCROLL_PANE.getViewPort().removeMouseMotionListener(mouseMotionListener);
     }
+
+    public void setTrace(boolean trace){
+        SCROLL_PANE.getViewPort().setTrace(trace);
+    }
+
 }

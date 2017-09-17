@@ -1,7 +1,6 @@
 package com.mommoo.flat.button;
 
 import com.mommoo.flat.component.OnClickListener;
-import com.mommoo.flat.frame.FlatPopUpMenuList;
 import com.mommoo.util.ScreenManager;
 
 import java.awt.*;
@@ -12,7 +11,7 @@ public class FlatMenuButton extends FlatButton{
 //	private final OnClickListener DEFAULT_CLICK_EVENT;
 	private boolean isClicked;
 
-	private final FlatPopUpMenuList FLAT_POP_UP_MENU_LIST = new FlatPopUpMenuList();
+//	private final FlatPopUpMenuList FLAT_POP_UP_MENU_LIST = new FlatPopUpMenuList();
 	private boolean preventReOpen;
 	
 	public FlatMenuButton(){
@@ -57,9 +56,9 @@ public class FlatMenuButton extends FlatButton{
 		setText(text);
 	}
 
-	public FlatPopUpMenuList getPopUpMenu(){
-		return FLAT_POP_UP_MENU_LIST;
-	}
+//	public FlatPopUpMenuList getPopUpMenu(){
+//		return FLAT_POP_UP_MENU_LIST;
+//	}
 	
 	public void closeMenu(){
 		isClicked = false;

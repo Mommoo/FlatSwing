@@ -9,6 +9,7 @@ import com.mommoo.flat.list.listener.FlatScrollListener;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
 import com.mommoo.util.ColorManager;
+import javafx.scene.Parent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable {
-    private static final long eventMask = AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.COMPONENT_EVENT_MASK;
+    private static final long eventMask = AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_WHEEL_EVENT_MASK | AWTEvent.COMPONENT_EVENT_MASK;
     private static final int scrollableUnit = 30;
 
     private final CompIndexList compIndexList = new CompIndexList();
@@ -30,8 +31,11 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     private List<MouseListener> mouseListenerList = new ArrayList<>();
     private List<MouseMotionListener> mouseMotionListenerList = new ArrayList<>();
     private Color selectionColor = ColorManager.getColorAccent();
+
     private boolean isSingleSelectionMode;
     private boolean isMultiSelectionMode = !isSingleSelectionMode;
+    private boolean trace;
+
     private int dividerThick;
 
 
@@ -52,6 +56,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+
         Graphics2D graphics2D = (Graphics2D)g;
         graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         graphics2D.setColor(selectionColor);
@@ -103,7 +108,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
     void setSingleSelectionMode(boolean singleSelectionMode){
         this.isSingleSelectionMode = singleSelectionMode;
-        setMultiSelectionMode(!singleSelectionMode);
+        this.isMultiSelectionMode = !singleSelectionMode;
     }
 
     boolean isMultiSelectionMode(){
@@ -112,7 +117,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
     void setMultiSelectionMode(boolean multiSelectionMode){
         this.isMultiSelectionMode = multiSelectionMode;
-        setSingleSelectionMode(!multiSelectionMode);
+        this.isSingleSelectionMode = !multiSelectionMode;
     }
 
     void setOnSelectionListener(OnSelectionListener<T> onSelectionListener){
@@ -126,6 +131,10 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     void select(int beginIndex, int endIndex){
         setSelectionFromToIndex(beginIndex, endIndex);
         paintSelection();
+    }
+
+    void setTrace(boolean trace){
+        this.trace = trace;
     }
 
     @Override
@@ -200,33 +209,26 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         DOWN_WARD;
     }
 
+    private static class MouseEventFactory{
+
+        private static MouseEvent createMouseEvent(Component source, int id, AWTEvent event){
+            MouseEvent mouseEvent = (MouseEvent) event;
+            return new MouseEvent(source,
+                    id,
+                    System.currentTimeMillis(),
+                    mouseEvent.getModifiers(),
+                    mouseEvent.getXOnScreen(),
+                    mouseEvent.getYOnScreen(),
+                    mouseEvent.getClickCount(),
+                    mouseEvent.isPopupTrigger(),
+                    mouseEvent.getButton());
+        }
+    }
+
     private class ViewPortAWTEventListener implements AWTEventListener{
         private final MouseEventHandler mouseEventHandler = new MouseEventHandler();
 
-        private ViewPortAWTEventListener(){
-            mouseEventHandler.setOnDraggedListener((currentIndex, event) -> {
-                scrollListener.onDrag(mouseEventHandler.getScrollSensitivity());
-
-                if (isMultiSelectionMode){
-                    select(mouseEventHandler.getDragBeginIndex(), currentIndex);
-                    onDragListener.onDrag(selectionFromToIndex[0], selectionFromToIndex[1], getFromToList());
-                }
-
-            });
-
-            mouseEventHandler.setOnPressedListener((currentIndex, event) -> {});
-
-            mouseEventHandler.setOnReleasedListener((currentIndex, event) -> {
-                scrollListener.onDrag(0);
-                onSelectionListener.onSelection(selectionFromToIndex[0], selectionFromToIndex[1], getFromToList());
-            });
-
-            mouseEventHandler.setOnClickListener((currentIndex, event) -> {
-                if (event instanceof MouseEvent && ((MouseEvent)event).getButton() == MouseEvent.BUTTON1){
-                    select(currentIndex, currentIndex);
-                }
-            });
-        }
+        private boolean lock;
 
         private java.util.List<T> getFromToList(){
             java.util.List<T> compList = new ArrayList<>();
@@ -237,49 +239,126 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
             return compList;
         }
+        private boolean valid;
+        private boolean isViewPortMouseEntered;
+        private ViewPortAWTEventListener(){
+            mouseEventHandler.setOnWheelListener((currentIndex, event)->{
+                if(mouseEventHandler.isDragging()){
+                    select(mouseEventHandler.getDragBeginIndex(), currentIndex);
+                }
+            });
+
+            mouseEventHandler.setOnDraggedListener((currentIndex, event) -> {
+                scrollListener.onDrag(mouseEventHandler.getScrollSensitivity());
+
+                if (isMultiSelectionMode){
+                    select(mouseEventHandler.getDragBeginIndex(), currentIndex);
+                    onDragListener.onDrag(selectionFromToIndex[0], selectionFromToIndex[1], getFromToList());
+                }
+
+            });
+
+            mouseEventHandler.setOnMovedListener((currentIndex, event) ->{
+                if (trace){
+                    select(currentIndex, currentIndex);
+                }
+            });
+
+            mouseEventHandler.setOnReleasedListener((currentIndex, event) -> {
+                scrollListener.onDrag(0);
+                onSelectionListener.onSelection(selectionFromToIndex[0], selectionFromToIndex[1], getFromToList());
+            });
+
+            mouseEventHandler.setOnClickListener((currentIndex, event) -> {
+                if (event.getButton() == MouseEvent.BUTTON1){
+                    select(currentIndex, currentIndex);
+                }
+            });
+        }
+
+        private boolean isMouseLocationInViewPort(){
+            Container parent = getParent();
+            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+            Point panelLocation = parent.getLocationOnScreen();
+
+            return mouseLocation.x >= panelLocation.x &&
+                    mouseLocation.x <= panelLocation.x + getWidth() &&
+                    mouseLocation.y >= panelLocation.y &&
+                    mouseLocation.y <= panelLocation.y + parent.getHeight();
+        }
 
         @Override
         public void eventDispatched(AWTEvent event) {
-            mouseEventHandler.setAWTEvent(event);
+
+            if (!isShowing()) return;
 
             if (event.getID() == ComponentEvent.COMPONENT_RESIZED && isSelected()){
                 paintSelection();
             }
+
+            if (!(event instanceof MouseEvent)) return;
+
+            MouseEvent mouseEvent = null;
+
+            boolean isMouseLocationInViewPort = isMouseLocationInViewPort();
+
+            if (event.getID() == MouseEvent.MOUSE_MOVED){
+                if (isViewPortMouseEntered && !isMouseLocationInViewPort){
+                    isViewPortMouseEntered = false;
+                    valid = true;
+                    mouseEvent = MouseEventFactory.createMouseEvent(FlatViewPort.this, MouseEvent.MOUSE_EXITED, event);
+                }
+
+                else if (!isViewPortMouseEntered && isMouseLocationInViewPort){
+                    isViewPortMouseEntered = true;
+                    valid = true;
+                    mouseEvent = MouseEventFactory.createMouseEvent(FlatViewPort.this, MouseEvent.MOUSE_ENTERED, event);
+                }
+            }
+
+            else if (event.getID() == MouseEvent.MOUSE_PRESSED){
+
+                lock = true;
+                valid = isMouseLocationInViewPort;
+
+            }
+
+            else if (event.getID() == MouseEvent.MOUSE_RELEASED){
+
+                lock = false;
+
+            }
+            else {
+
+                if (!lock) valid = isMouseLocationInViewPort;
+
+            }
+
+            if (mouseEvent == null ){
+                mouseEvent = MouseEventFactory.createMouseEvent(FlatViewPort.this, event.getID(), event);
+            }
+
+            if (!valid) return;
+
+            mouseEventHandler.setMouseEvent(mouseEvent);
         }
     }
 
     private class MouseEventHandler {
         private static final int NONE = - 1;
-        private final BiConsumer<Integer, AWTEvent> defaultListener = (index, event) -> {};
+        private final BiConsumer<Integer, MouseEvent> defaultListener = (index, event) -> {};
         private DirectionHandler directionHandler = new DirectionHandler();
         private int dragBeginIndex = NONE;
         private int currentIndex   = NONE;
         private int pressedIndex   = NONE;
         private int releasedIndex  = NONE;
-        private BiConsumer<Integer, AWTEvent> onDraggedListener  = defaultListener;
-        private BiConsumer<Integer, AWTEvent> onPressedListener  = defaultListener;
-        private BiConsumer<Integer, AWTEvent> onReleasedListener = defaultListener;
-        private BiConsumer<Integer, AWTEvent> onClickListener    = defaultListener;
-
-        private boolean isViewPortMouseEnter;
-
-        private boolean isViewPortEvent(AWTEvent event){
-            int eventID = event.getID();
-
-            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-            Point panelLocation = getParent().getLocationOnScreen();
-
-            if (eventID == MouseEvent.MOUSE_MOVED){
-
-                isViewPortMouseEnter = mouseLocation.x >= panelLocation.x &&
-                        mouseLocation.x <= panelLocation.x + getWidth() &&
-                        mouseLocation.y >= panelLocation.y &&
-                        mouseLocation.y <= panelLocation.y + getHeight();
-
-            }
-
-            return isViewPortMouseEnter;
-        }
+        private BiConsumer<Integer, MouseEvent> onWheelListener    = defaultListener;
+        private BiConsumer<Integer, MouseEvent> onDraggedListener  = defaultListener;
+        private BiConsumer<Integer, MouseEvent> onMovedListener    = defaultListener;
+        private BiConsumer<Integer, MouseEvent> onEnteredListener  = defaultListener;
+        private BiConsumer<Integer, MouseEvent> onPressedListener  = defaultListener;
+        private BiConsumer<Integer, MouseEvent> onReleasedListener = defaultListener;
+        private BiConsumer<Integer, MouseEvent> onClickListener    = defaultListener;
 
         private int getScrollSensitivity(){
             int parentComponentY = getParent().getLocationOnScreen().y;
@@ -314,7 +393,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
                         return index;
                     }
                 }
-
             }
 
             if (mouseY <= parentPanelLocationY) return 0;
@@ -328,34 +406,41 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
             return (compLocation.y <= currentMouseY) && (compLocation.y + comp.getSize().height + dividerThick >= currentMouseY);
         }
 
-        private void setAWTEvent(AWTEvent event){
-            if (!isShowing() || !isViewPortEvent(event)) return;
 
+        private void setMouseEvent(MouseEvent mouseEvent){
             this.currentIndex = findCompIndex();
 
-            switch(event.getID()){
+            switch(mouseEvent.getID()){
+                case MouseEvent.MOUSE_WHEEL :
+
+                    onWheelListener.accept(currentIndex, mouseEvent);
+
+                    break;
+
                 case MouseEvent.MOUSE_DRAGGED:
 
                     if (isDragging()) {
-                        onDraggedListener.accept(currentIndex, event);
+                        onDraggedListener.accept(currentIndex, mouseEvent);
                         return;
                     }
 
                     dragBeginIndex = currentIndex;
 
-                    mouseMotionListenerList.forEach(action -> action.mouseDragged((MouseEvent)event));
+                    mouseMotionListenerList.forEach(action -> action.mouseDragged(mouseEvent));
 
                     break;
 
                 case MouseEvent.MOUSE_MOVED:
 
-                    mouseMotionListenerList.forEach(action -> action.mouseMoved((MouseEvent)event));
+                    onMovedListener.accept(currentIndex, mouseEvent);
+
+                    mouseMotionListenerList.forEach(action -> action.mouseMoved(mouseEvent));
 
                     break;
 
                 case MouseEvent.MOUSE_CLICKED:
 
-                    mouseListenerList.forEach(action -> action.mouseClicked((MouseEvent)event));
+                    mouseListenerList.forEach(action -> action.mouseClicked(mouseEvent));
 
                     break;
 
@@ -363,9 +448,9 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
                     pressedIndex = currentIndex;
 
-                    onPressedListener.accept(pressedIndex, event);
+                    onPressedListener.accept(pressedIndex, mouseEvent);
 
-                    mouseListenerList.forEach(action -> action.mousePressed((MouseEvent)event));
+                    mouseListenerList.forEach(action -> action.mousePressed(mouseEvent));
 
                     break;
 
@@ -374,47 +459,62 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
                     releasedIndex = currentIndex;
 
                     if (isClicked()){
-                        onClickListener.accept(currentIndex, event);
+                        onClickListener.accept(currentIndex, mouseEvent);
                     }
 
-                    onReleasedListener.accept(releasedIndex, event);
+                    onReleasedListener.accept(releasedIndex, mouseEvent);
 
                     reset();
 
-                    mouseListenerList.forEach(action -> action.mouseReleased((MouseEvent)event));
+                    mouseListenerList.forEach(action -> action.mouseReleased(mouseEvent));
 
                     break;
 
                 case MouseEvent.MOUSE_ENTERED :
 
-                    mouseListenerList.forEach(action -> action.mouseEntered((MouseEvent)event));
+                    onEnteredListener.accept(currentIndex, mouseEvent);
+
+                    mouseListenerList.forEach(action -> action.mouseEntered(mouseEvent));
 
                     break;
 
                 case MouseEvent.MOUSE_EXITED :
 
-                    mouseListenerList.forEach(action -> action.mouseExited((MouseEvent)event));
+                    mouseListenerList.forEach(action -> action.mouseExited(mouseEvent));
 
                     break;
+
                 default:
                     break;
             }
 
         }
 
-        private void setOnDraggedListener(BiConsumer<Integer, AWTEvent> onDraggedListener){
+        private void setOnWheelListener(BiConsumer<Integer, MouseEvent> onWheelListener){
+            this.onWheelListener = onWheelListener;
+        }
+
+        private void setOnDraggedListener(BiConsumer<Integer, MouseEvent> onDraggedListener){
             this.onDraggedListener = onDraggedListener;
         }
 
-        private void setOnPressedListener(BiConsumer<Integer, AWTEvent> onPressedListener){
+        private void setOnMovedListener(BiConsumer<Integer, MouseEvent> onMovedListener){
+            this.onMovedListener = onMovedListener;
+        }
+
+        private void setOnEnteredListener(BiConsumer<Integer, MouseEvent> onEnteredListener){
+            this.onEnteredListener = onEnteredListener;
+        }
+
+        private void setOnPressedListener(BiConsumer<Integer, MouseEvent> onPressedListener){
             this.onPressedListener = onPressedListener;
         }
 
-        private void setOnReleasedListener(BiConsumer<Integer, AWTEvent> onReleasedListener){
+        private void setOnReleasedListener(BiConsumer<Integer, MouseEvent> onReleasedListener){
             this.onReleasedListener = onReleasedListener;
         }
 
-        private void setOnClickListener(BiConsumer<Integer, AWTEvent> onClickListener){
+        private void setOnClickListener(BiConsumer<Integer, MouseEvent> onClickListener){
             this.onClickListener = onClickListener;
         }
 
@@ -436,7 +536,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
         private void reset(){
             dragBeginIndex = currentIndex = pressedIndex = releasedIndex = NONE;
-            isViewPortMouseEnter = false;
         }
     }
 
@@ -445,16 +544,16 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         private MouseDirection direction = MouseDirection.NONE;
 
         private MouseDirection getDirection(int currentMouseY){
-
-            if (currentMouseY - previousMouseY > 0){
+            int relativeY = currentMouseY -  FlatViewPort.this.getLocationOnScreen().y;
+            if (relativeY - previousMouseY > 0){
                 direction = MouseDirection.DOWN_WARD;
             }
 
-            else if (currentMouseY - previousMouseY < 0){
+            else if (relativeY - previousMouseY < 0){
                 direction = MouseDirection.UP_WARD;
             }
 
-            previousMouseY = currentMouseY;
+            previousMouseY = relativeY;
 
             return direction;
         }

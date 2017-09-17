@@ -105,10 +105,7 @@ class FlatAutoResizeListener{
             lineCount += getCountContainNewLine(text.substring(substringBeginIndex));
         }
 
-        int firstLineHeight = fontMetrics.getHeight() + 3;
-//        flatTextArea.setMinimumSize(new Dimension(width, firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom));
-//        flatTextArea.setMaximumSize(new Dimension(width, firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom));
-//        flatTextArea.setSize(new Dimension(width, firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom));
+        int firstLineHeight = fontMetrics.getHeight();
         flatTextArea.setPreferredSize(new Dimension(width, firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom));
 
     }

@@ -93,7 +93,6 @@ public class FlatTextArea extends JTextPane {
                 if (getWidth() != 0){
                     flatAutoResizeListener.setHeightFitToWidth();
                 }
-//                pre = getPreferredSize();
             }
         };
     }
