@@ -40,10 +40,32 @@ public class GuideTextPanel extends FlatPanel {
         setBackground(flatTextField.getBackground());
     }
 
-    private void initGuideLabel(){
-        GUIDE_LABEL.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-        GUIDE_LABEL.setFont(FontManager.getNanumGothicFont(Font.BOLD, 14).deriveFont(getAttribute()));
-        GUIDE_LABEL.setOpaque(false);
+    public static void main(String[] args){
+        FlatFrame flatFrame = new FlatFrame();
+        flatFrame.setTitle("Beautiful GuideTextPanel");
+        flatFrame.setSize(500,500);
+        flatFrame.setLocationOnScreenCenter();
+
+        FlatTextField flatTextField = new FlatTextField(false);
+        flatTextField.setHint("hint");
+        flatTextField.setIconImage(ImageManager.CHECK);
+
+        GuideTextPanel guideTextPanel = new GuideTextPanel(flatTextField);
+        guideTextPanel.setGuideText("good".toUpperCase());
+
+        FlatTextField flatTextField2 = new FlatTextField(false);
+        flatTextField2.setHint("hint2");
+
+        GuideTextPanel guideTextPanel2 = new GuideTextPanel(flatTextField2);
+        guideTextPanel2.setGuideText("good".toUpperCase());
+
+        flatFrame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+        flatFrame.getContainer().add(guideTextPanel);
+        flatFrame.getContainer().add(guideTextPanel2);
+        flatFrame.setResizable(true);
+
+        flatFrame.show();
+
     }
 
     private Map<TextAttribute, Object> getAttribute(){
@@ -98,23 +120,10 @@ public class GuideTextPanel extends FlatPanel {
         if(flatTextField != null) flatTextField.setBackground(bg);
     }
 
-    public static void main(String[] args){
-        FlatFrame flatFrame = new FlatFrame();
-        flatFrame.setTitle("Beautiful GuideTextPanel");
-        flatFrame.setSize(500,500);
-        flatFrame.setLocationOnScreenCenter();
+    private void initGuideLabel(){
+        GUIDE_LABEL.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+        GUIDE_LABEL.setFont(FontManager.getNanumGothicFont(Font.BOLD, 14).deriveFont(getAttribute()));
 
-        FlatTextField flatTextField = new FlatTextField(false);
-        flatTextField.setHint("hint");
-        flatTextField.setIconImage(ImageManager.CHECK);
-
-        GuideTextPanel guideTextPanel = new GuideTextPanel(flatTextField);
-        guideTextPanel.setGuideText("good".toUpperCase());
-        guideTextPanel.setBackground(Color.RED);
-        flatFrame.getContainer().add(guideTextPanel);
-        flatFrame.setResizable(true);
-
-        flatFrame.show();
-
+        GUIDE_LABEL.setOpaque(false);
     }
 }

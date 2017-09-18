@@ -57,12 +57,10 @@ public class FlatTextArea extends JTextPane {
 //        area.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
         area.setCaretColor(Color.PINK);
         pane.setViewportView(area);
-        frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL, 10));
-        frame.getContainer().add(area, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT));
+        frame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL, 10));
+        frame.getContainer().add(area);
         JTextArea JArea = new JTextArea("가낭란ㅇ라날날날날날날나란라ㅏ");
         JArea.setCaretColor(Color.RED);
-        frame.setShadowWidth(100);
-        frame.setResizable(true);
         frame.getContainer().add(JArea);
         frame.show();
         frame.setEnableSizeButton(true);
