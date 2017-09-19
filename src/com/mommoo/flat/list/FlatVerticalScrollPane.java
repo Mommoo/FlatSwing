@@ -81,7 +81,6 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
                 }
 
                 private MouseEvent createMouseDragEvent(){
-                    System.out.println("mouseEventCreated");
                     Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
                     Point panelLocation = VIEW_PORT.getLocationOnScreen();
 
