@@ -114,8 +114,7 @@ class FlatAutoResizeListener{
         int firstLineHeight = fontMetrics.getHeight();
         int height = firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom;
 
-        Dimension preferredSize = flatTextArea.getPreferredSize();
-        flatTextArea.setPreferredSize(new Dimension(Math.max(width, preferredSize.width), Math.max(height, preferredSize.height)));
+        flatTextArea.setPreferredSize(new Dimension(width, height));
     }
 
     int getLineCount(){
