@@ -196,6 +196,39 @@ public class FlatTextField extends FlatPanel {
 		repaint();
 	}
 
+	public static void main(String[] args){
+		FlatTextField normalTextField = new FlatTextField(false);
+		normalTextField.setHint("write name");
+//		normalTextField.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+		normalTextField.setBackground(Color.WHITE);
+
+		FlatTextField normalImageTextField = new FlatTextField(false);
+		normalImageTextField.setIconImage(ImageManager.WRITE);
+		normalImageTextField.setHint("write name");
+		normalImageTextField.setBackground(Color.WHITE);
+		normalImageTextField.setLineBorderWidth(10);
+
+		FlatTextField passwordTextField = new FlatTextField(true);
+		passwordTextField.setIconImage(ImageManager.WRITE);
+		passwordTextField.setBackground(Color.WHITE);
+		passwordTextField.setHint("write password");
+
+		//normalTextField.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+		FlatFrame frame = new FlatFrame();
+		frame.setTitle("FlatTextField test");
+		frame.setSize(500,500);
+		frame.setLocationOnScreenCenter();
+		frame.getContainer().setBackground(Color.GRAY);
+		frame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+		frame.getContainer().setLayout(new GridLayout(3,1,30,30));
+		frame.getContainer().add(normalTextField);
+		frame.getContainer().add(normalImageTextField);
+		frame.getContainer().add(passwordTextField);
+		frame.setResizable(true);
+		frame.show();
+	}
+
 	private class ImageTextField extends FlatPanel{
 		private boolean isNeedReDraw;
 		private TextFieldProxy textFieldProxy;
@@ -224,7 +257,7 @@ public class FlatTextField extends FlatPanel {
 
 		private void initTextField(){
 			JTextField textField = this.textFieldProxy.getTextField();
-			textField.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+//			textField.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
 			textField.setOpaque(false);
 		}
 
@@ -255,38 +288,5 @@ public class FlatTextField extends FlatPanel {
 			isNeedReDraw = true;
 			repaint();
 		}
-	}
-
-	public static void main(String[] args){
-		FlatTextField normalTextField = new FlatTextField(false);
-		normalTextField.setHint("write name");
-		normalTextField.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-		normalTextField.setBackground(Color.WHITE);
-
-		FlatTextField normalImageTextField = new FlatTextField(false);
-		normalImageTextField.setIconImage(ImageManager.WRITE);
-		normalImageTextField.setHint("write name");
-		normalImageTextField.setBackground(Color.WHITE);
-		normalImageTextField.setLineBorderWidth(10);
-
-		FlatTextField passwordTextField = new FlatTextField(true);
-		passwordTextField.setIconImage(ImageManager.WRITE);
-		passwordTextField.setBackground(Color.WHITE);
-		passwordTextField.setHint("write password");
-
-		//normalTextField.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-		FlatFrame frame = new FlatFrame();
-		frame.setTitle("FlatTextField test");
-		frame.setSize(500,500);
-		frame.setLocationOnScreenCenter();
-		frame.getContainer().setBackground(Color.GRAY);
-		frame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-		frame.getContainer().setLayout(new GridLayout(3,1,30,30));
-		frame.getContainer().add(normalTextField);
-		frame.getContainer().add(normalImageTextField);
-		frame.getContainer().add(passwordTextField);
-		frame.setResizable(true);
-		frame.show();
 	}
 }

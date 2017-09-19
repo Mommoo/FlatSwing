@@ -71,17 +71,15 @@ class FlatAutoResizeListener{
 
             while (true){
                 String parsedText = text.substring(substringBeginIndex, substringBeginIndex + substringEndIndex);
-
+                int w=  fontMetrics.stringWidth(parsedText);
                 if (width > fontMetrics.stringWidth(parsedText)){
                     substringEndIndex++;
                 }
 
-                if (width <= fontMetrics.stringWidth(parsedText)){
-
-                    int previousEndIndex = substringEndIndex;
-
+                else if (width <= fontMetrics.stringWidth(parsedText)){
+                   // int previousEndIndex = substringEndIndex;
                     while(true) {
-                        parsedText = text.substring(substringBeginIndex, substringBeginIndex + (substringEndIndex--));
+                        parsedText = text.substring(substringBeginIndex, substringBeginIndex + (--substringEndIndex));
                         int indexOfNewLine = getIndexOfNewLine(parsedText);
 
                         if (indexOfNewLine != -1){
@@ -94,12 +92,13 @@ class FlatAutoResizeListener{
                         }
                     }
 
-                    if (substringEndIndex <= -1) substringEndIndex = previousEndIndex;
+                    if (substringEndIndex == 0) substringEndIndex = 1;
 
                     substringEndIndex += substringBeginIndex;
                     break;
                 }
             }
+
             stringWidth -= fontMetrics.stringWidth(text.substring(substringBeginIndex, substringEndIndex));
 
             substringBeginIndex = substringEndIndex;
@@ -113,7 +112,10 @@ class FlatAutoResizeListener{
         }
 
         int firstLineHeight = fontMetrics.getHeight();
-        flatTextArea.setPreferredSize(new Dimension(width, firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom));
+        int height = firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom;
+
+        Dimension preferredSize = flatTextArea.getPreferredSize();
+        flatTextArea.setPreferredSize(new Dimension(Math.max(width, preferredSize.width), Math.max(height, preferredSize.height)));
     }
 
     int getLineCount(){

@@ -110,7 +110,6 @@ public class FlatTextArea extends JTextPane {
 
         StyleConstants.setLineSpacing(ATTRIBUTE_SET, lineSpacing);
         getStyledDocument().setParagraphAttributes(0,Integer.MAX_VALUE,ATTRIBUTE_SET,true);
-
     }
 
     public void setTextAlignment(FlatTextAlignment alignment){

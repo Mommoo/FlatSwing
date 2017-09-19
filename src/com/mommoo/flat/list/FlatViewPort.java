@@ -9,9 +9,9 @@ import com.mommoo.flat.list.listener.FlatScrollListener;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
 import com.mommoo.util.ColorManager;
-import javafx.scene.Parent;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -203,22 +203,24 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
 
-    private enum MouseDirection{
+    private enum BinaryDirection {
+        TARGET,
         UP_WARD,
-        NONE,
-        DOWN_WARD;
+        DOWN_WARD,
+        NONE;
     }
 
     private static class MouseEventFactory{
 
         private static MouseEvent createMouseEvent(Component source, int id, AWTEvent event){
             MouseEvent mouseEvent = (MouseEvent) event;
+            Point point = MouseInfo.getPointerInfo().getLocation();
             return new MouseEvent(source,
                     id,
                     System.currentTimeMillis(),
                     mouseEvent.getModifiers(),
-                    mouseEvent.getXOnScreen(),
-                    mouseEvent.getYOnScreen(),
+                    point.x,
+                    point.y,
                     mouseEvent.getClickCount(),
                     mouseEvent.isPopupTrigger(),
                     mouseEvent.getButton());
@@ -264,15 +266,22 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
                 }
             });
 
-            mouseEventHandler.setOnReleasedListener((currentIndex, event) -> {
-                scrollListener.onDrag(0);
-                onSelectionListener.onSelection(selectionFromToIndex[0], selectionFromToIndex[1], getFromToList());
-            });
-
-            mouseEventHandler.setOnClickListener((currentIndex, event) -> {
+            mouseEventHandler.setOnPressedListener((currentIndex, event)->{
                 if (event.getButton() == MouseEvent.BUTTON1){
                     select(currentIndex, currentIndex);
                 }
+            });
+
+            mouseEventHandler.setOnReleasedListener((currentIndex, event) -> {
+                scrollListener.onDrag(0);
+
+                if (isSelected()){
+                    onSelectionListener.onSelection(selectionFromToIndex[0], selectionFromToIndex[1], getFromToList());
+                }
+            });
+
+            mouseEventHandler.setOnClickListener((currentIndex, event) -> {
+
             });
         }
 
@@ -317,10 +326,8 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
             }
 
             else if (event.getID() == MouseEvent.MOUSE_PRESSED){
-
                 lock = true;
                 valid = isMouseLocationInViewPort;
-
             }
 
             else if (event.getID() == MouseEvent.MOUSE_RELEASED){
@@ -328,6 +335,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
                 lock = false;
 
             }
+
             else {
 
                 if (!lock) valid = isMouseLocationInViewPort;
@@ -347,7 +355,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     private class MouseEventHandler {
         private static final int NONE = - 1;
         private final BiConsumer<Integer, MouseEvent> defaultListener = (index, event) -> {};
-        private DirectionHandler directionHandler = new DirectionHandler();
+
         private int dragBeginIndex = NONE;
         private int currentIndex   = NONE;
         private int pressedIndex   = NONE;
@@ -378,21 +386,26 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
             int parentPanelLocationY = getParent().getLocationOnScreen().y;
             int mouseY = MouseInfo.getPointerInfo().getLocation().y;
 
-            if (directionHandler.getDirection(mouseY) == MouseDirection.DOWN_WARD){
+            int beginIndex = 0;
+            int endIndex = compIndexList.getSize() - 1;
+            int targetIndex = (beginIndex + endIndex) /2;
 
-                for (int index = Math.max(currentIndex,0), size = compIndexList.getSize() ; index < size ; index++){
-                    if (isComponentAt(compIndexList.peek(index), mouseY)){
-                        return index;
-                    }
+            while(beginIndex <= endIndex){
+                BinaryDirection direction = findDirection(targetIndex);
+
+                switch(direction){
+                    case NONE : return -1;
+
+                    case TARGET: return targetIndex;
+
+                    case UP_WARD: endIndex = targetIndex -1;
+                        break;
+
+                    case DOWN_WARD: beginIndex = targetIndex + 1;
+                        break;
                 }
 
-            } else if (directionHandler.getDirection(mouseY) == MouseDirection.UP_WARD){
-
-                for (int index = Math.max(currentIndex,0); index >= 0 ; index--){
-                    if (isComponentAt(compIndexList.peek(index), mouseY)){
-                        return index;
-                    }
-                }
+                targetIndex = (beginIndex + endIndex) /2;
             }
 
             if (mouseY <= parentPanelLocationY) return 0;
@@ -400,15 +413,35 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
             return compIndexList.getSize() - 1;
         }
 
-        private boolean isComponentAt(Component comp, int currentMouseY){
+        private BinaryDirection findDirection(int index){
+            int currentMouseY = MouseInfo.getPointerInfo().getLocation().y;
+
+            Component comp = compIndexList.peek(index);
             Point compLocation = comp.getLocationOnScreen();
 
-            return (compLocation.y <= currentMouseY) && (compLocation.y + comp.getSize().height + dividerThick >= currentMouseY);
-        }
+            int compBottomY = compLocation.y + comp.getSize().height;
 
+            if ((compLocation.y <= currentMouseY) && (compBottomY > currentMouseY)){
+                return BinaryDirection.TARGET;
+            }
+
+            else if ((compBottomY <= currentMouseY) && (compBottomY + dividerThick > currentMouseY)) {
+                return BinaryDirection.NONE;
+            }
+
+            else if (compBottomY + dividerThick <= currentMouseY){
+                return BinaryDirection.DOWN_WARD;
+            }
+
+            else {
+                return BinaryDirection.UP_WARD;
+            }
+        }
 
         private void setMouseEvent(MouseEvent mouseEvent){
             this.currentIndex = findCompIndex();
+
+            if (this.currentIndex == -1) return;
 
             switch(mouseEvent.getID()){
                 case MouseEvent.MOUSE_WHEEL :
@@ -536,26 +569,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
         private void reset(){
             dragBeginIndex = currentIndex = pressedIndex = releasedIndex = NONE;
-        }
-    }
-
-    private class DirectionHandler {
-        private int previousMouseY = 0;
-        private MouseDirection direction = MouseDirection.NONE;
-
-        private MouseDirection getDirection(int currentMouseY){
-            int relativeY = currentMouseY -  FlatViewPort.this.getLocationOnScreen().y;
-            if (relativeY - previousMouseY > 0){
-                direction = MouseDirection.DOWN_WARD;
-            }
-
-            else if (relativeY - previousMouseY < 0){
-                direction = MouseDirection.UP_WARD;
-            }
-
-            previousMouseY = relativeY;
-
-            return direction;
         }
     }
 }

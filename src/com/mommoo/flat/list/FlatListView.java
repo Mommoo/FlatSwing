@@ -3,6 +3,7 @@ package com.mommoo.flat.list;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
+import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.util.FontManager;
 
@@ -130,7 +131,7 @@ public class FlatListView<T extends Component> {
         });
 
         list2.setOnDragListener((beginIndex, endIndex, selectionList) -> {
-            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
+//            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
         });
 
         frame.getContainer().add(list2.getComponent());
@@ -139,6 +140,10 @@ public class FlatListView<T extends Component> {
         frame.setLocationOnScreenCenter();
         frame.setResizable(true);
         frame.show();
+
+        for(FlatTextArea l : list2.getItems()){
+            System.out.println(l.getLocationOnScreen());
+        }
     }
 
     public boolean isMultiSelectionMode(){
