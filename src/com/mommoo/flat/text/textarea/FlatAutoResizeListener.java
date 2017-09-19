@@ -60,7 +60,7 @@ class FlatAutoResizeListener{
 
         int stringWidth = fontMetrics.stringWidth(text);
 
-        int width = flatTextArea.getWidth();
+        int width = flatTextArea.getWidth() - insets.left - insets.right;
         int substringBeginIndex = 0;
         int substringEndIndex = 0;
 
@@ -71,13 +71,13 @@ class FlatAutoResizeListener{
 
             while (true){
                 String parsedText = text.substring(substringBeginIndex, substringBeginIndex + substringEndIndex);
-                int w=  fontMetrics.stringWidth(parsedText);
+
                 if (width > fontMetrics.stringWidth(parsedText)){
                     substringEndIndex++;
                 }
 
                 else if (width <= fontMetrics.stringWidth(parsedText)){
-                   // int previousEndIndex = substringEndIndex;
+
                     while(true) {
                         parsedText = text.substring(substringBeginIndex, substringBeginIndex + (--substringEndIndex));
                         int indexOfNewLine = getIndexOfNewLine(parsedText);
@@ -114,7 +114,7 @@ class FlatAutoResizeListener{
         int firstLineHeight = fontMetrics.getHeight();
         int height = firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom;
 
-        flatTextArea.setPreferredSize(new Dimension(width, height));
+        flatTextArea.setPreferredSize(new Dimension(flatTextArea.getWidth(), height));
     }
 
     int getLineCount(){

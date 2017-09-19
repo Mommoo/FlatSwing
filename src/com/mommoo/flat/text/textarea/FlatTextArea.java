@@ -5,9 +5,6 @@ import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
-import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
-import com.mommoo.flat.layout.linear.constraints.LinearSpace;
-import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.FontManager;
 
 import javax.swing.*;
@@ -21,8 +18,8 @@ import java.awt.*;
 
 public class FlatTextArea extends JTextPane {
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
-    private FlatAutoResizeListener flatAutoResizeListener;
-    private ComputableDimension previousSize = new ComputableDimension(0,0);
+//    private FlatAutoResizeListener flatAutoResizeListener;
+    private boolean isNeedToFitWidth = true;
     private MouseClickAdapter mouseClickAdapter;
 
     public FlatTextArea() {
@@ -44,30 +41,24 @@ public class FlatTextArea extends JTextPane {
         frame.setSize(500, 500);
         frame.setLocationOnScreenCenter();
 
-
-        JScrollPane pane = new JScrollPane();
-        FlatTextArea area = new FlatTextArea("굳굳굳굳굳");
+        FlatTextArea area = new FlatTextArea("This is a Flexiable TextArea!! when no have space to print text, jump next line automatically");
+        area.setPreferredSize(new Dimension(500,10));
         area.setLineSpacing(0.7f);
-        area.setBackground(Color.YELLOW);
         area.setFont(FontManager.getNanumGothicFont(Font.BOLD, 17));
         area.setCaretWidth(4);
-//        area.setCursorColor(Color.RED);
+
         area.setForeground(Color.PINK);
         area.setSelectionColor(Color.BLUE);
-//        area.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
+
         area.setCaretColor(Color.PINK);
-        pane.setViewportView(area);
-        frame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL, 10));
+        frame.getContainer().setLayout(new FlowLayout());
         frame.getContainer().add(area);
-        JTextArea JArea = new JTextArea("가낭란ㅇ라날날날날날날나란라ㅏ");
-        JArea.setCaretColor(Color.RED);
-        frame.getContainer().add(JArea);
         frame.show();
         frame.setEnableSizeButton(true);
     }
 
     private void init(){
-        this.flatAutoResizeListener = new FlatAutoResizeListener(this);
+//        this.flatAutoResizeListener = new FlatAutoResizeListener(this);
         setEditorKit(new FlatWrapEditorKit());
         setCaret(new FlatCaret());
         getDocument().addDocumentListener(createDocumentListener());
@@ -89,15 +80,16 @@ public class FlatTextArea extends JTextPane {
             @Override
             public void changedUpdate(DocumentEvent e) {
                 if (getWidth() != 0){
-                    flatAutoResizeListener.setHeightFitToWidth();
+                    isNeedToFitWidth = true;
+                    repaint();
                 }
             }
         };
     }
 
-    public int getLineCount(){
-        return this.flatAutoResizeListener.getLineCount();
-    }
+//    public int getLineCount(){
+//        return this.flatAutoResizeListener.getLineCount();
+//    }
 
     public float getLineSpacing() {
         return StyleConstants.getLineSpacing(ATTRIBUTE_SET);
@@ -170,11 +162,11 @@ public class FlatTextArea extends JTextPane {
     public void paint(Graphics g) {
         super.paint(g);
 
-        if (previousSize.getSize().equals(getSize())) return;
-
-        previousSize.setSize(getSize());
-
-        flatAutoResizeListener.setHeightFitToWidth();
+        if (isNeedToFitWidth){
+            isNeedToFitWidth =false;
+            setPreferredSize(new Dimension(getWidth(), getFitHeightToWidth(getWidth())));
+            revalidate();
+        }
     }
 
     public void setOnClickListener(OnClickListener onClickListener){
