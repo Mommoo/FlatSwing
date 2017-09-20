@@ -5,6 +5,7 @@ import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
+import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.FontManager;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ import java.awt.*;
 public class FlatTextArea extends JTextPane {
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
 //    private FlatAutoResizeListener flatAutoResizeListener;
+    private ComputableDimension previousDimen = new ComputableDimension();
     private boolean isNeedToFitWidth = true;
     private MouseClickAdapter mouseClickAdapter;
 
@@ -164,6 +166,12 @@ public class FlatTextArea extends JTextPane {
 
         if (isNeedToFitWidth){
             isNeedToFitWidth =false;
+            setPreferredSize(new Dimension(getWidth(), getFitHeightToWidth(getWidth())));
+            revalidate();
+        }
+
+        else if(!previousDimen.equals(getSize())) {
+            previousDimen.setSize(getSize());
             setPreferredSize(new Dimension(getWidth(), getFitHeightToWidth(getWidth())));
             revalidate();
         }

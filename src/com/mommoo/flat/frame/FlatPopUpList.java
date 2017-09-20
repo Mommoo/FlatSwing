@@ -35,12 +35,19 @@ public class FlatPopUpList {
             System.out.println(message);
         });
 
-        popUpList.show(400,400);
+        FlatFrame frame = new FlatFrame();
+        frame.setSize(500,500);
+        frame.setLocationOnScreenCenter();
+        JButton button = new JButton("클릭");
+        button.addActionListener(e -> popUpList.show(MouseInfo.getPointerInfo().getLocation()));
+        frame.getContainer().add(button);
+        frame.show();
     }
 
     private void initFrame(){
         FRAME.setType(Window.Type.UTILITY);
         FRAME.setShadowWidth(3);
+        FRAME.setAlwaysOnTop(true);
         FRAME.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
@@ -66,6 +73,30 @@ public class FlatPopUpList {
         return flatLabel;
     }
 
+    private Dimension getProperSize(){
+        int width = 0;
+        int height = 0;
+
+        for (Component comp : listView.getItems()){
+            width = Math.max(comp.getPreferredSize().width, width);
+            height += comp.getPreferredSize().height;
+        }
+
+        return new Dimension(width, height);
+    }
+
+    private Point getProperLocation(Dimension properSize, int originX, int originY){
+        if (screenManager.getScreenWidth() < originX + properSize.width) {
+            originX -= properSize.width;
+        }
+
+        if (screenManager.getWindowHeight() < originY + properSize.height){
+            originY -= properSize.height;
+        }
+
+        return new Point(originX, originY);
+    }
+
     public void addMenu(String menuTxt){
         listView.addItem(createLabel(menuTxt));
     }
@@ -74,18 +105,16 @@ public class FlatPopUpList {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void show(int x, int y){
-        int width = 0;
-        int height = 0;
-        for (Component comp : listView.getItems()){
-            width = Math.max(comp.getPreferredSize().width, width);
-            height += comp.getPreferredSize().height;
-        }
-        listView.getComponent().setPreferredSize(new Dimension(width, height));
-        FRAME.pack();
-        FRAME.setLocation(x,y);
-        FRAME.setVisible(true);
+    public void show(Point point){
+        show(point.x, point.y);
+    }
 
+    public void show(int x, int y){
+        Dimension properSize = getProperSize();
+        listView.getComponent().setPreferredSize(properSize);
+        FRAME.pack();
+        FRAME.setLocation(getProperLocation(properSize, x, y));
+        FRAME.setVisible(true);
     }
 
     public void setFocusLostDispose(){
