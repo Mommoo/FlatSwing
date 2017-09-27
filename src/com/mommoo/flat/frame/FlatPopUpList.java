@@ -18,11 +18,28 @@ public class FlatPopUpList {
     private OnItemClickListener onItemClickListener = (index, message)->{};
     private FlatListView<FlatLabel> listView = new FlatListView<>();
 
+    private boolean isDisposeAfterSelection;
+
     public FlatPopUpList(){
         initFrame();
         initContentPane();
         initListView();
+        setDisposeAfterSelection(true);
+        setFocusLostDispose();
         getContentPane().add(listView.getComponent());
+    }
+
+    private void initFrame(){
+        FRAME.setType(Window.Type.UTILITY);
+        FRAME.setShadowWidth(3);
+        FRAME.setAlwaysOnTop(true);
+        FRAME.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+
+    private void initContentPane(){
+        JPanel contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.setOpaque(true);
     }
 
     public static void main(String[] args){
@@ -42,25 +59,6 @@ public class FlatPopUpList {
         button.addActionListener(e -> popUpList.show(MouseInfo.getPointerInfo().getLocation()));
         frame.getContainer().add(button);
         frame.show();
-    }
-
-    private void initFrame(){
-        FRAME.setType(Window.Type.UTILITY);
-        FRAME.setShadowWidth(3);
-        FRAME.setAlwaysOnTop(true);
-        FRAME.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    private void initContentPane(){
-        JPanel contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.setOpaque(true);
-    }
-
-    private void initListView(){
-        listView.setTrace(true);
-        listView.setSingleSelectionMode(true);
-        listView.setOnSelectionListener(((beginIndex, endIndex, selectionList) -> onItemClickListener.onItemClick(beginIndex, selectionList.get(0).getText())));
     }
 
     private JPanel getContentPane(){
@@ -126,7 +124,28 @@ public class FlatPopUpList {
         });
     }
 
+    private void initListView(){
+        listView.setTrace(true);
+        listView.setSingleSelectionMode(true);
+        listView.setOnSelectionListener(((beginIndex, endIndex, selectionList) -> {
+            onItemClickListener.onItemClick(beginIndex, selectionList.get(0).getText());
+            if (isDisposeAfterSelection) dispose();
+        }));
+    }
+
     public void dispose(){
         FRAME.dispose();
+    }
+
+    public void setDisposeAfterSelection(boolean isDisposeAfterSelection){
+        this.isDisposeAfterSelection = isDisposeAfterSelection;
+    }
+
+    public void select(int index){
+        listView.select(index, index);
+    }
+
+    public void deSelect(){
+        listView.deSelect();
     }
 }

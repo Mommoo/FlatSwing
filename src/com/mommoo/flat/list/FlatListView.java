@@ -17,27 +17,28 @@ import java.util.List;
 
 public class FlatListView<T extends Component> {
     private FlatVerticalScrollPane<T> SCROLL_PANE = new FlatVerticalScrollPane<>();
-    private List<T> compList = new ArrayList<>();
+    private ArrayList<T> compList = new ArrayList<>();
 
     public FlatListView() { }
 
     public FlatListView(List<T> itemList) {
-        this();
         addItems(itemList);
     }
 
     public FlatListView(T... items){
-        this();
         addItems(items);
     }
 
+    private FlatViewPort<T> getViewPortView(){
+        return (FlatViewPort<T>)SCROLL_PANE.getViewport().getView();
+    }
 
     public Component getComponent() {
         return SCROLL_PANE;
     }
 
     public void addItem(T item) {
-        SCROLL_PANE.getViewPort().addComponent(item);
+        getViewPortView().addComponent(item);
         compList.add(item);
     }
 
@@ -45,6 +46,11 @@ public class FlatListView<T extends Component> {
         for (T t : items) {
             addItem(t);
         }
+    }
+
+    public void addItem(T item, int index){
+        compList.add(index, item);
+        getViewPortView().addComponent(item, index);
     }
 
     public void addItems(List<T> items){
@@ -56,25 +62,33 @@ public class FlatListView<T extends Component> {
     }
 
     public void removeItem(int index) {
-        SCROLL_PANE.getViewPort().removeComponent(index);
+        getViewPortView().removeComponent(index);
         compList.remove(index);
+    }
+
+    public void removeItems(int beginIndex, int endIndex){
+        if (beginIndex > endIndex) throw new IllegalArgumentException("beginIndex isn't bigger than endIndex");
+
+        for (int i = endIndex ; i >= beginIndex ; i--){
+            compList.remove(i);
+        }
     }
 
     public void setDivider(Color color, int thick) {
         if (thick < 1) thick = 1;
-        SCROLL_PANE.getViewPort().setDivider(color, thick);
+        getViewPortView().setDivider(color, thick);
     }
 
     public void removeDivider(){
-        SCROLL_PANE.getViewPort().removeDivider();
+        getViewPortView().removeDivider();
     }
 
     public Color getDividerColor() {
-        return SCROLL_PANE.getViewPort().getDividerColor();
+        return getViewPortView().getDividerColor();
     }
 
     public int getDividerThick() {
-        return SCROLL_PANE.getViewPort().getDividerThick();
+        return getViewPortView().getDividerThick();
     }
 
     public void setPadding(int left, int top, int right, int bottom) {
@@ -109,7 +123,75 @@ public class FlatListView<T extends Component> {
             endIndex = startIndex+1;
         }
 
-        SCROLL_PANE.getViewPort().select(startIndex, endIndex);
+        getViewPortView().select(startIndex, endIndex);
+    }
+
+    public void deSelect(){
+        getViewPortView().deSelect();
+    }
+
+    public boolean isMultiSelectionMode(){
+        return getViewPortView().isMultiSelectionMode();
+    }
+
+    public void setMultiSelectionMode(boolean multiSelectionMode) {
+        getViewPortView().setMultiSelectionMode(multiSelectionMode);
+    }
+
+    public boolean isSingleSelectionMode(){
+        return getViewPortView().isSingleSelectionMode();
+    }
+
+    public void setSingleSelectionMode(boolean singleSelectionMode){
+        getViewPortView().setSingleSelectionMode(singleSelectionMode);
+    }
+
+    public void setOnSelectionListener(OnSelectionListener<T> onSelectionListener){
+        getViewPortView().setOnSelectionListener(onSelectionListener);
+    }
+
+    public List<T> getSelectedList(){
+        return getViewPortView().getSelectedList();
+    }
+
+    public int[] getSelectionFromToIndex(){
+        return getViewPortView().getSelectionFromToIndex();
+    }
+
+    public boolean isSelected(){
+        return getViewPortView().isSelected();
+    }
+
+    public void setOnDragListener(OnDragListener<T> onDragListener){
+        getViewPortView().setOnDragListener(onDragListener);
+    }
+
+    public Color getSelectionColor(){
+        return getViewPortView().getSelectionColor();
+    }
+
+    public void setSelectionColor(Color color){
+        getViewPortView().setSelectionColor(color);
+    }
+
+    public void addMouseListener(MouseListener mouseListener){
+        getViewPortView().addMouseListener(mouseListener);
+    }
+
+    public void removeMouseListener(MouseListener mouseListener){
+        getViewPortView().removeMouseListener(mouseListener);
+    }
+
+    public void addMouseMotionListener(MouseMotionListener mouseMotionListener){
+        getViewPortView().addMouseMotionListener(mouseMotionListener);
+    }
+
+    public void removeMouseMotionListener(MouseMotionListener mouseMotionListener){
+        getViewPortView().removeMouseMotionListener(mouseMotionListener);
+    }
+
+    public void setTrace(boolean trace){
+        getViewPortView().setTrace(trace);
     }
 
     public static void main(String[] args){
@@ -140,62 +222,6 @@ public class FlatListView<T extends Component> {
         frame.setLocationOnScreenCenter();
         frame.setResizable(true);
         frame.show();
-
-        for(FlatTextArea l : list2.getItems()){
-            System.out.println(l.getLocationOnScreen());
-        }
-    }
-
-    public boolean isMultiSelectionMode(){
-        return SCROLL_PANE.getViewPort().isMultiSelectionMode();
-    }
-
-    public void setMultiSelectionMode(boolean multiSelectionMode) {
-        SCROLL_PANE.getViewPort().setMultiSelectionMode(multiSelectionMode);
-    }
-
-    public boolean isSingleSelectionMode(){
-        return SCROLL_PANE.getViewPort().isSingleSelectionMode();
-    }
-
-    public void setSingleSelectionMode(boolean singleSelectionMode){
-        SCROLL_PANE.getViewPort().setSingleSelectionMode(singleSelectionMode);
-    }
-
-    public void setOnSelectionListener(OnSelectionListener<T> onSelectionListener){
-        SCROLL_PANE.getViewPort().setOnSelectionListener(onSelectionListener);
-    }
-
-    public void setOnDragListener(OnDragListener<T> onDragListener){
-        SCROLL_PANE.getViewPort().setOnDragListener(onDragListener);
-    }
-
-    public Color getSelectionColor(){
-        return SCROLL_PANE.getViewPort().getSelectionColor();
-    }
-
-    public void setSelectionColor(Color color){
-        SCROLL_PANE.getViewPort().setSelectionColor(color);
-    }
-
-    public void addMouseListener(MouseListener mouseListener){
-        SCROLL_PANE.getViewPort().addMouseListener(mouseListener);
-    }
-
-    public void removeMouseListener(MouseListener mouseListener){
-        SCROLL_PANE.getViewPort().removeMouseListener(mouseListener);
-    }
-
-    public void addMouseMotionListener(MouseMotionListener mouseMotionListener){
-        SCROLL_PANE.getViewPort().addMouseMotionListener(mouseMotionListener);
-    }
-
-    public void removeMouseMotionListener(MouseMotionListener mouseMotionListener){
-        SCROLL_PANE.getViewPort().removeMouseMotionListener(mouseMotionListener);
-    }
-
-    public void setTrace(boolean trace){
-        SCROLL_PANE.getViewPort().setTrace(trace);
     }
 
 }

@@ -33,10 +33,6 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
         });
     }
 
-    FlatViewPort<T> getViewPort(){
-        return VIEW_PORT;
-    }
-
     private class AutoScrollWorker{
         private static final int FREQUENT_DURATION = 70;
         private int scrollSensitivity;
@@ -83,7 +79,7 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
                 private MouseEvent createMouseDragEvent(){
                     Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
                     Point panelLocation = VIEW_PORT.getLocationOnScreen();
-
+                    System.out.println("mouseEvent");
                     return new MouseEvent(VIEW_PORT,
                             MouseEvent.MOUSE_DRAGGED,
                             System.currentTimeMillis(),

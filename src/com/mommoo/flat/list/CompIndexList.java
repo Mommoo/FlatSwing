@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.List;
 
 class CompIndexList{
-    private List<Component> compList = new ArrayList<>();
+    private ArrayList<Component> compList = new ArrayList<>();
     private Map<Component, Integer> indexMapper = new HashMap<>();
 
     private void pushOneByOne(int index){
@@ -17,6 +17,12 @@ class CompIndexList{
     void addComp(Component comp){
         compList.add(comp);
         indexMapper.put(comp, getSize() - 1);
+    }
+
+    void addComp(Component comp, int index){
+        compList.add(index, comp);
+        indexMapper.put(comp,getSize()-1);
+        pushOneByOne(index);
     }
 
     void addAllComp(List<Component> compList){
