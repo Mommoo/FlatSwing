@@ -61,17 +61,29 @@ public class FlatListView<T extends Component> {
         return compList.get(index);
     }
 
-    public void removeItem(int index) {
+    private void repaint(){
+        getViewPortView().revalidate();
+        getViewPortView().repaint();
+    }
+
+    private void removeItem(int index, boolean repaint){
         getViewPortView().removeComponent(index);
+        if(repaint) repaint();
         compList.remove(index);
+    }
+
+    public void removeItem(int index) {
+        removeItem(index, true);
     }
 
     public void removeItems(int beginIndex, int endIndex){
         if (beginIndex > endIndex) throw new IllegalArgumentException("beginIndex isn't bigger than endIndex");
 
-        for (int i = endIndex ; i >= beginIndex ; i--){
-            compList.remove(i);
+        for (int index = endIndex ; index >= beginIndex ; index--){
+            removeItem(index, false);
         }
+
+        repaint();
     }
 
     public void setDivider(Color color, int thick) {

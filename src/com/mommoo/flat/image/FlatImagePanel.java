@@ -19,6 +19,8 @@ public class FlatImagePanel extends FlatPanel {
 
     private boolean reDraw = true;
 
+    private float alpha = 1.0f;
+
     public static void main(String[] args){
         FlatFrame flatFrame = new FlatFrame();
         flatFrame.setSize(500,500);
@@ -28,6 +30,7 @@ public class FlatImagePanel extends FlatPanel {
         FlatImagePanel imagePanel = new FlatImagePanel();
         imagePanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
         imagePanel.setImage(ImageManager.TEST, ImageOption.MATCH_PARENT);
+        imagePanel.setAlpha(0.8f);
 
         flatFrame.getContainer().add(imagePanel);
 
@@ -52,6 +55,10 @@ public class FlatImagePanel extends FlatPanel {
         repaint();
     }
 
+    public void setAlpha(float alpha){
+        this.alpha = alpha;
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -61,6 +68,7 @@ public class FlatImagePanel extends FlatPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
         Insets insets = getInsets();
 

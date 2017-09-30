@@ -16,7 +16,7 @@ public class Example {
         frame.setSize(500,500 + FlatFrame.getTitleBarHeight());
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
-        frame.getContainer().add(new LinearLayoutPanel());
+        frame.getContainer().add(new LinearLayoutPanel2());
         frame.show();
     }
 
