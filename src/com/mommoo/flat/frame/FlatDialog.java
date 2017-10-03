@@ -1,7 +1,8 @@
 package com.mommoo.flat.frame;
 
 import com.mommoo.flat.component.OnClickListener;
-import com.mommoo.flat.frame.dialog.TextInfo;
+import com.mommoo.flat.frame.dialog.DialogButtonInfo;
+import com.mommoo.flat.frame.dialog.DialogComponentInfo;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
@@ -15,6 +16,8 @@ import com.mommoo.util.ScreenManager;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
 
 import static com.mommoo.flat.frame.FrameLocation.CENTER_AT_COMPONENT;
 import static com.mommoo.flat.frame.FrameLocation.CENTER_AT_SCREEN;
@@ -27,6 +30,7 @@ public class FlatDialog {
 	private final static int PADDING = FLAT_DIALOG_WIDTH/28;
 
 	private final CommonJFrame COMMON_FRAME = new CommonJFrame();
+	private final JDialog HIDDEN_DIALOG_FOR_MODALITY = new JDialog(COMMON_FRAME, true);
 
 	private final Builder builder;
 
@@ -38,7 +42,7 @@ public class FlatDialog {
 
 		Container container = getContainer();
 
-		container.setLayout(new LinearLayout(Orientation.VERTICAL));
+		container.setLayout(new LinearLayout(Orientation.VERTICAL, 0));
 		container.setBackground(builder.dialogBackgroundColor);
 
 		container.add(createTitleLabel(),   constraints);
@@ -48,86 +52,101 @@ public class FlatDialog {
 		container.add(createButtonPanel(),  constraints);
 	}
 	
+    public static void main(String[] args){
+        DialogButtonInfo buttonInfo = new DialogButtonInfo();
+        buttonInfo.setText("customButton");
+        buttonInfo.setOnClickListener(comp->System.out.println("customButton"));
+
+        new FlatDialog.Builder()
+                .setTitle("Beautiful Dialog!")
+                .setContent("This is test message\n" +
+                        "When dialog message length increase, this dialog area is wider automatically \n" +
+                        "So, you don't consider that width or height size\n" +
+                        "Just use it!")
+                .setDialogWidth(500)
+                .setLocationScreenCenter()
+                .appendButton(buttonInfo)
+                .build()
+                .show();
+
+        System.out.println("blocked this message when dialog showing, if you exit dialog, you can see this message");
+    }
+
 	private void initFrame(){
 		COMMON_FRAME.setType(JFrame.Type.UTILITY);
 		COMMON_FRAME.setAlwaysOnTop(true);
-		COMMON_FRAME.getCustomizablePanel().setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
+		COMMON_FRAME.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+		HIDDEN_DIALOG_FOR_MODALITY.setUndecorated(true);
+		HIDDEN_DIALOG_FOR_MODALITY.setSize(0,0);
 	}
 
-	private void initComponent(Component component, TextInfo textInfo){
-		component.setForeground(textInfo.getTextColor());
-		component.setBackground(textInfo.getBackgroundColor());
-		component.setFont(textInfo.getTextFont());
+	private void initComponent(Component component, DialogComponentInfo dialogComponentInfo){
+		component.setForeground(dialogComponentInfo.getTextColor());
+		component.setBackground(dialogComponentInfo.getBackgroundColor());
+		component.setFont(dialogComponentInfo.getTextFont());
 
 		if (component instanceof JTextComponent){
 
-			((JTextComponent) component).setText(textInfo.getText());
+			((JTextComponent) component).setText(dialogComponentInfo.getText());
 
 		}
 	}
 
-	public static void main(String[] args){
-		new FlatDialog.Builder()
-				.setTitle("Beautiful Dialog!")
-				.setContent("This is test message\n" +
-						"When dialog message length increase, this dialog area is wider automatically \n" +
-						"So, you don't consider that width or height size\n" +
-						"Just use it!")
-				.setDialogWidth(500)
-				.setLocationScreenCenter()
-				.build()
-				.show();
-	}
-
 	private Component createTitleLabel(){
 		FlatLabel TITLE_LABEL = new FlatLabel();
+		TITLE_LABEL.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
 		initComponent(TITLE_LABEL, builder.titleInfo);
 		TITLE_LABEL.setHeightFittedToWidth(builder.dialogWidth);
-//		TITLE_LABEL.setPreferredSize(new Dimension(builder.dialogWidth, TITLE_LABEL.getFitHeightToWidth(builder.dialogWidth)));
 		return TITLE_LABEL;
 	}
 
 	private Component createContentLabel(){
 		FlatLabel CONTENT = new FlatLabel();
+		CONTENT.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
 		initComponent(CONTENT, builder.contentInfo);
 		CONTENT.setLineSpacing(builder.lineSpacing);
 		CONTENT.setHeightFittedToWidth(builder.dialogWidth);
-//		CONTENT.setPreferredSize(new Dimension(builder.dialogWidth, CONTENT.getFitHeightToWidth(builder.dialogWidth)));
 		return CONTENT;
 	}
 
 	private Component createButtonPanel(){
 		JPanel BTN_PARENT_PANEL = new JPanel();
+		BTN_PARENT_PANEL.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
 		BTN_PARENT_PANEL.setOpaque(true);
-		BTN_PARENT_PANEL.setBackground(builder.contentInfo.getBackgroundColor());
+		BTN_PARENT_PANEL.setBackground(builder.buttonAreaBackgroundColor);
 		BTN_PARENT_PANEL.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		BTN_PARENT_PANEL.setBackground(Color.RED);
-		BTN_PARENT_PANEL.add(createButton());
+
+		for (DialogButtonInfo buttonInfo : builder.dialogButtonInfoList){
+		    BTN_PARENT_PANEL.add(createUserCustomButton(buttonInfo));
+        }
+
+        BTN_PARENT_PANEL.add(createOKButton());
 
 		return BTN_PARENT_PANEL;
 	}
 
-	private Component createButton(){
-		FlatLabel label = new FlatLabel(){
-			@Override
-			public String toString() {
-				return "BUTTON";
-			}
-		};
-		initComponent(label, builder.buttonTextInfo);
-		label.setBorder(BorderFactory.createEmptyBorder(0,15,0,15));
-		label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-		OnClickListener onClickListener = component -> {
-			builder.onClickListener.onClick(label);
-			COMMON_FRAME.dispose();
-		};
-
-		label.setOnClickListener(onClickListener);
-
-		addKeyListener(() -> onClickListener.onClick(label));
-		return label;
+	private FlatLabel createButton(DialogComponentInfo componentInfo){
+		FlatLabel button = new FlatLabel();
+		initComponent(button, componentInfo);
+		button.setBorder(BorderFactory.createEmptyBorder(SCREEN_MANAGER.dip2px(5),SCREEN_MANAGER.dip2px(7),SCREEN_MANAGER.dip2px(5),SCREEN_MANAGER.dip2px(7)));
+		button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		button.setHeightFittedToText();
+		return button;
 	}
+
+    private Component createOKButton(){
+        FlatLabel okButton = createButton(builder.buttonDialogComponentInfo);
+
+        OnClickListener onClickListener = component -> {
+            builder.onClickListener.onClick(okButton);
+            COMMON_FRAME.dispose();
+        };
+
+        okButton.setOnClickListener(onClickListener);
+
+        addKeyListener(() -> onClickListener.onClick(okButton));
+        return okButton;
+    }
 
 	private Container getContainer(){
 		return COMMON_FRAME.getCustomizablePanel();
@@ -152,12 +171,14 @@ public class FlatDialog {
 		return builder.contentInfo.getTextFont();
 	}
 
-	public Font getButtonFont(){
-		return builder.buttonTextInfo.getTextFont();
-	}
+	private Component createUserCustomButton(DialogButtonInfo buttonInfo){
+	    FlatLabel userButton = createButton(buttonInfo);
+	    userButton.setOnClickListener(buttonInfo.getOnClickListener());
+	    return userButton;
+    }
 
-	public Color getButtonTextColor(){
-		return builder.buttonTextInfo.getTextColor();
+	public Font getButtonFont(){
+		return builder.buttonDialogComponentInfo.getTextFont();
 	}
 
 	public String getContent(){
@@ -168,8 +189,8 @@ public class FlatDialog {
 		return builder.dialogBackgroundColor;
 	}
 
-	public Color getButtonBackgroundColor(){
-		return builder.buttonTextInfo.getBackgroundColor();
+	public Color getButtonTextColor(){
+		return builder.buttonDialogComponentInfo.getTextColor();
 	}
 
 	public Point getLocation(){
@@ -206,23 +227,31 @@ public class FlatDialog {
 		}
 	}
 
+	public Color getButtonBackgroundColor(){
+		return builder.buttonDialogComponentInfo.getBackgroundColor();
+	}
+
 	public void show(){
 		COMMON_FRAME.pack();
 		COMMON_FRAME.setLocation(getProperLocation());
 		COMMON_FRAME.setVisible(true);
+		HIDDEN_DIALOG_FOR_MODALITY.setVisible(true);
 	}
 
 	public static class Builder{
-		private TextInfo titleInfo = new TextInfo();
-		private TextInfo contentInfo = new TextInfo();
-		private TextInfo buttonTextInfo = new TextInfo();
+		private DialogComponentInfo titleInfo = new DialogComponentInfo();
+		private DialogComponentInfo contentInfo = new DialogComponentInfo();
+		private DialogComponentInfo buttonDialogComponentInfo = new DialogComponentInfo();
+		private Color buttonAreaBackgroundColor = buttonDialogComponentInfo.getBackgroundColor();
+
+		private List<DialogButtonInfo> dialogButtonInfoList = new ArrayList<>();
 
 		private JPanel upperView = new JPanel(), lowerView = new JPanel();
 
 		private Color dialogBackgroundColor = Color.WHITE;
 
 		private int dialogWidth = FLAT_DIALOG_WIDTH;
-		private float lineSpacing;
+		private float lineSpacing = 0.3f;
 
 		private OnClickListener onClickListener = o -> {};
 
@@ -230,15 +259,15 @@ public class FlatDialog {
 		private FrameLocation frameLocation = FrameLocation.NONE;
 
 		public Builder(){
-			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(20)));
-			contentInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, SCREEN_MANAGER.dip2px(14)));
+			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(18)));
+			contentInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, SCREEN_MANAGER.dip2px(10)));
 
 			upperView.setPreferredSize(new Dimension(0,0));
 			lowerView.setPreferredSize(new Dimension(0,0));
 
-			buttonTextInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(10)));
-			buttonTextInfo.setTextColor(ColorManager.getColorAccent());
-			buttonTextInfo.setText("OK");
+			buttonDialogComponentInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(9)));
+			buttonDialogComponentInfo.setTextColor(ColorManager.getColorAccent());
+			buttonDialogComponentInfo.setText("OK");
 		}
 
 		public Builder setTitle(String title){
@@ -292,22 +321,27 @@ public class FlatDialog {
 		}
 
 		public Builder setButtonText(String text){
-			buttonTextInfo.setText(text);
+			buttonDialogComponentInfo.setText(text);
 			return this;
 		}
 
 		public Builder setButtonTextFont(Font font){
-			buttonTextInfo.setTextFont(font);
+			buttonDialogComponentInfo.setTextFont(font);
 			return this;
 		}
 
 		public Builder setButtonTextColor(Color color){
-			buttonTextInfo.setTextColor(color);
+			buttonDialogComponentInfo.setTextColor(color);
+			return this;
+		}
+
+		public Builder setButtonAreaBackgroundColor(Color color){
+			buttonAreaBackgroundColor = color;
 			return this;
 		}
 
 		public Builder setButtonBackgroundColor(Color color){
-			buttonTextInfo.setBackgroundColor(color);
+			buttonDialogComponentInfo.setBackgroundColor(color);
 			return this;
 		}
 
@@ -315,6 +349,11 @@ public class FlatDialog {
 			dialogBackgroundColor = color;
 			return this;
 		}
+
+		public Builder appendButton(DialogButtonInfo buttonInfo){
+		    dialogButtonInfoList.add(buttonInfo);
+		    return this;
+        }
 
 		public Builder setLineSpacing(float lineSpacing){
 			this.lineSpacing = lineSpacing;

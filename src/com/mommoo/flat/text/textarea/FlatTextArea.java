@@ -173,7 +173,7 @@ private FlatAutoResizeListener flatAutoResizeListener = new FlatAutoResizeListen
 
     @Override
     public void paint(Graphics g) {
-        if (isNeedToFitWidth || !previousDimen.equals(getPreferredSize())){
+        if (!previousDimen.equals(getPreferredSize())){
             isNeedToFitWidth = false;
             previousDimen.setSize(getPreferredSize());
             flatAutoResizeListener.setContentsFitSize();
@@ -189,6 +189,11 @@ private FlatAutoResizeListener flatAutoResizeListener = new FlatAutoResizeListen
 
     public void setHeightFittedToWidth(int preferredWidth){
         flatAutoResizeListener.setContentsFitSize(preferredWidth);
+    }
+
+    public void setHeightFittedToText(){
+        Insets insets = getInsets();
+        flatAutoResizeListener.setContentsFitSize(getFontMetrics(getFont()).stringWidth(getText()) + insets.left + insets.right);
     }
 
 //    public int getFitHeightToWidth(int textAreaWidth){

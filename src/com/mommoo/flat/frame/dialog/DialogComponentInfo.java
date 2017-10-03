@@ -4,7 +4,7 @@ import com.mommoo.util.FontManager;
 
 import java.awt.*;
 
-public class TextInfo {
+public class DialogComponentInfo {
     private String text = "text";
     private Color textColor = Color.BLACK;
     private Color backgroundColor = Color.WHITE;
