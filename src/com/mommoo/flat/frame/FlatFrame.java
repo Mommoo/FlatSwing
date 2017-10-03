@@ -220,6 +220,7 @@ public final class FlatFrame {
 			ScreenManager screenManager = ScreenManager.getInstance();
 			this.COMMON_FRAME.setLocation((screenManager.getWindowWidth() - getSize().width )/2, (screenManager.getWindowHeight() - getSize().height)/2);
 		}
+
 		COMMON_FRAME.setVisible(true);
 	}
 	

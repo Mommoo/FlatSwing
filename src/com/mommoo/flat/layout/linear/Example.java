@@ -6,12 +6,13 @@ import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
+
 public class Example {
 
     private Example(){}
 
     public static void main(String[] args){
-
         FlatFrame frame = new FlatFrame();
         frame.setSize(500,500 + FlatFrame.getTitleBarHeight());
         frame.setTitle("Flat layout test example");

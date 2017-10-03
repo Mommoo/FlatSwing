@@ -60,6 +60,11 @@ public class FlatImagePanel extends FlatPanel {
     }
 
     @Override
+    protected boolean isPaintingOrigin() {
+        return true;
+    }
+
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
 

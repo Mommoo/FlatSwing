@@ -3,9 +3,12 @@ package com.mommoo.flat.layout.linear;
 
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 
+import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
+import java.util.List;
 
-public class LinearLayout implements LayoutManager2 {
+public class LinearLayout implements LayoutManager2, Serializable {
     private static final int GAP = 10;
     private Orientation orientation;
     private LinearSpaceInspector spaceInspector = new LinearSpaceInspector();
@@ -32,36 +35,40 @@ public class LinearLayout implements LayoutManager2 {
 
     @Override
     public Dimension preferredLayoutSize(Container parent) {
-        Dimension dimension = new Dimension(0,0);
+        synchronized (parent.getTreeLock()){
+            Dimension dimension = new Dimension(0,0);
 
-        for (Component component : parent.getComponents()){
+            for (Component component : parent.getComponents()){
 
-            Dimension compDimen = component.getPreferredSize();
+                if (!component.isVisible()) continue;
 
-            if (orientation == Orientation.HORIZONTAL){
-                dimension.width += compDimen.width;
-                dimension.height = Math.max(dimension.height, compDimen.height);
-            } else {
-                dimension.width  = Math.max(dimension.width, compDimen.width);
-                dimension.height += compDimen.height;
+                Dimension compDimen = component.getPreferredSize();
+
+                if (orientation == Orientation.HORIZONTAL){
+                    dimension.width += compDimen.width;
+                    dimension.height = Math.max(dimension.height, compDimen.height);
+                } else {
+                    dimension.width  = Math.max(dimension.width, compDimen.width);
+                    dimension.height += compDimen.height;
+                }
             }
-        }
 
         /* Add padding size */
-        Insets insets = parent.getInsets();
-        dimension.width += insets.left + insets.right;
-        dimension.height += insets.top + insets.bottom;
+            Insets insets = parent.getInsets();
+            dimension.width += insets.left + insets.right;
+            dimension.height += insets.top + insets.bottom;
 
-        int occupiedGapSize = (parent.getComponentCount() - 1) * gap;
+            int occupiedGapSize = (parent.getComponentCount() - 1) * gap;
 
         /* Add gap size */
-        if (orientation == Orientation.HORIZONTAL) {
-            dimension.width += occupiedGapSize;
-        } else {
-            dimension.height += occupiedGapSize;
-        }
+            if (orientation == Orientation.HORIZONTAL) {
+                dimension.width += occupiedGapSize;
+            } else {
+                dimension.height += occupiedGapSize;
+            }
 
-        return dimension;
+            return dimension;
+        }
     }
 
     @Override
@@ -71,22 +78,24 @@ public class LinearLayout implements LayoutManager2 {
 
     @Override
     public Dimension minimumLayoutSize(Container parent) {
-        Dimension dimension = new Dimension(0,0);
-        Insets insets = parent.getInsets();
+        synchronized (parent.getTreeLock()) {
+            Dimension dimension = new Dimension(0,0);
+            Insets insets = parent.getInsets();
 
-        dimension.width = insets.left + insets.right;
-        dimension.height = insets.top + insets.bottom;
-        return dimension;
+            dimension.width = insets.left + insets.right;
+            dimension.height = insets.top + insets.bottom;
+            return dimension;
+        }
     }
 
     @Override
     public float getLayoutAlignmentX(Container target) {
-        return 0;
+        return 0.5f;
     }
 
     @Override
     public float getLayoutAlignmentY(Container target) {
-        return 0;
+        return 0.5f;
     }
 
     @Override
@@ -94,10 +103,10 @@ public class LinearLayout implements LayoutManager2 {
 
     @Override
     public void addLayoutComponent(Component comp, Object constraints) {
-
-        if (!(constraints instanceof LinearConstraints)) return;
-
-        spaceInspector.setLinearConstraints(comp, ((LinearConstraints) constraints).clone());
+        synchronized (comp.getTreeLock()) {
+            if (!(constraints instanceof LinearConstraints)) return;
+            spaceInspector.setLinearConstraints(comp, ((LinearConstraints) constraints).clone());
+        }
     }
 
     @Override
@@ -107,25 +116,34 @@ public class LinearLayout implements LayoutManager2 {
 
     @Override
     public void removeLayoutComponent(Component comp) {
-        spaceInspector.removeComponent(comp);
+        synchronized (comp.getTreeLock()) {
+            spaceInspector.removeComponent(comp);
+        }
     }
 
     @Override
     public void layoutContainer(Container parent) {
-        fixComponentSizeAtOnce(parent);
+        synchronized (parent.getTreeLock()) {
+            fixComponentSizeAtOnce(parent);
 
-        spaceInspector.setData(parent, orientation, gap);
+            spaceInspector.setData(parent, orientation, gap);
 
-        int index = 0;
-        for (Component comp : parent.getComponents()){
-            comp.setBounds(spaceInspector.getProperCompBounds(index++));
+            int index = 0;
+
+            for (Component comp : parent.getComponents()){
+                comp.setBounds(spaceInspector.getProperCompBounds(index++));
+            }
+
         }
     }
 
     private void fixComponentSizeAtOnce(Container container){
-        if (once) return;
 
+        if (once) {
+            return;
+        }
         once = true;
+
         for (Component comp : container.getComponents()){
             comp.setPreferredSize(comp.getPreferredSize());
         }

@@ -42,9 +42,9 @@ public class FlatDialog {
 		container.setBackground(builder.dialogBackgroundColor);
 
 		container.add(createTitleLabel(),   constraints);
-		container.add(builder.upperView,           constraints);
+		container.add(builder.upperView,    constraints);
 		container.add(createContentLabel(), constraints);
-		container.add(builder.lowerView,           constraints);
+		container.add(builder.lowerView,    constraints);
 		container.add(createButtonPanel(),  constraints);
 	}
 	
@@ -75,31 +75,45 @@ public class FlatDialog {
 						"Just use it!")
 				.setDialogWidth(500)
 				.setLocationScreenCenter()
-				.setLineSpacing(1.4f)
 				.build()
 				.show();
-
-		System.out.println(System.getProperty("user.home"));
 	}
 
 	private Component createTitleLabel(){
 		FlatLabel TITLE_LABEL = new FlatLabel();
 		initComponent(TITLE_LABEL, builder.titleInfo);
-		TITLE_LABEL.setPreferredSize(new Dimension(builder.dialogWidth, TITLE_LABEL.getFitHeightToWidth(builder.dialogWidth)));
+		TITLE_LABEL.setHeightFittedToWidth(builder.dialogWidth);
+//		TITLE_LABEL.setPreferredSize(new Dimension(builder.dialogWidth, TITLE_LABEL.getFitHeightToWidth(builder.dialogWidth)));
 		return TITLE_LABEL;
+	}
+
+	private Component createContentLabel(){
+		FlatLabel CONTENT = new FlatLabel();
+		initComponent(CONTENT, builder.contentInfo);
+		CONTENT.setLineSpacing(builder.lineSpacing);
+		CONTENT.setHeightFittedToWidth(builder.dialogWidth);
+//		CONTENT.setPreferredSize(new Dimension(builder.dialogWidth, CONTENT.getFitHeightToWidth(builder.dialogWidth)));
+		return CONTENT;
 	}
 
 	private Component createButtonPanel(){
 		JPanel BTN_PARENT_PANEL = new JPanel();
+		BTN_PARENT_PANEL.setOpaque(true);
 		BTN_PARENT_PANEL.setBackground(builder.contentInfo.getBackgroundColor());
 		BTN_PARENT_PANEL.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		BTN_PARENT_PANEL.setBackground(Color.RED);
 		BTN_PARENT_PANEL.add(createButton());
 
 		return BTN_PARENT_PANEL;
 	}
 
 	private Component createButton(){
-		FlatLabel label = new FlatLabel();
+		FlatLabel label = new FlatLabel(){
+			@Override
+			public String toString() {
+				return "BUTTON";
+			}
+		};
 		initComponent(label, builder.buttonTextInfo);
 		label.setBorder(BorderFactory.createEmptyBorder(0,15,0,15));
 		label.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -192,14 +206,6 @@ public class FlatDialog {
 		}
 	}
 
-	private Component createContentLabel(){
-		FlatLabel CONTENT = new FlatLabel();
-		initComponent(CONTENT, builder.contentInfo);
-		CONTENT.setLineSpacing(builder.lineSpacing);
-		CONTENT.setPreferredSize(new Dimension(builder.dialogWidth, CONTENT.getFitHeightToWidth(builder.dialogWidth)));
-		return CONTENT;
-	}
-
 	public void show(){
 		COMMON_FRAME.pack();
 		COMMON_FRAME.setLocation(getProperLocation());
@@ -224,13 +230,13 @@ public class FlatDialog {
 		private FrameLocation frameLocation = FrameLocation.NONE;
 
 		public Builder(){
-			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, 44));
-			contentInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, 20));
+			titleInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(20)));
+			contentInfo.setTextFont(FontManager.getNanumGothicFont(Font.PLAIN, SCREEN_MANAGER.dip2px(14)));
 
 			upperView.setPreferredSize(new Dimension(0,0));
 			lowerView.setPreferredSize(new Dimension(0,0));
 
-			buttonTextInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, 18));
+			buttonTextInfo.setTextFont(FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(10)));
 			buttonTextInfo.setTextColor(ColorManager.getColorAccent());
 			buttonTextInfo.setText("OK");
 		}

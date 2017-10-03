@@ -4,9 +4,15 @@ import javax.swing.text.*;
 
 class FlatWrapEditorKit extends StyledEditorKit {
     private ViewFactory defaultFactory = new WrapColumnFactory();
+    boolean isNeedToCentered;
+    private FlatAutoResizeListener flatAutoResizeListener;
 
     public ViewFactory getViewFactory() {
         return defaultFactory;
+    }
+
+    FlatWrapEditorKit(FlatAutoResizeListener flatAutoResizeListener){
+        this.flatAutoResizeListener = flatAutoResizeListener;
     }
 
     private class WrapColumnFactory implements ViewFactory {
@@ -18,7 +24,7 @@ class FlatWrapEditorKit extends StyledEditorKit {
                 } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
                     return new ParagraphView(elem);
                 } else if (kind.equals(AbstractDocument.SectionElementName)) {
-                    return new BoxView(elem, View.Y_AXIS);
+                    return isNeedToCentered ? new CenteredBoxView(elem, View.Y_AXIS) : new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals(StyleConstants.ComponentElementName)) {
                     return new ComponentView(elem);
                 } else if (kind.equals(StyleConstants.IconElementName)) {
@@ -72,6 +78,24 @@ class FlatWrapEditorKit extends StyledEditorKit {
                 default:
                     throw new IllegalArgumentException("Invalid axis: " + axis);
             }
+        }
+    }
+
+    private class CenteredBoxView extends BoxView {
+        private  CenteredBoxView(Element elem, int axis) {
+            super(elem,axis);
+        }
+        protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
+
+            super.layoutMajorAxis(targetSpan, axis, offsets, spans);
+
+            int textBlockHeight = flatAutoResizeListener.getFittedHeight(flatAutoResizeListener.getLineCount());
+            int offset = (getContainer().getHeight() - textBlockHeight) / 2;
+
+            for (int i = 0; i < offsets.length; i++) {
+                offsets[i] += offset;
+            }
+
         }
     }
 }

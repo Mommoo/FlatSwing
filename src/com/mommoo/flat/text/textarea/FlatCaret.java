@@ -47,9 +47,4 @@ class FlatCaret extends DefaultCaret{
         g.setColor(comp.getCaretColor());
         g.fillRect(r.x -( cursorWidth - 1), r.y, cursorWidth, r.height);
     }
-
-    @Override
-    public String toString() {
-        return "내꺼야";
-    }
 }

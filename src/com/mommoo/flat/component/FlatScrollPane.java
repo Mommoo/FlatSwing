@@ -6,17 +6,14 @@ import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.synth.SynthDesktopIconUI;
 import java.awt.*;
-import java.awt.geom.Path2D;
-import java.awt.geom.RoundRectangle2D;
 
 /**
  * Created by mommoo on 2017-03-11.
  */
 public class FlatScrollPane extends JScrollPane {
-    private final FlatScrollBarUI VERTICAL_SCROLL_BAR = new FlatScrollBarUI();
-    private final FlatScrollBarUI HORIZONTAL_SCROLL_BAR = new FlatScrollBarUI();
+    private final FlatScrollBarUI VERTICAL_SCROLL_BAR_UI = new FlatScrollBarUI();
+    private final FlatScrollBarUI HORIZONTAL_SCROLL_BAR_UI = new FlatScrollBarUI();
     private Color themeColor = ColorManager.getColorAccent();
 
     public FlatScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
@@ -40,8 +37,8 @@ public class FlatScrollPane extends JScrollPane {
     }
 
     private void init(){
-        getVerticalScrollBar().setUI(VERTICAL_SCROLL_BAR);
-        getHorizontalScrollBar().setUI(HORIZONTAL_SCROLL_BAR);
+        getVerticalScrollBar().setUI(VERTICAL_SCROLL_BAR_UI);
+        getHorizontalScrollBar().setUI(HORIZONTAL_SCROLL_BAR_UI);
         getVerticalScrollBar().setPreferredSize(new Dimension(10,0));
         getHorizontalScrollBar().setPreferredSize(new Dimension(10,0));
     }
@@ -52,6 +49,24 @@ public class FlatScrollPane extends JScrollPane {
 
     public Color getThemeColor(){
         return this.themeColor;
+    }
+
+    public Color getVerticalScrollTrackColor(){
+        return getVerticalScrollBar().getBackground();
+    }
+
+    public void setVerticalScrollTrackColor(Color trackColor){
+        getVerticalScrollBar().setOpaque(true);
+        getVerticalScrollBar().setBackground(trackColor);
+    }
+
+    public Color getHorizontalScrollTrackColor(){
+        return getHorizontalScrollBar().getBackground();
+    }
+
+    public void setHorizontalScrollTrackColor(Color trackColor){
+        getHorizontalScrollBar().setOpaque(true);
+        getHorizontalScrollBar().setBackground(trackColor);
     }
 
 

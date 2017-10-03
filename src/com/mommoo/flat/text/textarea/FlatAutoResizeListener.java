@@ -50,33 +50,37 @@ class FlatAutoResizeListener{
         return -1;
     }
 
-    void setHeightFitToWidth(){
+    void setContentsFitSize(){
+        Insets insets = flatTextArea.getInsets();
+        int parentAvailableWidth = flatTextArea.getParent().getWidth() - insets.left - insets.right;
+        setContentsFitSize(parentAvailableWidth);
+    }
+
+    void setContentsFitSize(int availableWidth){
         this.lineCount = 1;
         Font font = flatTextArea.getFont();
         FontMetrics fontMetrics = flatTextArea.getFontMetrics(font);
         Insets insets = flatTextArea.getInsets();
-        int fontSize = font.getSize();
+
         String text = flatTextArea.getText();
 
         int stringWidth = fontMetrics.stringWidth(text);
-
-        int width = flatTextArea.getWidth() - insets.left - insets.right;
+        int properWidth = Math.min(stringWidth, availableWidth);
         int substringBeginIndex = 0;
         int substringEndIndex = 0;
 
-        int lineHeight = (int)(fontMetrics.getHeight() * (1.0f + flatTextArea.getLineSpacing()));
-
-        while (stringWidth > width){
-            substringEndIndex = width/fontSize;
+        while (stringWidth > properWidth){
+            //substringEndIndex = width/fontSize;
+            substringEndIndex = 1;
 
             while (true){
                 String parsedText = text.substring(substringBeginIndex, substringBeginIndex + substringEndIndex);
 
-                if (width > fontMetrics.stringWidth(parsedText)){
+                if (properWidth > fontMetrics.stringWidth(parsedText)){
                     substringEndIndex++;
                 }
 
-                else if (width <= fontMetrics.stringWidth(parsedText)){
+                else if (properWidth <= fontMetrics.stringWidth(parsedText)){
 
                     while(true) {
                         parsedText = text.substring(substringBeginIndex, substringBeginIndex + (--substringEndIndex));
@@ -87,7 +91,7 @@ class FlatAutoResizeListener{
                             break;
                         }
 
-                        if (width > fontMetrics.stringWidth(parsedText)) {
+                        if (properWidth > fontMetrics.stringWidth(parsedText)) {
                             break;
                         }
                     }
@@ -107,17 +111,25 @@ class FlatAutoResizeListener{
 
         }
 
-        if (stringWidth <= width){
+        if (stringWidth <= properWidth){
             lineCount += getCountContainNewLine(text.substring(substringBeginIndex));
         }
 
-        int firstLineHeight = fontMetrics.getHeight();
-        int height = firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom;
-
-        flatTextArea.setPreferredSize(new Dimension(flatTextArea.getWidth(), height));
+        flatTextArea.setPreferredSize(new Dimension(properWidth + insets.left + insets.right, getFittedHeight(lineCount)));
     }
 
     int getLineCount(){
         return lineCount;
+    }
+
+    int getFittedHeight(int lineCount){
+        Insets insets = flatTextArea.getInsets();
+
+        FontMetrics fontMetrics = flatTextArea.getFontMetrics(flatTextArea.getFont());
+
+        int lineHeight = (int)(fontMetrics.getHeight() * (1.0f + flatTextArea.getLineSpacing()));
+        int firstLineHeight = fontMetrics.getHeight();
+
+        return firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom;
     }
 }

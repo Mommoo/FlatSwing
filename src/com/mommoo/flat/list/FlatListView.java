@@ -119,6 +119,23 @@ public class FlatListView<T extends Component> {
         SCROLL_PANE.setThemeColor(color);
     }
 
+    public Color getBackgroundColor(){
+        return this.SCROLL_PANE.getViewport().getBackground();
+    }
+
+    public void setBackgroundColor(Color backgroundColor){
+        this.SCROLL_PANE.getViewport().setOpaque(true);
+        this.SCROLL_PANE.getViewport().setBackground(backgroundColor);
+    }
+
+    public Color getScrollTrackColor(){
+        return this.SCROLL_PANE.getVerticalScrollTrackColor();
+    }
+
+    public void setScrollTrackColor(Color trackColor){
+        this.SCROLL_PANE.setVerticalScrollTrackColor(trackColor);
+    }
+
     public int getItemSize() {
         return compList.size();
     }
