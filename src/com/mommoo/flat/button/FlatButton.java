@@ -20,7 +20,7 @@ public class FlatButton extends JLabel implements MouseListener{
 	private Color doubleDarkenColor = darkenColor.darker();
 	
 	private boolean isOutLine; 
-	protected OnClickListener onClickListener;
+	protected OnClickListener onClickListener = comp -> {};
 	protected boolean isMouseExited,isMouseEntered,isMousePressed;
 	
 	public FlatButton(){
@@ -128,15 +128,17 @@ public class FlatButton extends JLabel implements MouseListener{
 		setBackground(doubleDarkenColor);
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		isMousePressed = false;
-		setBackground(themeColor);
-		repaint();
-		if (!isMouseExited){
-			if(onClickListener != null) onClickListener.onClick(this);
-		}
-		
+	public static void main(String[] args){
+		FlatButton flatButton = new FlatButton("TEST");
+		flatButton.setOnClickListener(comp->{System.out.println("sdfs");});
+
+		FlatFrame flatFrame = new FlatFrame();
+		flatFrame.setTitle("FlatButton test");
+		flatFrame.setSize(400,200);
+		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+		flatFrame.getContainer().add(flatButton);
+		flatFrame.setLocationOnScreenCenter();
+		flatFrame.show();
 	}
 
 	@Override
@@ -156,15 +158,13 @@ public class FlatButton extends JLabel implements MouseListener{
 		repaint();
 	}
 
-	public static void main(String[] args){
-		FlatButton flatButton = new FlatButton("TEST");
-
-		FlatFrame flatFrame = new FlatFrame();
-		flatFrame.setTitle("FlatButton test");
-		flatFrame.setSize(400,200);
-		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-		flatFrame.getContainer().add(flatButton);
-		flatFrame.setLocationOnScreenCenter();
-		flatFrame.show();
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		isMousePressed = false;
+		setBackground(themeColor);
+		repaint();
+		if (!isMouseExited){
+			if(isEnabled()) onClickListener.onClick(this);
+		}
 	}
 }
