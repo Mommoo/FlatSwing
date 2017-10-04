@@ -2,7 +2,9 @@ package com.mommoo.flat.text.textarea;
 
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 class FlatCaret extends DefaultCaret{
     private static final int BLINK_RATE = 500;
@@ -45,6 +47,6 @@ class FlatCaret extends DefaultCaret{
         // set cursorHeight;
         r.height = cacheMetrics.getHeight();
         g.setColor(comp.getCaretColor());
-        g.fillRect(r.x -( cursorWidth - 1), r.y, cursorWidth, r.height);
+        g.fillRect(r.x , r.y, cursorWidth, r.height);
     }
 }

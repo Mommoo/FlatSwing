@@ -1,135 +1,196 @@
 package com.mommoo.flat.text.textarea;
 
-import com.mommoo.flat.text.textarea.FlatTextArea;
-
+import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.util.ArrayList;
 
 class FlatAutoResizeListener{
     private static final String NEW_LINE = System.getProperty("line.separator");
+    private final StringCalculator STRING_CALCULATOR = new StringCalculator();
     private final FlatTextArea flatTextArea;
-    private int lineCount = 1;
+    private StringViewModel stringViewModel = new StringViewModel(0,0,1);
 
     FlatAutoResizeListener(FlatTextArea flatTextArea){
         this.flatTextArea = flatTextArea;
     }
 
-    private char[] createCharArray(String text){
-        int size = text.length();
-        char[] charArray = new char[size];
-        text.getChars(0, size, charArray, 0);
-
-        return charArray;
-    }
-
-    private boolean isContainNewLine(char c){
-        return NEW_LINE.contains(Character.toString(c));
-    }
-
-    private int getCountContainNewLine(String text){
-        int cnt = 0;
-
-        char[] charArray = createCharArray(text);
-
-        for (char c : charArray){
-            if(isContainNewLine(c)) cnt++;
-        }
-
-        return cnt;
-    }
-
-    private int getIndexOfNewLine(String text){
-        int index = 0;
-
-        char[] charArray = createCharArray(text);
-
-        for (char c : charArray){
-            if(isContainNewLine(c)) return index;
-            index++;
-        }
-
-        return -1;
-    }
-
     void setContentsFitSize(){
+        Insets parentInsets = flatTextArea.getParent().getInsets();
         Insets insets = flatTextArea.getInsets();
-        int parentAvailableWidth = flatTextArea.getParent().getWidth() - insets.left - insets.right;
+        int parentAvailableWidth = flatTextArea.getParent().getWidth() - insets.left - insets.right - parentInsets.left - parentInsets.right;
         setContentsFitSize(parentAvailableWidth);
     }
 
+    /**
+     * This method is perform that after get parameter of available width, calculate proper width of component
+     *
+     * @Case_1
+     *   If string length smaller than available width , proper component width is width of string
+     *   But, if string contains new line character, we have to calculate line count
+     *
+     * @Case_2
+     *   If string length bigger than available width , we need to width of line calculated available string width.
+     *   After get line count, through it, we have to calculate proper height
+     *
+     * @param availableWidth capacity of space we can use
+     */
     void setContentsFitSize(int availableWidth){
-        this.lineCount = 1;
-        Font font = flatTextArea.getFont();
-        FontMetrics fontMetrics = flatTextArea.getFontMetrics(font);
-        Insets insets = flatTextArea.getInsets();
+        stringViewModel = STRING_CALCULATOR.getStringViewModel(availableWidth, flatTextArea.getText());
+        flatTextArea.setPreferredSize(getPreferredSize());
+    }
 
-        String text = flatTextArea.getText();
-
-        int stringWidth = fontMetrics.stringWidth(text);
-        int properWidth = Math.min(stringWidth, availableWidth);
-        int substringBeginIndex = 0;
-        int substringEndIndex = 0;
-
-        while (stringWidth > properWidth){
-            //substringEndIndex = width/fontSize;
-            substringEndIndex = 1;
-
-            while (true){
-                String parsedText = text.substring(substringBeginIndex, substringBeginIndex + substringEndIndex);
-
-                if (properWidth > fontMetrics.stringWidth(parsedText)){
-                    substringEndIndex++;
-                }
-
-                else if (properWidth <= fontMetrics.stringWidth(parsedText)){
-
-                    while(true) {
-                        parsedText = text.substring(substringBeginIndex, substringBeginIndex + (--substringEndIndex));
-                        int indexOfNewLine = getIndexOfNewLine(parsedText);
-
-                        if (indexOfNewLine != -1){
-                            substringEndIndex = indexOfNewLine + 1;
-                            break;
-                        }
-
-                        if (properWidth > fontMetrics.stringWidth(parsedText)) {
-                            break;
-                        }
-                    }
-
-                    if (substringEndIndex == 0) substringEndIndex = 1;
-
-                    substringEndIndex += substringBeginIndex;
-                    break;
-                }
-            }
-
-            stringWidth -= fontMetrics.stringWidth(text.substring(substringBeginIndex, substringEndIndex));
-
-            substringBeginIndex = substringEndIndex;
-
-            lineCount++;
-
-        }
-
-        if (stringWidth <= properWidth){
-            lineCount += getCountContainNewLine(text.substring(substringBeginIndex));
-        }
-
-        flatTextArea.setPreferredSize(new Dimension(properWidth + insets.left + insets.right, getFittedHeight(lineCount)));
+    Dimension getPreferredSize(){
+//        System.out.println(stringViewModel);
+        return new Dimension(stringViewModel.getStringWidth(), stringViewModel.getStringHeight());
+//        return getDimenContainedPadding(stringViewModel.getStringWidth(), stringViewModel.getStringHeight());
     }
 
     int getLineCount(){
-        return lineCount;
+        return stringViewModel.getLineCount();
     }
 
-    int getFittedHeight(int lineCount){
+    private FontMetrics getFontMetrics(){
+        return flatTextArea.getFontMetrics(flatTextArea.getFont());
+    }
+
+    private int measureWidth(String string){
+        return getFontMetrics().stringWidth(string);
+    }
+
+    private int getFontHeight(){
+        return getFontMetrics().getHeight();
+//        return flatTextArea.getFont().getSize();
+    }
+
+    private int getLineHeight(){
+        return (int)(getFontHeight() * flatTextArea.getLineSpacing());
+    }
+
+    private Dimension getDimenContainedPadding(int width, int height){
         Insets insets = flatTextArea.getInsets();
+        return new Dimension(width + insets.left + insets.right, height + insets.top + insets.bottom);
+    }
 
-        FontMetrics fontMetrics = flatTextArea.getFontMetrics(flatTextArea.getFont());
+    private class StringCalculator{
 
-        int lineHeight = (int)(fontMetrics.getHeight() * (1.0f + flatTextArea.getLineSpacing()));
-        int firstLineHeight = fontMetrics.getHeight();
+        /**
+         * @param string string contains different character of new-line for each of the OS
+         * @return string replaced linux formatting character of new-line
+         */
 
-        return firstLineHeight + lineHeight * (lineCount-1) + insets.top + insets.bottom;
+        private String convertNewLineFormatToLinuxFormat(String string){
+            return string.replaceAll(NEW_LINE,"\n");
+        }
+
+        private int getStringViewHeight(int lineCount){
+            return ( getFontHeight() * lineCount ) + ( getLineHeight() * (lineCount - 1) );
+        }
+
+        private StringViewModel createViewModelContainedPadding(int width, int height, int lineCount){
+            Dimension dimension = getDimenContainedPadding(width, height);
+            return new StringViewModel(dimension.width, dimension.height, lineCount);
+//            return new StringViewModel(width, height, lineCount);
+        }
+
+        private int getNewLineCount(String string){
+            int newLineCount = 0;
+
+            for (char c : string.toCharArray()){
+                if (c == '\n') newLineCount++;
+            }
+
+            return newLineCount;
+        }
+
+        private StringViewModel getStringViewModel(int maxWidth, String string){
+            string = convertNewLineFormatToLinuxFormat(string);
+            String[] splitNewLineArray = string.split("\n");
+
+            int stringWidth = 0;
+            int lineCount = 1 + getNewLineCount(string);
+            int stringHeight = getStringViewHeight(lineCount);
+
+            if (string.length() == 0) {
+                return createViewModelContainedPadding(0,stringHeight,1);
+            }
+
+
+            if (maxWidth == -1 || isStringSmallerThanWidth(maxWidth, string)){
+                int targetWidth = 0;
+
+                for (String line : splitNewLineArray){
+                    targetWidth = Math.max(measureWidth(line), targetWidth);
+                }
+
+                return createViewModelContainedPadding(targetWidth, stringHeight, lineCount);
+            }
+
+            if (isOneLetterWidthBiggerThanWidth(maxWidth, string)){
+                lineCount = string.length() - 1;
+                return createViewModelContainedPadding(maxWidth, getStringViewHeight(lineCount), string.length() - 1);
+            }
+
+            int position = 0;
+            ArrayList<Integer> list = new ArrayList<>();
+            for (String line : splitNewLineArray){
+
+                int newLineIndex = getNeedToMoveNewLineIndex(maxWidth,line);
+                int beginIndex = newLineIndex;
+
+                if (newLineIndex == -1) stringWidth = Math.max(stringWidth, measureWidth(line));
+                else stringWidth = maxWidth;
+
+                while (newLineIndex != -1){
+                    lineCount++;
+                    list.add(position + beginIndex);
+                    newLineIndex =  getNeedToMoveNewLineIndex(maxWidth, line.substring(beginIndex, line.length()));
+                    beginIndex += newLineIndex;
+                }
+
+                position += line.length() + 1;
+            }
+            return createViewModelContainedPadding(stringWidth, getStringViewHeight(lineCount), lineCount);
+        }
+
+        private boolean isStringSmallerThanWidth(int width, String string){
+            return measureWidth(string) <= width;
+        }
+
+        private boolean isOneLetterWidthBiggerThanWidth(int width, String string){
+            String oneLetter = string.substring(0,1);
+            return measureWidth(oneLetter) >= width;
+        }
+
+        /**
+         *  Don't put string contained new-line character
+         */
+        private int getNeedToMoveNewLineIndex(int maxWidth, String originStr){
+            int beginIndex = 0;
+            int endIndex = originStr.length();
+
+            if (measureWidth(originStr) <= maxWidth){
+                return -1;
+            }
+
+            while(beginIndex < endIndex){
+                int findIndex = beginIndex + ( endIndex - beginIndex ) / 2;
+
+                if (measureWidth(originStr.substring(0, findIndex)) <= maxWidth && findIndex + 1 <= endIndex){
+
+                    if (measureWidth(originStr.substring(0, findIndex + 1)) > maxWidth) {
+
+                        return findIndex ;
+
+                    } else {
+                        beginIndex = findIndex;
+                    }
+
+                } else {
+                    endIndex = findIndex;
+                }
+            }
+
+            return -1;
+        }
     }
 }
