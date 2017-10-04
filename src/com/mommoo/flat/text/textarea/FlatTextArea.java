@@ -57,7 +57,7 @@ public class FlatTextArea extends JTextPane {
 
             area.setCaretColor(Color.PINK);
             area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-            frame.getContainer().setLayout(new FlowLayout());
+//            frame.getContainer().setLayout(new FlowLayout());
 
             frame.getContainer().add(area);
 
@@ -95,7 +95,7 @@ public class FlatTextArea extends JTextPane {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if (isBeforeDrawing()){
+                if (!isBeforeDrawing()){
                     autoContentsFitSize();
                 }
             }
@@ -106,7 +106,7 @@ public class FlatTextArea extends JTextPane {
     private Dimension autoContentsFitSize(){
 
         if (this.preferredWidth != -1){
-            flatAutoResizeListener.setContentsFitSize(preferredWidth);
+            flatAutoResizeListener.setContentsFitSize(preferredWidth, true);
         }else {
             flatAutoResizeListener.setContentsFitSize();
         }
@@ -117,11 +117,8 @@ public class FlatTextArea extends JTextPane {
     @Override
     public void paint(Graphics g) {
         Dimension preferredSize = getPreferredSize();
-        if (!previousDimen.equals(preferredSize) || preferredWidth != preferredSize.width) {
-
-            preferredSize = autoContentsFitSize();
-            preferredWidth = preferredSize.width;
-            previousDimen.setSize(preferredSize);
+        if (!previousDimen.equals(preferredSize) || preferredWidth != -1) {
+            previousDimen.setSize(autoContentsFitSize());
         }
         super.paint(g);
     }
@@ -209,13 +206,16 @@ public class FlatTextArea extends JTextPane {
         }
     }
 
-    public void setHeightFittedToText() {
-        this.preferredWidth = getFontMetrics(getFont()).stringWidth(getText());
-
-        if (!isBeforeDrawing()){
-            autoContentsFitSize();
-        }
-    }
+//    public void setHeightFittedToText() {
+//        this.preferredWidth = getFontMetrics(getFont()).stringWidth(getText());
+//        if (isBeforeDrawing()){
+//            flatAutoResizeListener.setContentsFitSize()
+//        }
+//
+//        if (!isBeforeDrawing()){
+//            autoContentsFitSize();
+//        }
+//    }
 
     public void setVerticalCenteredTextAlignment() {
         if (!(getEditorKit() instanceof FlatWrapEditorKit)) {

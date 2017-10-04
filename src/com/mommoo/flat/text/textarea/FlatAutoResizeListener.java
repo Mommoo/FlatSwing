@@ -22,7 +22,7 @@ class FlatAutoResizeListener {
             parentAvailableWidth = flatTextArea.getParent().getWidth() - insets.left - insets.right - parentInsets.left - parentInsets.right;
 
         }
-        setContentsFitSize(parentAvailableWidth);
+        setContentsFitSize(parentAvailableWidth, false);
     }
 
     /**
@@ -34,9 +34,9 @@ class FlatAutoResizeListener {
      * @Case_2 If string length bigger than available width , we need to width of line calculated available string width.
      * After get line count, through it, we have to calculate proper height
      */
-    void setContentsFitSize(int availableWidth) {
+    void setContentsFitSize(int availableWidth, boolean isFixWidth) {
 //        System.out.println(availableWidth);
-        stringViewModel = STRING_CALCULATOR.getStringViewModel(availableWidth, flatTextArea.getText());
+        stringViewModel = STRING_CALCULATOR.getStringViewModel(availableWidth, flatTextArea.getText(), isFixWidth);
 //        System.out.println(stringViewModel);
         flatTextArea.setPreferredSize(getPreferredSize());
     }
@@ -102,7 +102,7 @@ class FlatAutoResizeListener {
             return newLineCount;
         }
 
-        private StringViewModel getStringViewModel(int maxWidth, String string) {
+        private StringViewModel getStringViewModel(int maxWidth, String string, boolean isFixWidth) {
             string = convertNewLineFormatToLinuxFormat(string);
             String[] splitNewLineArray = string.split("\n");
 
@@ -111,22 +111,23 @@ class FlatAutoResizeListener {
             int stringHeight = getStringViewHeight(lineCount);
 
             if (string.length() == 0) {
+
                 return createViewModelContainedPadding(0, stringHeight, 1);
             }
 
 
-            if (maxWidth <= 0) {
+            if (maxWidth <= 0 || isStringSmallerThanWidth(maxWidth, string)) {
                 int targetWidth = 0;
 
-                for (String line : splitNewLineArray) {
-                    targetWidth = Math.max(measureWidth(line), targetWidth);
+                if (isFixWidth){
+                    targetWidth = maxWidth;
+                } else {
+                    for (String line : splitNewLineArray) {
+                        targetWidth = Math.max(measureWidth(line), targetWidth);
+                    }
                 }
 
                 return createViewModelContainedPadding(targetWidth, stringHeight, lineCount);
-            }
-
-            if (isStringSmallerThanWidth(maxWidth, string)){
-                return createViewModelContainedPadding(maxWidth, stringHeight, lineCount);
             }
 
             if (isOneLetterWidthBiggerThanWidth(maxWidth, string)) {

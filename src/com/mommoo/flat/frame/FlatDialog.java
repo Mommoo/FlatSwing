@@ -131,7 +131,7 @@ public class FlatDialog {
 		initComponent(button, componentInfo);
 		button.setBorder(BorderFactory.createEmptyBorder(SCREEN_MANAGER.dip2px(5),SCREEN_MANAGER.dip2px(7),SCREEN_MANAGER.dip2px(5),SCREEN_MANAGER.dip2px(7)));
 		button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		button.setHeightFittedToText();
+//		button.setHeightFittedToText();
 		return button;
 	}
 
