@@ -115,7 +115,7 @@ class FlatAutoResizeListener {
             }
 
 
-            if (maxWidth <= 0 || isStringSmallerThanWidth(maxWidth, string)) {
+            if (maxWidth <= 0) {
                 int targetWidth = 0;
 
                 for (String line : splitNewLineArray) {
@@ -123,6 +123,10 @@ class FlatAutoResizeListener {
                 }
 
                 return createViewModelContainedPadding(targetWidth, stringHeight, lineCount);
+            }
+
+            if (isStringSmallerThanWidth(maxWidth, string)){
+                return createViewModelContainedPadding(maxWidth, stringHeight, lineCount);
             }
 
             if (isOneLetterWidthBiggerThanWidth(maxWidth, string)) {
