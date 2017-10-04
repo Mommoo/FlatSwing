@@ -19,7 +19,6 @@ public class FlatTextArea extends JTextPane {
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
 
     private ComputableDimension previousDimen = new ComputableDimension();
-    private boolean isNeedToFitWidth = true;
     private MouseClickAdapter mouseClickAdapter;
 
     public FlatTextArea() {
@@ -103,7 +102,6 @@ public class FlatTextArea extends JTextPane {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-//                System.out.println("insert");
                 changedUpdate(e);
             }
 
@@ -114,7 +112,7 @@ public class FlatTextArea extends JTextPane {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if (getWidth() != 0) {
+                if (getWidth() != 0){
                     flatAutoResizeListener.setContentsFitSize();
                 }
             }
@@ -127,6 +125,23 @@ public class FlatTextArea extends JTextPane {
         }
 
         ((FlatWrapEditorKit) getEditorKit()).isNeedToCentered = true;
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        if (!previousDimen.equals(getPreferredSize())) {
+            previousDimen.setSize(getPreferredSize());
+            flatAutoResizeListener.setContentsFitSize();
+        }
+        super.paint(g);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        if (getWidth() == 0){
+            flatAutoResizeListener.setContentsFitSize();
+        }
+        return super.getPreferredSize();
     }
 
     @Override
@@ -180,21 +195,6 @@ public class FlatTextArea extends JTextPane {
         if (getCaret() instanceof FlatCaret) {
             ((FlatCaret) getCaret()).setCursorWidth(cursorWidth);
         }
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        if (!previousDimen.equals(getPreferredSize())) {
-            isNeedToFitWidth = false;
-            previousDimen.setSize(getPreferredSize());
-            flatAutoResizeListener.setContentsFitSize();
-        }
-        super.paint(g);
-    }
-
-    public Dimension getTextFittedSize(){
-        flatAutoResizeListener.setContentsFitSize();
-        return flatAutoResizeListener.getPreferredSize();
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {

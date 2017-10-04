@@ -4,9 +4,9 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-class CompIndexList{
-    private ArrayList<Component> compList = new ArrayList<>();
-    private Map<Component, Integer> indexMapper = new HashMap<>();
+class CompIndexList<T extends Component>{
+    private ArrayList<T> compList = new ArrayList<>();
+    private Map<T, Integer> indexMapper = new HashMap<>();
 
     private void pushOneByOne(int index){
         for (int i = index ,size = getSize(); i < size; i++){
@@ -14,18 +14,18 @@ class CompIndexList{
         }
     }
 
-    void addComp(Component comp){
+    void addComp(T comp){
         compList.add(comp);
         indexMapper.put(comp, getSize() - 1);
     }
 
-    void addComp(Component comp, int index){
+    void addComp(T comp, int index){
         compList.add(index, comp);
         indexMapper.put(comp,getSize()-1);
         pushOneByOne(index);
     }
 
-    void addAllComp(List<Component> compList){
+    void addAllComp(List<T> compList){
         compList.forEach(this::addComp);
     }
 
@@ -36,18 +36,18 @@ class CompIndexList{
     }
 
     void removeAll(){
-        for (Component component : compList){
+        for (T component : compList){
             indexMapper.remove(component);
         }
 
         compList.clear();
     }
 
-    int getIndex(Component comp){
+    int getIndex(T comp){
         return indexMapper.get(comp);
     }
 
-    Component peek(int index){
+    T peek(int index){
         return compList.get(index);
     }
 
@@ -55,7 +55,7 @@ class CompIndexList{
         return compList.size();
     }
 
-    List<Component> getList(){
+    List<T> getList(){
         return Collections.unmodifiableList(compList);
     }
 }

@@ -25,6 +25,7 @@ public class FlatListView<T extends Component> {
         addItems(itemList);
     }
 
+    @SafeVarargs
     public FlatListView(T... items){
         addItems(items);
     }
@@ -149,7 +150,7 @@ public class FlatListView<T extends Component> {
         endIndex = Math.max(beginIndex, endIndex);
 
         if (isSingleSelectionMode()) {
-            endIndex = startIndex+1;
+            endIndex = startIndex;
         }
 
         getViewPortView().select(startIndex, endIndex);

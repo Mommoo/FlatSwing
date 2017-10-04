@@ -52,7 +52,7 @@ class FlatWrapEditorKit extends StyledEditorKit {
 
                     return this;
                 }
-                System.out.println("p1 : " + p1);
+
                 return createFragment(p0, p1);
             }
             return this;
@@ -63,7 +63,6 @@ class FlatWrapEditorKit extends StyledEditorKit {
                 checkPainter();
                 int p0 = getStartOffset();
                 int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
-
 
                 if (p1 == p0) {
                     return View.BadBreakWeight;

@@ -8,6 +8,7 @@ import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.list.listener.FlatScrollListener;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
+import com.mommoo.flat.list.listener.SelectionModel;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
@@ -16,17 +17,21 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
-class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable {
+class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable , SelectionModel {
     private static final long eventMask = AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_WHEEL_EVENT_MASK | AWTEvent.COMPONENT_EVENT_MASK;
     private static final int scrollableUnit = 30;
 
-    private final CompIndexList compIndexList = new CompIndexList();
+    private final CompIndexList<T> compIndexList = new CompIndexList<>();
+    private final SelectionRange SELECTION_RANGE = new SelectionRange(this);
+
     private final Rectangle selectionRect = new Rectangle();
-    private final int[] selectionFromToIndex = {-1, -1};
+
     private FlatScrollListener scrollListener = scrollSensitivity -> {};
     private OnSelectionListener<T> onSelectionListener = (beginIndex, endIndex, selectionList) -> {};
     private OnDragListener<T> onDragListener = (beginIndex, endIndex, selectionList) -> {};
+
     private List<MouseListener> mouseListenerList = new ArrayList<>();
     private List<MouseMotionListener> mouseMotionListenerList = new ArrayList<>();
     private Color selectionColor = ColorManager.getColorAccent();
@@ -36,7 +41,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     private boolean trace;
 
     private int dividerThick;
-
 
     FlatViewPort(){
         getToolkit().addAWTEventListener(new ViewPortAWTEventListener(), eventMask);
@@ -62,21 +66,21 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         graphics2D.fill(selectionRect);
     }
 
-    void addComponent(Component component){
-        LinearConstraints constraints = new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT);
-        add(component, constraints);
+    void addComponent(T component){
+        add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT));
         compIndexList.addComp(component);
     }
 
-    void addComponent(Component component, int index){
-        LinearConstraints constraints = new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT);
-        add(component, constraints, index);
+    void addComponent(T component, int index){
+        add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT), index);
         compIndexList.addComp(component, index);
     }
 
     void removeComponent(int index){
+        SELECTION_RANGE.inspectValidSelection(index);
         remove(index);
         compIndexList.removeComp(index);
+        paintSelection();
     }
 
     void setDivider(Color color, int thick){
@@ -107,7 +111,13 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         this.selectionColor = color;
     }
 
-    boolean isSingleSelectionMode(){
+    @Override
+    public int getItemSize() {
+        return compIndexList.getSize();
+    }
+
+    @Override
+    public boolean isSingleSelectionMode(){
         return this.isSingleSelectionMode;
     }
 
@@ -134,12 +144,12 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     void select(int beginIndex, int endIndex){
-        setSelectionFromToIndex(beginIndex, endIndex);
+        SELECTION_RANGE.saveRange(beginIndex, endIndex);
         paintSelection();
     }
 
     void deSelect(){
-        setSelectionFromToIndex(-1,-1);
+        SELECTION_RANGE.setInValidRange();
         paintSelection();
     }
 
@@ -148,23 +158,18 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     List<T> getSelectedList(){
-        List<T> compList = new ArrayList<>();
 
-        if(isSelected()){
-            for (int index = selectionFromToIndex[0]; index <= selectionFromToIndex[1] ; index++){
-                compList.add((T)compIndexList.peek(index));
-            }
-        }
-
-        return compList;
+        return compIndexList
+                .getList()
+                .subList(SELECTION_RANGE.getBeginIndex(), SELECTION_RANGE.getEndIndex() + 1);
     }
 
     int[] getSelectionFromToIndex(){
-        return selectionFromToIndex;
+        return SELECTION_RANGE.getRange();
     }
 
     boolean isSelected(){
-        return selectionFromToIndex[0] != -1 && selectionFromToIndex[1] != -1;
+        return SELECTION_RANGE.isValid();
     }
 
     @Override
@@ -187,14 +192,8 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         mouseMotionListenerList.remove(mouseMotionListener);
     }
 
-    private void setSelectionFromToIndex(int beginIndex, int endIndex){
-        selectionFromToIndex[0] = Math.min(beginIndex, endIndex);
-        selectionFromToIndex[1] = Math.max(beginIndex, endIndex);
-    }
-
     private void paintSelection(){
-
-        if (selectionFromToIndex[0] == -1 || selectionFromToIndex[1] == -1){
+        if (!SELECTION_RANGE.isValid()){
             removeRect();
             return;
         }
@@ -208,8 +207,8 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     private void paintRect(){
-        Component beginComp = compIndexList.peek(selectionFromToIndex[0]);
-        Component endComp   = compIndexList.peek(selectionFromToIndex[1]);
+        Component beginComp = compIndexList.peek(SELECTION_RANGE.getBeginIndex());
+        Component endComp   = compIndexList.peek(SELECTION_RANGE.getEndIndex());
 
         int beginY = beginComp.getLocation().y;
         int endY = endComp.getLocation().y + endComp.getPreferredSize().height;
@@ -249,7 +248,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         TARGET,
         UP_WARD,
         DOWN_WARD,
-        NONE;
+        NONE
     }
 
     private class ViewPortAWTEventListener implements AWTEventListener{
@@ -270,7 +269,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
                 if (isMultiSelectionMode){
                     select(mouseEventHandler.getDragBeginIndex(), currentIndex);
-                    onDragListener.onDrag(selectionFromToIndex[0], selectionFromToIndex[1], getSelectedList());
+                    onDragListener.onDrag(SELECTION_RANGE.getBeginIndex(), SELECTION_RANGE.getEndIndex(), getSelectedList());
                 }
 
             });
@@ -291,7 +290,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
                 scrollListener.onDrag(0);
 
                 if (isSelected()){
-                    onSelectionListener.onSelection(selectionFromToIndex[0], selectionFromToIndex[1], getSelectedList());
+                    onSelectionListener.onSelection(SELECTION_RANGE.getBeginIndex(), SELECTION_RANGE.getEndIndex(), getSelectedList());
                 }
             });
 

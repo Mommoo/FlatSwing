@@ -77,7 +77,7 @@ public class FlatPopUpList {
         int height = 0;
 
         for (FlatLabel comp : listView.getItems()){
-            Dimension dimension = comp.getTextFittedSize();
+            Dimension dimension = comp.getPreferredSize();
             width = Math.max(dimension.width, width);
             height += dimension.height;
         }
