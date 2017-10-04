@@ -35,14 +35,14 @@ class FlatAutoResizeListener {
      * After get line count, through it, we have to calculate proper height
      */
     void setContentsFitSize(int availableWidth) {
+//        System.out.println(availableWidth);
         stringViewModel = STRING_CALCULATOR.getStringViewModel(availableWidth, flatTextArea.getText());
+//        System.out.println(stringViewModel);
         flatTextArea.setPreferredSize(getPreferredSize());
     }
 
     Dimension getPreferredSize() {
-//        System.out.println(stringViewModel);
         return new Dimension(stringViewModel.getStringWidth(), stringViewModel.getStringHeight());
-//        return getDimenContainedPadding(stringViewModel.getStringWidth(), stringViewModel.getStringHeight());
     }
 
     int getLineCount() {
@@ -121,7 +121,7 @@ class FlatAutoResizeListener {
                 for (String line : splitNewLineArray) {
                     targetWidth = Math.max(measureWidth(line), targetWidth);
                 }
-                System.out.println(targetWidth);
+
                 return createViewModelContainedPadding(targetWidth, stringHeight, lineCount);
             }
 

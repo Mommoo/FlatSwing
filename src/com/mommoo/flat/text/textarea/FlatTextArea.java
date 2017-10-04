@@ -21,6 +21,8 @@ public class FlatTextArea extends JTextPane {
     private ComputableDimension previousDimen = new ComputableDimension();
     private MouseClickAdapter mouseClickAdapter;
 
+    private int preferredWidth = -1;
+
     public FlatTextArea() {
         init();
     }
@@ -63,6 +65,10 @@ public class FlatTextArea extends JTextPane {
         });
     }
 
+    private void blockStrangeParentMethodInvoked() {
+        setPreferredSize(getPreferredSize());
+    }
+
     private void init() {
         blockStrangeParentMethodInvoked();
         setEditorKit(new FlatWrapEditorKit(flatAutoResizeListener));
@@ -70,31 +76,8 @@ public class FlatTextArea extends JTextPane {
         getDocument().addDocumentListener(createDocumentListener());
     }
 
-    @Override
-    public boolean getScrollableTracksViewportWidth() {
-        return false;
-    }
-
-    public float getLineSpacing() {
-        return StyleConstants.getLineSpacing(ATTRIBUTE_SET);
-    }
-
-    private void blockStrangeParentMethodInvoked() {
-        setPreferredSize(getPreferredSize());
-    }
-
-    public void setLineSpacing(float lineSpacing) {
-        if (lineSpacing < 0.0f) {
-            return;
-        }
-
-        StyleConstants.setLineSpacing(ATTRIBUTE_SET, lineSpacing);
-        getStyledDocument().setParagraphAttributes(0, Integer.MAX_VALUE, ATTRIBUTE_SET, true);
-    }
-
-    public void setTextAlignment(FlatTextAlignment alignment) {
-        StyleConstants.setAlignment(ATTRIBUTE_SET, alignment.ordinal());
-        setParagraphAttributes(ATTRIBUTE_SET, true);
+    private boolean isBeforeDrawing(){
+        return getWidth() == 0;
     }
 
     private DocumentListener createDocumentListener() {
@@ -112,34 +95,41 @@ public class FlatTextArea extends JTextPane {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if (getWidth() != 0){
-                    flatAutoResizeListener.setContentsFitSize();
+                if (isBeforeDrawing()){
+                    autoContentsFitSize();
                 }
             }
         };
     }
 
-    public void setVerticalCenteredTextAlignment() {
-        if (!(getEditorKit() instanceof FlatWrapEditorKit)) {
-            throw new IllegalArgumentException("Current EditorKit isn't FlatWrapEditorKit");
+
+    private Dimension autoContentsFitSize(){
+
+        if (this.preferredWidth != -1){
+            flatAutoResizeListener.setContentsFitSize(preferredWidth);
+        }else {
+            flatAutoResizeListener.setContentsFitSize();
         }
 
-        ((FlatWrapEditorKit) getEditorKit()).isNeedToCentered = true;
+        return flatAutoResizeListener.getPreferredSize();
     }
 
     @Override
     public void paint(Graphics g) {
-        if (!previousDimen.equals(getPreferredSize())) {
-            previousDimen.setSize(getPreferredSize());
-            flatAutoResizeListener.setContentsFitSize();
+        Dimension preferredSize = getPreferredSize();
+        if (!previousDimen.equals(preferredSize) || preferredWidth != preferredSize.width) {
+
+            preferredSize = autoContentsFitSize();
+            preferredWidth = preferredSize.width;
+            previousDimen.setSize(preferredSize);
         }
         super.paint(g);
     }
 
     @Override
     public Dimension getPreferredSize() {
-        if (getWidth() == 0){
-            flatAutoResizeListener.setContentsFitSize();
+        if (isBeforeDrawing()){
+            return autoContentsFitSize();
         }
         return super.getPreferredSize();
     }
@@ -179,6 +169,62 @@ public class FlatTextArea extends JTextPane {
         return flatAutoResizeListener.getLineCount();
     }
 
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    public float getLineSpacing() {
+        return StyleConstants.getLineSpacing(ATTRIBUTE_SET);
+    }
+
+    public void setLineSpacing(float lineSpacing) {
+        if (lineSpacing < 0.0f) {
+            return;
+        }
+
+        StyleConstants.setLineSpacing(ATTRIBUTE_SET, lineSpacing);
+        getStyledDocument().setParagraphAttributes(0, Integer.MAX_VALUE, ATTRIBUTE_SET, true);
+    }
+
+    public void setTextAlignment(FlatTextAlignment alignment) {
+        StyleConstants.setAlignment(ATTRIBUTE_SET, alignment.ordinal());
+        setParagraphAttributes(ATTRIBUTE_SET, true);
+    }
+
+    public void setOnClickListener(OnClickListener onClickListener) {
+        if (this.mouseClickAdapter != null) removeMouseListener(this.mouseClickAdapter);
+        this.mouseClickAdapter = new MouseClickAdapter(onClickListener);
+        addMouseListener(mouseClickAdapter);
+    }
+
+
+    public void setHeightFittedToWidth(int preferredWidth) {
+        Insets insets = getInsets();
+
+        this.preferredWidth = preferredWidth - insets.left - insets.right;
+
+        if (!isBeforeDrawing()){
+            autoContentsFitSize();
+        }
+    }
+
+    public void setHeightFittedToText() {
+        this.preferredWidth = getFontMetrics(getFont()).stringWidth(getText());
+
+        if (!isBeforeDrawing()){
+            autoContentsFitSize();
+        }
+    }
+
+    public void setVerticalCenteredTextAlignment() {
+        if (!(getEditorKit() instanceof FlatWrapEditorKit)) {
+            throw new IllegalArgumentException("Current EditorKit isn't FlatWrapEditorKit");
+        }
+
+        ((FlatWrapEditorKit) getEditorKit()).isNeedToCentered = true;
+    }
+
     /**
      * Caret API
      */
@@ -197,18 +243,5 @@ public class FlatTextArea extends JTextPane {
         }
     }
 
-    public void setOnClickListener(OnClickListener onClickListener) {
-        if (this.mouseClickAdapter != null) removeMouseListener(this.mouseClickAdapter);
-        this.mouseClickAdapter = new MouseClickAdapter(onClickListener);
-        addMouseListener(mouseClickAdapter);
-    }
 
-    public void setHeightFittedToWidth(int preferredWidth) {
-        flatAutoResizeListener.setContentsFitSize(preferredWidth);
-    }
-
-    public void setHeightFittedToText() {
-        Insets insets = getInsets();
-        flatAutoResizeListener.setContentsFitSize(getFontMetrics(getFont()).stringWidth(getText()) + insets.left + insets.right);
-    }
 }
