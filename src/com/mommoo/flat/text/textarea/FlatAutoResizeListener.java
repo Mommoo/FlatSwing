@@ -115,7 +115,7 @@ class FlatAutoResizeListener{
             }
 
 
-            if (maxWidth == -1 || isStringSmallerThanWidth(maxWidth, string)){
+            if (maxWidth <= 0 || isStringSmallerThanWidth(maxWidth, string)){
                 int targetWidth = 0;
 
                 for (String line : splitNewLineArray){

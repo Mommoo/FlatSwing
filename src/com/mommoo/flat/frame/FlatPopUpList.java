@@ -47,6 +47,7 @@ public class FlatPopUpList {
         for (int i = 1; i < 6 ; i++){
             popUpList.addMenu("Item " + i);
         }
+        popUpList.addMenu("Very Long Menu Text");
         popUpList.setFocusLostDispose();
         popUpList.setOnItemClickListener((position, message) -> {
             System.out.println(message);
@@ -75,9 +76,10 @@ public class FlatPopUpList {
         int width = 0;
         int height = 0;
 
-        for (Component comp : listView.getItems()){
-            width = Math.max(comp.getPreferredSize().width, width);
-            height += comp.getPreferredSize().height;
+        for (FlatLabel comp : listView.getItems()){
+            Dimension dimension = comp.getTextFittedSize();
+            width = Math.max(dimension.width, width);
+            height += dimension.height;
         }
 
         return new Dimension(width, height);

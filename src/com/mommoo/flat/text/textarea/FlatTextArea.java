@@ -192,6 +192,11 @@ public class FlatTextArea extends JTextPane {
         super.paint(g);
     }
 
+    public Dimension getTextFittedSize(){
+        flatAutoResizeListener.setContentsFitSize();
+        return flatAutoResizeListener.getPreferredSize();
+    }
+
     public void setOnClickListener(OnClickListener onClickListener) {
         if (this.mouseClickAdapter != null) removeMouseListener(this.mouseClickAdapter);
         this.mouseClickAdapter = new MouseClickAdapter(onClickListener);
