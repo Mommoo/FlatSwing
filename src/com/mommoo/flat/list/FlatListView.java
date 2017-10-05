@@ -3,7 +3,6 @@ package com.mommoo.flat.list;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
-import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.util.FontManager;
 
@@ -16,8 +15,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class FlatListView<T extends Component> {
-    private FlatVerticalScrollPane<T> SCROLL_PANE = new FlatVerticalScrollPane<>();
-    private ArrayList<T> compList = new ArrayList<>();
+    private final FlatVerticalScrollPane<T> SCROLL_PANE = new FlatVerticalScrollPane<>();
+    private final ArrayList<T> compList = new ArrayList<>();
+    private final Scroller SCROLLER = new Scroller();
+
 
     public FlatListView() { }
 
@@ -112,14 +113,6 @@ public class FlatListView<T extends Component> {
         return Collections.unmodifiableList(compList);
     }
 
-    public Color getScrollBarColor() {
-        return SCROLL_PANE.getThemeColor();
-    }
-
-    public void setScrollBarColor(Color color) {
-        SCROLL_PANE.setThemeColor(color);
-    }
-
     public Color getBackgroundColor(){
         return this.SCROLL_PANE.getViewport().getBackground();
     }
@@ -127,14 +120,6 @@ public class FlatListView<T extends Component> {
     public void setBackgroundColor(Color backgroundColor){
         this.SCROLL_PANE.getViewport().setOpaque(true);
         this.SCROLL_PANE.getViewport().setBackground(backgroundColor);
-    }
-
-    public Color getScrollTrackColor(){
-        return this.SCROLL_PANE.getVerticalScrollTrackColor();
-    }
-
-    public void setScrollTrackColor(Color trackColor){
-        this.SCROLL_PANE.setVerticalScrollTrackColor(trackColor);
     }
 
     public int getItemSize() {
@@ -231,12 +216,14 @@ public class FlatListView<T extends Component> {
 
         FlatListView<FlatTextArea> list2 = new FlatListView<>();
         Font font = FontManager.getNanumGothicFont(Font.PLAIN, 10);
-        for (int i = 0 ; i < 100 ; i ++){
+        for (int i = 0 ; i < 100 ; i ++) {
             FlatTextArea area = new FlatTextArea("index : " + i);
-            area.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+            area.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             area.setFont(font);
             list2.addItem(area);
         }
+
+        list2.getScroller().smoothScrollByPosition(50);
 
         list2.setOnSelectionListener((beginIndex, endIndex, selectionList) -> {
             System.out.println("selected index from : " + beginIndex +", to : " + endIndex);
@@ -252,6 +239,46 @@ public class FlatListView<T extends Component> {
         frame.setLocationOnScreenCenter();
         frame.setResizable(true);
         frame.show();
+    }
+
+    public Scroller getScroller(){
+        return SCROLLER;
+    }
+
+    private class Scroller{
+        private Scroller(){}
+
+        public void scrollByValue(int value){
+            SCROLL_PANE.scrollByValue(value);
+        }
+
+        public void scrollByPosition(int position){
+            SCROLL_PANE.scrollByPosition(position);
+        }
+
+        public void smoothScrollByValue(int value){
+            SCROLL_PANE.smoothScrollByValue(value);
+        }
+
+        public void smoothScrollByPosition(int position){
+            SCROLL_PANE.smoothScrollByPosition(position);
+        }
+
+        public Color getScrollBarColor() {
+            return SCROLL_PANE.getThemeColor();
+        }
+
+        public void setScrollBarColor(Color color) {
+            SCROLL_PANE.setThemeColor(color);
+        }
+
+        public Color getScrollTrackColor(){
+            return SCROLL_PANE.getVerticalScrollTrackColor();
+        }
+
+        public void setScrollTrackColor(Color trackColor){
+            SCROLL_PANE.setVerticalScrollTrackColor(trackColor);
+        }
     }
 
 }

@@ -1,12 +1,12 @@
 package com.mommoo.flat.list;
 
-import com.mommoo.flat.list.listener.SelectionModel;
+import com.mommoo.flat.list.model.SelectionModel;
 
 class SelectionRange {
     private static final int INVALID_INDEX = -1;
     private final SelectionModel SELECTION_MODEL;
-    private int beginIndex;
-    private int endIndex;
+    private int beginIndex = INVALID_INDEX;
+    private int endIndex   = INVALID_INDEX;
 
     SelectionRange(SelectionModel model){
         SELECTION_MODEL = model;

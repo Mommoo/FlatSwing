@@ -101,6 +101,10 @@ public class FlatColorPicker {
         this.colorChangeListener = colorChangedListener;
     }
 
+    public FlatFrame getFlatFrame(){
+        return PICKER_VIEW;
+    }
+
     public void setOnClickListener(OnClickListener onClickListener){
         this.onClickListener = onClickListener;
     }

@@ -1,5 +1,8 @@
 package com.mommoo.flat.list;
 
+import com.mommoo.animation.AnimationListener;
+import com.mommoo.animation.Animator;
+import com.mommoo.animation.timeInterpolator.AccelerateInterpolator;
 import com.mommoo.flat.component.FlatScrollPane;
 import com.mommoo.util.ColorManager;
 
@@ -11,6 +14,8 @@ import java.util.List;
 class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
     private final FlatViewPort<T> VIEW_PORT = new FlatViewPort<>();
     private AutoScrollWorker autoScrollWorker = new AutoScrollWorker();
+
+    private ComputeScrollWorker computeScrollWorker = new ComputeScrollWorker();
 
     FlatVerticalScrollPane(){
         setViewportView(VIEW_PORT);
@@ -31,6 +36,32 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
             }
 
         });
+    }
+
+    void scrollByValue(int value){
+        computeScrollWorker.scrollByValue(value);
+    }
+
+    void scrollByPosition(int position){
+        computeScrollWorker.scrollByPosition(position);
+    }
+
+    void smoothScrollByValue(int value){
+        computeScrollWorker.smoothScrollByValue(value);
+    }
+
+    void smoothScrollByPosition(int position){
+        computeScrollWorker.smoothScrollByPosition(position);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        computeScrollWorker.executeTask();
+        super.paint(g);
+    }
+
+    private void scroll(int value){
+        getVerticalScrollBar().setValue(value);
     }
 
     private class AutoScrollWorker{
@@ -97,4 +128,78 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
         }
     }
 
+    private class ComputeScrollWorker {
+        private Runnable afterDrawTask = ()->{};
+
+        private boolean isVisible(){
+            return getWidth() != 0;
+        }
+
+        private void executeTaskIfVisible(){
+            if (isVisible()){
+                executeTask();
+            }
+        }
+
+        private int getScrollValueByPosition(int position){
+            Component targetComp = VIEW_PORT.getComponent(position);
+            return targetComp.getY() + targetComp.getHeight();
+        }
+
+        private void scrollByValue(int value){
+            if (value < 0) return;
+
+            afterDrawTask = ()-> scroll(value);
+            executeTaskIfVisible();
+
+        }
+
+        private void smoothScrollByValue(int value){
+            if (value < 0) return;
+
+            afterDrawTask = () -> new Animator()
+                    .setTimeInterpolator(new AccelerateInterpolator())
+                    .setAnimationListener(new AnimationListener() {
+                        @Override public void onStart() { }
+
+                        @Override
+                        public void onAnimation(List<Double> resultList) {
+                            scroll(resultList.get(0).intValue());
+                        }
+
+                        @Override public void onEnd() { }
+                    })
+                    .setDuration(500)
+                    .start(value);
+
+            executeTaskIfVisible();
+        }
+
+        private void scrollByPosition(int position){
+            if (position < 0) return;
+
+            afterDrawTask = ()-> {
+                if (position >= VIEW_PORT.getItemSize()) return;
+                scrollByValue(getScrollValueByPosition(position));
+            };
+
+            executeTaskIfVisible();
+        }
+
+        private void smoothScrollByPosition(int position){
+            if (position < 0) return;
+
+            afterDrawTask = ()-> {
+                if (position >= VIEW_PORT.getItemSize()) return;
+                smoothScrollByValue(getScrollValueByPosition(position));
+            };
+
+            executeTaskIfVisible();
+        }
+
+        private void executeTask() {
+            afterDrawTask.run();
+            afterDrawTask = ()->{};
+        }
+    }
 }
