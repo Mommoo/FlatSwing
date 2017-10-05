@@ -245,7 +245,7 @@ public class FlatListView<T extends Component> {
         return SCROLLER;
     }
 
-    private class Scroller{
+    public class Scroller{
         private Scroller(){}
 
         public void scrollByValue(int value){
