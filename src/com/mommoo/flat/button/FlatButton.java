@@ -1,137 +1,50 @@
 package com.mommoo.flat.button;
 
+import com.mommoo.flat.button.ripple.RippleEffect;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.util.FontManager;
+import com.mommoo.util.ColorManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.util.List;
+import java.util.ArrayList;
 
-public class FlatButton extends JLabel implements MouseListener{
-	private static final int BUTTON_TEXT_FONT_SIZE = ScreenManager.getInstance().dip2px(10);
-	private final BasicStroke ONE_STROKE = new BasicStroke(1.0f);
-	private final BasicStroke TWO_STROKE = new BasicStroke(2.0f);
-	private Color themeColor = Color.PINK;
-	private Color darkenColor = themeColor.darker();
-	private Color lightenColor = themeColor.brighter();
-	private Color doubleDarkenColor = darkenColor.darker();
-	
-	private boolean isOutLine; 
-	protected OnClickListener onClickListener = comp -> {};
-	protected boolean isMouseExited,isMouseEntered,isMousePressed;
+public class FlatButton extends JButton implements ButtonViewModel{
+	private static final int BUTTON_TEXT_FONT_SIZE = ScreenManager.getInstance().dip2px(11);
+	private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
+
+	private final RippleEffect RIPPLE_EFFECT = new RippleEffect();
+	private final FlatButtonViewModel buttonViewModel = new FlatButtonViewModel(this, RIPPLE_EFFECT);
+	private final List<ActionListener> ACTION_LISTENER_LIST = new ArrayList<>();
+	private OnClickListener onClickListener = e -> {};
+	private boolean autoClick;
 	
 	public FlatButton(){
-		setHorizontalAlignment(JLabel.CENTER);
+		setAlignmentCentered();
+		setTextDecoration();
 		setOpaque(true);
-		setFont(FontManager.getNanumGothicFont(Font.BOLD,BUTTON_TEXT_FONT_SIZE));
-		setBackground(themeColor);
-		setForeground(Color.WHITE);
-		setCursor(new Cursor(Cursor.HAND_CURSOR));
-		addMouseListener(this);
+		setBackground(ColorManager.getColorAccent());
+		setCursor(HAND_CURSOR);
+		addRippleAnimMouseListener();
+		removeBasicButtonGraphics();
 	}
-	
-	@Override
-	protected void paintComponent(Graphics g){
-		super.paintComponent(g);
-		if(!isOutLine) return; 
-		final Graphics2D G_2D = (Graphics2D)g;
-		final int WIDTH = getWidth();
-		final int HEIGHT = getHeight();
 
-		G_2D.setColor(Color.LIGHT_GRAY);
-		G_2D.drawRect(0, 0, WIDTH-1, getHeight()-1);
-
-		if(isMousePressed){
-			G_2D.setColor(doubleDarkenColor);
-			G_2D.setStroke(TWO_STROKE);
-			G_2D.drawLine(2,2,WIDTH-2,2);
-			G_2D.drawLine(2,2,2,HEIGHT-2);
-			G_2D.setStroke(ONE_STROKE);
-			G_2D.drawLine(2,HEIGHT-2,WIDTH-2,HEIGHT-2);
-			G_2D.drawLine(WIDTH-2,2,WIDTH-2,HEIGHT-2);
-		}
-		else if(isMouseEntered){
-			G_2D.setStroke(TWO_STROKE);
-			G_2D.setColor(doubleDarkenColor);
-			G_2D.drawRect(1, 1, WIDTH-2, HEIGHT-2);
-		}
-		
-	}
-	
 	public FlatButton(String text){
 		this();
 		setText(text);
 	}
 
-	public void setThemeColor(Color themeColor){
-		this.themeColor = themeColor;
-		darkenColor = themeColor.darker();
-		lightenColor = themeColor.brighter();
-		doubleDarkenColor = themeColor.darker();
-		setBackground(themeColor);
-	}
-
-	public Color getThemeColor(){
-		return this.themeColor;
-	}
-	
-	public void doClick(){
-		setBackground(darkenColor);
-		new Thread(){
-			private final int MILLISECOND = 70;
-			@Override
-			public void run(){
-				try {
-					Thread.sleep(MILLISECOND);
-					setBackground(themeColor);
-					Thread.sleep(MILLISECOND);
-					if(onClickListener != null) onClickListener.onClick(FlatButton.this);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
-			}
-		}.start();
-	}
-	
-	public void setTextColor(Color color){
-		setForeground(color);
-	}
-	
-	public Color getTextColor(){
-		return getForeground();
-	}
-	
-	public void setOnClickListener(OnClickListener onClickListener){
-		this.onClickListener = onClickListener;
-	}
-	
-	public void setOutLine(boolean isOutLine){
-		this.isOutLine = isOutLine;
-	}
-	
-	public boolean isOutLine(){
-		return this.isOutLine;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		setBackground(themeColor);
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		isMousePressed = true;
-		setBackground(doubleDarkenColor);
-	}
-
 	public static void main(String[] args){
 		FlatButton flatButton = new FlatButton("TEST");
-		flatButton.setOnClickListener(comp->{System.out.println("sdfs");});
+		flatButton.setOnClickListener(comp-> System.out.println("onClick"));
+		flatButton.addActionListener(e -> System.out.println("onAction"));
 
+		flatButton.doClick();
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatButton test");
 		flatFrame.setSize(400,200);
@@ -141,30 +54,109 @@ public class FlatButton extends JLabel implements MouseListener{
 		flatFrame.show();
 	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		isMouseExited = false;
-		isMouseEntered = true;
-		if(!isOutLine) setBackground(darkenColor);
-		if(isMousePressed) setBackground(doubleDarkenColor);
-		else repaint();
+	private void setAlignmentCentered(){
+		setHorizontalAlignment(JButton.CENTER);
+		setVerticalAlignment(JButton.CENTER);
+	}
+
+	private void setTextDecoration(){
+		setFont(getFont().deriveFont(Font.BOLD, BUTTON_TEXT_FONT_SIZE));
+		setForeground(Color.WHITE);
+	}
+
+	private void removeBasicButtonGraphics(){
+		setContentAreaFilled(false);
+		setFocusPainted(false);
+		setBorderPainted(false);
+	}
+
+	private void addRippleAnimMouseListener(){
+		MouseAdapter rippleAnimMouseListener = buttonViewModel.getRippleAnimMouseListener();
+		addMouseListener(rippleAnimMouseListener);
+		addMouseMotionListener(rippleAnimMouseListener);
+	}
+
+	public OnClickListener getOnClickListener(){
+		return onClickListener;
+	}
+
+	public void setOnClickListener(OnClickListener onClickListener){
+		buttonViewModel.getButtonEventRepository().removeEvent(this.onClickListener);
+		buttonViewModel.getButtonEventRepository().addEvent(this.onClickListener, event -> onClickListener.onClick(this));
+		this.onClickListener = onClickListener;
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		isMouseExited = true;
-		isMouseEntered = false;
-		setBackground(themeColor);
-		repaint();
+	public void addActionListener(ActionListener actionListener) {
+		buttonViewModel.getButtonEventRepository().addEvent(actionListener, actionListener::actionPerformed);
+		ACTION_LISTENER_LIST.add(actionListener);
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		isMousePressed = false;
-		setBackground(themeColor);
-		repaint();
-		if (!isMouseExited){
-			if(isEnabled()) onClickListener.onClick(this);
+	public void removeActionListener(ActionListener actionListener) {
+		buttonViewModel.getButtonEventRepository().removeEvent(actionListener);
+		ACTION_LISTENER_LIST.remove(actionListener);
+	}
+
+	@Override
+	public ActionListener[] getActionListeners() {
+		return ACTION_LISTENER_LIST.toArray(new ActionListener[ACTION_LISTENER_LIST.size()]);
+	}
+
+	@Override
+	public boolean isContentAreaFilled() {
+		return false;
+	}
+
+	@Override
+	public boolean isBorderPainted() {
+		return false;
+	}
+	
+	@Override
+	public boolean isFocusPainted() {
+		return false;
+	}
+
+	@Override
+	public void paint(Graphics g){
+		paintBackground(g);
+		paintPreBorder(g);
+		inspectAutoClick();
+		buttonViewModel.paintRippleEffect((Graphics2D)g);
+		super.paint(g);
+		paintPostBorder(g);
+	}
+
+	private void paintBackground(Graphics g){
+		g.setColor(getBackground());
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+
+	private void paintPreBorder(Graphics g){
+		if (RIPPLE_EFFECT.isRippleDrawOverBorder()){
+			getBorder().paintBorder(this, g, 0,0,getWidth(), getHeight());
 		}
+	}
+
+	private void inspectAutoClick(){
+		if (autoClick){
+			buttonViewModel.executeRippleEffect(new Point(getWidth()/2, getHeight()/2), new ActionEvent(this, ActionEvent.ACTION_FIRST, "AUTO_CLICK"));
+			autoClick = false;
+		}
+	}
+
+	private void paintPostBorder(Graphics g){
+		if (!RIPPLE_EFFECT.isRippleDrawOverBorder()){
+			getBorder().paintBorder(this, g, 0,0,getWidth(), getHeight());
+		}
+	}
+
+	public void doClick(){
+		autoClick = true;
+	}
+
+	public RippleEffect getRippleEffect(){
+		return RIPPLE_EFFECT;
 	}
 }

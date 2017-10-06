@@ -15,11 +15,13 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 
-public class FlatTextArea extends JTextPane {
+public class FlatTextArea extends JTextPane implements EditorListener{
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
 
     private ComputableDimension previousDimen = new ComputableDimension();
     private MouseClickAdapter mouseClickAdapter;
+
+    private boolean isNeedToCentered;
 
     private int preferredWidth = -1;
 
@@ -57,7 +59,7 @@ public class FlatTextArea extends JTextPane {
 
             area.setCaretColor(Color.PINK);
             area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-//            frame.getContainer().setLayout(new FlowLayout());
+            frame.getContainer().setLayout(new FlowLayout());
 
             frame.getContainer().add(area);
 
@@ -71,7 +73,7 @@ public class FlatTextArea extends JTextPane {
 
     private void init() {
         blockStrangeParentMethodInvoked();
-        setEditorKit(new FlatWrapEditorKit(flatAutoResizeListener));
+        setEditorKit(new FlatWrapEditorKit(this));
         setCaret(new FlatCaret());
         getDocument().addDocumentListener(createDocumentListener());
     }
@@ -218,11 +220,12 @@ public class FlatTextArea extends JTextPane {
 //    }
 
     public void setVerticalCenteredTextAlignment() {
-        if (!(getEditorKit() instanceof FlatWrapEditorKit)) {
-            throw new IllegalArgumentException("Current EditorKit isn't FlatWrapEditorKit");
-        }
+        isNeedToCentered = true;
+    }
 
-        ((FlatWrapEditorKit) getEditorKit()).isNeedToCentered = true;
+    @Override
+    public boolean isVerticalCentered() {
+        return isNeedToCentered;
     }
 
     /**

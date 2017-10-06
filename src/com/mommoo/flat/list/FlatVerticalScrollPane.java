@@ -1,13 +1,20 @@
 package com.mommoo.flat.list;
 
+import com.mommoo.animation.AnimationAdapter;
 import com.mommoo.animation.AnimationListener;
 import com.mommoo.animation.Animator;
 import com.mommoo.animation.timeInterpolator.AccelerateInterpolator;
 import com.mommoo.flat.component.FlatScrollPane;
+import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ContainerAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -24,19 +31,14 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
         setThemeColor(ColorManager.getColorAccent());
 
         VIEW_PORT.setScrollListener(scrollSensitivity -> {
-
             if (scrollSensitivity == 0){
                 autoScrollWorker.stop();
+            } else {
+                autoScrollWorker.setScrollSensitivity(scrollSensitivity).computeScroll();
             }
-
-            else {
-                autoScrollWorker
-                        .setScrollSensitivity(scrollSensitivity)
-                        .computeScroll();
-            }
-
         });
     }
+
 
     void scrollByValue(int value){
         computeScrollWorker.scrollByValue(value);
@@ -46,18 +48,12 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
         computeScrollWorker.scrollByPosition(position);
     }
 
-    void smoothScrollByValue(int value){
-        computeScrollWorker.smoothScrollByValue(value);
+    void smoothScrollByValue(boolean relative, int value){
+        computeScrollWorker.smoothScrollByValue(relative, value);
     }
 
-    void smoothScrollByPosition(int position){
-        computeScrollWorker.smoothScrollByPosition(position);
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        computeScrollWorker.executeTask();
-        super.paint(g);
+    void smoothScrollByPosition(boolean relative, int position){
+        computeScrollWorker.smoothScrollByPosition(relative, position);
     }
 
     private void scroll(int value){
@@ -129,77 +125,67 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
     }
 
     private class ComputeScrollWorker {
-        private Runnable afterDrawTask = ()->{};
-
-        private boolean isVisible(){
-            return getWidth() != 0;
-        }
-
-        private void executeTaskIfVisible(){
-            if (isVisible()){
-                executeTask();
-            }
-        }
-
         private int getScrollValueByPosition(int position){
             Component targetComp = VIEW_PORT.getComponent(position);
-            return targetComp.getY() + targetComp.getHeight();
+            return targetComp.getY();
         }
 
         private void scrollByValue(int value){
             if (value < 0) return;
 
-            afterDrawTask = ()-> scroll(value);
-            executeTaskIfVisible();
-
+            SwingUtilities.invokeLater(()-> scroll(value));
         }
 
-        private void smoothScrollByValue(int value){
+        private void smoothScrollByValue(boolean relative, int value){
             if (value < 0) return;
 
-            afterDrawTask = () -> new Animator()
-                    .setTimeInterpolator(new AccelerateInterpolator())
-                    .setAnimationListener(new AnimationListener() {
-                        @Override public void onStart() { }
+            int originValue = getVerticalScrollBar().getValue();
+            double targetValue = relative ? value - originValue : value;
 
+            SwingUtilities.invokeLater(() -> new Animator()
+                    .setTimeInterpolator(new AccelerateInterpolator())
+                    .setAnimationListener(new AnimationAdapter() {
                         @Override
                         public void onAnimation(List<Double> resultList) {
-                            scroll(resultList.get(0).intValue());
+                            int value = relative ? originValue + resultList.get(0).intValue() : resultList.get(0).intValue();
+                            scroll(value);
                         }
 
                         @Override public void onEnd() { }
                     })
                     .setDuration(500)
-                    .start(value);
-
-            executeTaskIfVisible();
+                    .start(targetValue));
         }
 
         private void scrollByPosition(int position){
             if (position < 0) return;
 
-            afterDrawTask = ()-> {
-                if (position >= VIEW_PORT.getItemSize()) return;
-                scrollByValue(getScrollValueByPosition(position));
-            };
+            SwingUtilities.invokeLater(()-> {
+                int targetPosition = position;
 
-            executeTaskIfVisible();
+                if (VIEW_PORT.getItemSize() == 0) return;
+
+                if (position >= VIEW_PORT.getItemSize()) {
+                    targetPosition = VIEW_PORT.getItemSize() - 1;
+                }
+                scrollByValue(getScrollValueByPosition(targetPosition));
+            });
         }
 
-        private void smoothScrollByPosition(int position){
+        private void smoothScrollByPosition(boolean relative, int position){
             if (position < 0) return;
 
-            afterDrawTask = ()-> {
-                if (position >= VIEW_PORT.getItemSize()) return;
-                smoothScrollByValue(getScrollValueByPosition(position));
-            };
+            SwingUtilities.invokeLater(()-> {
+                int targetPosition = position;
 
-            executeTaskIfVisible();
-        }
+                if (VIEW_PORT.getItemSize() == 0) return;
 
-        private void executeTask() {
-            afterDrawTask.run();
-            afterDrawTask = ()->{};
+                if (position >= VIEW_PORT.getItemSize()) {
+                    targetPosition = VIEW_PORT.getItemSize() - 1;
+                }
+
+                smoothScrollByValue(relative, getScrollValueByPosition(targetPosition));
+            });
         }
     }
 }

@@ -5,16 +5,16 @@ import java.awt.*;
 
 class FlatWrapEditorKit extends StyledEditorKit {
     private ViewFactory defaultFactory = new WrapColumnFactory();
-    boolean isNeedToCentered;
-    private FlatAutoResizeListener flatAutoResizeListener;
+    private EditorListener editorListener;
+//    private FlatAutoResizeListener flatAutoResizeListener;
 
     public ViewFactory getViewFactory() {
         return defaultFactory;
     }
 
 
-    FlatWrapEditorKit(FlatAutoResizeListener flatAutoResizeListener){
-        this.flatAutoResizeListener = flatAutoResizeListener;
+    FlatWrapEditorKit(EditorListener editorListener){
+        this.editorListener = editorListener;
     }
 
     private class WrapColumnFactory implements ViewFactory {
@@ -27,7 +27,9 @@ class FlatWrapEditorKit extends StyledEditorKit {
                 } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
                     return new ParagraphView(elem);
                 } else if (kind.equals(AbstractDocument.SectionElementName)) {
-                    return isNeedToCentered ? new CenteredBoxView(elem, View.Y_AXIS) : new BoxView(elem, View.Y_AXIS);
+//                    System.out.println("sdf" + editorListener.isVerticalCentered());
+                    return new CenteredBoxView(elem, View.Y_AXIS);
+//                    return editorListener.isVerticalCentered() ? new CenteredBoxView(elem, View.Y_AXIS) : new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals(StyleConstants.ComponentElementName)) {
                     return new ComponentView(elem);
                 } else if (kind.equals(StyleConstants.IconElementName)) {
@@ -210,10 +212,11 @@ class FlatWrapEditorKit extends StyledEditorKit {
             super(elem,axis);
         }
         protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
-
             super.layoutMajorAxis(targetSpan, axis, offsets, spans);
 
-            int offset = (getContainer().getHeight() - flatAutoResizeListener.getPreferredSize().height) / 2;
+            if (!editorListener.isVerticalCentered()) return;
+
+            int offset = (getContainer().getHeight() - editorListener.getPreferredSize().height) / 2;
 
             for (int i = 0; i < offsets.length; i++) {
                 offsets[i] += offset;

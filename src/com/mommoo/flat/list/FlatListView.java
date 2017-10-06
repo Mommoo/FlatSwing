@@ -1,12 +1,20 @@
 package com.mommoo.flat.list;
 
 import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.flat.layout.linear.LinearLayout;
+import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
+import com.mommoo.flat.text.label.FlatLabel;
+import com.mommoo.flat.text.textarea.FlatTextAlignment;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.util.FontManager;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -39,9 +47,39 @@ public class FlatListView<T extends Component> {
         return SCROLL_PANE;
     }
 
-    public void addItem(T item) {
-        getViewPortView().addComponent(item);
-        compList.add(item);
+    public static void main(String[] args){
+//        SwingUtilities.invokeLater(()->{ });
+        FlatFrame frame = new FlatFrame();
+        frame.setTitle("Beautiful FlatList");
+        frame.setSize(500, 500);
+        Font font = FontManager.getNanumGothicFont(Font.PLAIN, 50);
+
+        FlatListView<FlatTextArea> list2 = new FlatListView<>();
+
+        for (int i = 0 ; i < 100 ; i ++) {
+            FlatLabel area = new FlatLabel("index : " + i);
+            area.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            area.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
+            area.setFont(font);
+            list2.addItem(area);
+        }
+
+        list2.getScroller().smoothScrollByPosition(true, 30);
+
+        list2.setOnSelectionListener((beginIndex, endIndex, selectionList) -> {
+            System.out.println("selected index from : " + beginIndex +", to : " + endIndex);
+        });
+        list2.setOnDragListener((beginIndex, endIndex, selectionList) -> {
+            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
+        });
+        frame.getContainer().add(list2.getComponent());
+        list2.setDivider(Color.BLACK, 1);
+
+        frame.setLocationOnScreenCenter();
+        frame.setResizable(true);
+
+
+        frame.show();
     }
 
     public void addItems(T... items) {
@@ -209,36 +247,10 @@ public class FlatListView<T extends Component> {
         getViewPortView().setTrace(trace);
     }
 
-    public static void main(String[] args){
-        FlatFrame frame = new FlatFrame();
-        frame.setTitle("Beautiful FlatList");
-        frame.setSize(500, 500);
+    public void addItem(T item) {
+        getViewPortView().addComponent(item);
+        compList.add(item);
 
-        FlatListView<FlatTextArea> list2 = new FlatListView<>();
-        Font font = FontManager.getNanumGothicFont(Font.PLAIN, 10);
-        for (int i = 0 ; i < 100 ; i ++) {
-            FlatTextArea area = new FlatTextArea("index : " + i);
-            area.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            area.setFont(font);
-            list2.addItem(area);
-        }
-
-        list2.getScroller().smoothScrollByPosition(50);
-
-        list2.setOnSelectionListener((beginIndex, endIndex, selectionList) -> {
-            System.out.println("selected index from : " + beginIndex +", to : " + endIndex);
-        });
-
-        list2.setOnDragListener((beginIndex, endIndex, selectionList) -> {
-//            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
-        });
-
-        frame.getContainer().add(list2.getComponent());
-        list2.setDivider(Color.BLACK, 1);
-
-        frame.setLocationOnScreenCenter();
-        frame.setResizable(true);
-        frame.show();
     }
 
     public Scroller getScroller(){
@@ -256,12 +268,12 @@ public class FlatListView<T extends Component> {
             SCROLL_PANE.scrollByPosition(position);
         }
 
-        public void smoothScrollByValue(int value){
-            SCROLL_PANE.smoothScrollByValue(value);
+        public void smoothScrollByValue(boolean relative, int value){
+            SCROLL_PANE.smoothScrollByValue(relative, value);
         }
 
-        public void smoothScrollByPosition(int position){
-            SCROLL_PANE.smoothScrollByPosition(position);
+        public void smoothScrollByPosition(boolean relative, int position){
+            SCROLL_PANE.smoothScrollByPosition(relative, position);
         }
 
         public Color getScrollBarColor() {

@@ -40,32 +40,35 @@ public class FlatLabel extends FlatTextArea {
 	}
 
 	public static void main(String[] args){
-		SwingUtilities.invokeLater(()-> {
-			FlatFrame flatFrame = new FlatFrame();
-			flatFrame.setWindowExit(true);
-			flatFrame.setTitle("FlatLabel Test");
-			flatFrame.setLocationOnScreenCenter();
+//		SwingUtilities.invokeLater(()-> {
+//
+//
+//		});
 
-			FlatLabel flatLabel = new FlatLabel("A Beautiful Label!!\n This is automatically line jump if string width longer than label width. You just use it well!");
-			flatLabel.setVerticalCenteredTextAlignment();
-			flatLabel.setFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
-			flatLabel.setOnClickListener(component -> System.out.println(((FlatLabel) component).getText()));
-			flatLabel.setLineSpacing(0.7f);
+		FlatFrame flatFrame = new FlatFrame();
+		flatFrame.setWindowExit(true);
+		flatFrame.setTitle("FlatLabel Test");
+		flatFrame.setLocationOnScreenCenter();
 
-			flatFrame.setSize(500, 700);
+//			FlatLabel flatLabel = new FlatLabel("A Beautiful Label!!\n This is automatically line jump if string width longer than label width. You just use it well!");
+		FlatLabel flatLabel = new FlatLabel("Test");
+		flatLabel.setVerticalCenteredTextAlignment();
+		flatLabel.setFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
+		flatLabel.setOnClickListener(component -> System.out.println(((FlatLabel) component).getText()));
+//		flatLabel.setLineSpacing(0.7f);
 
-			flatFrame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL));
-			flatFrame.getContainer().add(flatLabel, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-			flatLabel.setOpaque(true);
-			flatLabel.setBackground(Color.RED);
-			flatFrame.show();
+		flatFrame.setSize(500, 700);
 
-		});
+		flatFrame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL));
+		flatFrame.getContainer().add(flatLabel, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+		flatLabel.setOpaque(true);
+		flatLabel.setBackground(Color.RED);
+		flatFrame.show();
 	}
 
 	private void init(){
 		setEnableDragging(false);
-		setFont(FontManager.getNanumGothicFont(Font.PLAIN, TEXT_FONT_SIZE));
+//		setFont(FontManager.getNanumGothicFont(Font.PLAIN, TEXT_FONT_SIZE));
 	}
 
 	@Override

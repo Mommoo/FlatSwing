@@ -604,10 +604,8 @@ public class FlatColorPicker {
 
             int padding = SCREEN_MANAGER.dip2px(6);
             for(FlatButton btn : flatButtons){
-                btn.setThemeColor(THEME_COLOR);
-                btn.setTextColor(Color.BLACK);
+                btn.setBackground(THEME_COLOR);
                 btn.setFont(font);
-                btn.setOutLine(true);
                 btn.setBorder(BorderFactory.createEmptyBorder(padding,padding*2,padding,padding*2));
             }
             CONFIRM_BUTTON.setOnClickListener(o->{

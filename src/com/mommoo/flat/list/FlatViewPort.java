@@ -8,7 +8,7 @@ import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.list.listener.FlatScrollListener;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
-import com.mommoo.flat.list.listener.SelectionModel;
+import com.mommoo.flat.list.model.SelectionModel;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
@@ -17,7 +17,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable , SelectionModel {
     private static final long eventMask = AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_WHEEL_EVENT_MASK | AWTEvent.COMPONENT_EVENT_MASK;
@@ -67,13 +66,20 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     void addComponent(T component){
-        add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT));
-        compIndexList.addComp(component);
+        SwingUtilities.invokeLater(()->{
+            add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT));
+            compIndexList.addComp(component);
+            FlatViewPort.this.doLayout();
+        });
+
     }
 
     void addComponent(T component, int index){
-        add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT), index);
-        compIndexList.addComp(component, index);
+        SwingUtilities.invokeLater(()->{
+            add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT), index);
+            compIndexList.addComp(component, index);
+            FlatViewPort.this.doLayout();
+        });
     }
 
     void removeComponent(int index){
@@ -252,6 +258,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     private class ViewPortAWTEventListener implements AWTEventListener{
+        private Window window = SwingUtilities.getWindowAncestor(FlatViewPort.this);
         private final MouseEventHandler mouseEventHandler = new MouseEventHandler();
         private boolean valid;
         private boolean isViewPortMouseEntered;
@@ -308,24 +315,13 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
                     mouseLocation.y <= panelLocation.y + parent.getHeight();
         }
 
-        private boolean isConfirmOwnPanelEvent(Object object){
-            if (object == FlatViewPort.this) return true;
-
-            if (object instanceof Component){
-                Component component = (Component)object;
-                Container container = component.getParent();
-                while(container != null){
-                    if (container == FlatViewPort.this) return true;
-                    container = container.getParent();
-                }
-            }
-
-            return false;
+        private boolean isConfirmOwnPanelEvent(Component component){
+            return SwingUtilities.getWindowAncestor(FlatViewPort.this) == SwingUtilities.getWindowAncestor(component);
         }
 
         @Override
         public void eventDispatched(AWTEvent event) {
-            if (!isShowing() || !isConfirmOwnPanelEvent(event.getSource())) return;
+            if (!isShowing() || !isConfirmOwnPanelEvent((Component)event.getSource())) return;
 
             if (event.getID() == ComponentEvent.COMPONENT_RESIZED && isSelected()){
                 paintSelection();
