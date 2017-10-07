@@ -14,7 +14,7 @@ class FlatAutoResizeListener {
     }
 
     void setContentsFitSize() {
-        int parentAvailableWidth = 0;
+        int parentAvailableWidth;
         if (flatTextArea.getParent() == null) parentAvailableWidth = -1;
         else {
             Insets parentInsets = flatTextArea.getParent().getInsets();
@@ -35,10 +35,8 @@ class FlatAutoResizeListener {
      * After get line count, through it, we have to calculate proper height
      */
     void setContentsFitSize(int availableWidth, boolean isFixWidth) {
-//        System.out.println(availableWidth);
         stringViewModel = STRING_CALCULATOR.getStringViewModel(availableWidth, flatTextArea.getText(), isFixWidth);
-//        System.out.println(stringViewModel);
-        flatTextArea.setPreferredSize(getPreferredSize());
+        flatTextArea.setPreferredLabelSize(getPreferredSize());
     }
 
     Dimension getPreferredSize() {
@@ -59,7 +57,6 @@ class FlatAutoResizeListener {
 
     private int getFontHeight() {
         return getFontMetrics().getHeight();
-//        return flatTextArea.getFont().getSize();
     }
 
     private int getLineHeight() {
@@ -87,9 +84,7 @@ class FlatAutoResizeListener {
         }
 
         private StringViewModel createViewModelContainedPadding(int width, int height, int lineCount) {
-            Dimension dimension = getDimenContainedPadding(width, height);
-            return new StringViewModel(dimension.width, dimension.height, lineCount);
-//            return new StringViewModel(width, height, lineCount);
+            return new StringViewModel(getDimenContainedPadding(width, height), lineCount);
         }
 
         private int getNewLineCount(String string) {
@@ -135,8 +130,6 @@ class FlatAutoResizeListener {
                 return createViewModelContainedPadding(maxWidth, getStringViewHeight(lineCount), string.length() - 1);
             }
 
-            int position = 0;
-            ArrayList<Integer> list = new ArrayList<>();
             for (String line : splitNewLineArray) {
 
                 int newLineIndex = getNeedToMoveNewLineIndex(maxWidth, line);
@@ -147,12 +140,11 @@ class FlatAutoResizeListener {
 
                 while (newLineIndex != -1) {
                     lineCount++;
-                    list.add(position + beginIndex);
+
                     newLineIndex = getNeedToMoveNewLineIndex(maxWidth, line.substring(beginIndex, line.length()));
                     beginIndex += newLineIndex;
                 }
 
-                position += line.length() + 1;
             }
             return createViewModelContainedPadding(stringWidth, getStringViewHeight(lineCount), lineCount);
         }

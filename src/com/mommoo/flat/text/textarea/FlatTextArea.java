@@ -19,6 +19,7 @@ public class FlatTextArea extends JTextPane implements EditorListener{
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
 
     private ComputableDimension previousDimen = new ComputableDimension();
+    private Dimension userWantedDimension;
     private MouseClickAdapter mouseClickAdapter;
 
     private boolean isNeedToCentered;
@@ -68,7 +69,7 @@ public class FlatTextArea extends JTextPane implements EditorListener{
     }
 
     private void blockStrangeParentMethodInvoked() {
-        setPreferredSize(getPreferredSize());
+        super.setPreferredSize(getPreferredSize());
     }
 
     private void init() {
@@ -197,27 +198,29 @@ public class FlatTextArea extends JTextPane implements EditorListener{
         addMouseListener(mouseClickAdapter);
     }
 
+    void setPreferredLabelSize(Dimension preferredSize){
+        if (userWantedDimension == null){
+            super.setPreferredSize(preferredSize);
+        }
+    }
+
+    @Deprecated
+    @Override
+    public void setPreferredSize(Dimension preferredSize) {
+        userWantedDimension = preferredSize;
+        super.setPreferredSize(preferredSize);
+    }
 
     public void setHeightFittedToWidth(int preferredWidth) {
         Insets insets = getInsets();
 
+        userWantedDimension = null;
         this.preferredWidth = preferredWidth - insets.left - insets.right;
 
         if (!isBeforeDrawing()){
             autoContentsFitSize();
         }
     }
-
-//    public void setHeightFittedToText() {
-//        this.preferredWidth = getFontMetrics(getFont()).stringWidth(getText());
-//        if (isBeforeDrawing()){
-//            flatAutoResizeListener.setContentsFitSize()
-//        }
-//
-//        if (!isBeforeDrawing()){
-//            autoContentsFitSize();
-//        }
-//    }
 
     public void setVerticalCenteredTextAlignment() {
         isNeedToCentered = true;

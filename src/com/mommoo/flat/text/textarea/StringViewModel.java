@@ -1,25 +1,31 @@
 package com.mommoo.flat.text.textarea;
 
-public class StringViewModel{
+import java.awt.*;
+
+class StringViewModel{
     private final int stringWidth;
     private final int stringHeight;
     private final int lineCount;
 
-    public StringViewModel(int stringWidth, int stringHeight, int lineCount){
+    StringViewModel(int stringWidth, int stringHeight, int lineCount){
         this.stringWidth = stringWidth;
         this.stringHeight = stringHeight;
         this.lineCount = lineCount;
     }
 
-    public int getStringWidth(){
+    public StringViewModel(Dimension dimension, int lineCount){
+        this(dimension.width, dimension.height, lineCount);
+    }
+
+    int getStringWidth(){
         return stringWidth;
     }
 
-    public int getStringHeight(){
+    int getStringHeight(){
         return stringHeight;
     }
 
-    public int getLineCount(){
+    int getLineCount(){
         return lineCount;
     }
 
