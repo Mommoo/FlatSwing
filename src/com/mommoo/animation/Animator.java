@@ -60,9 +60,17 @@ public class Animator {
         return this;
     }
 
+    public int getDelay(){
+        return delay;
+    }
+
     public Animator setDuration(int duration){
         this.duration = duration;
         return this;
+    }
+
+    public int getDuration(){
+        return duration;
     }
 
     public Animator setTimeInterpolator(TimeInterpolator timeInterpolator){
@@ -70,9 +78,17 @@ public class Animator {
         return this;
     }
 
+    public TimeInterpolator getTimeInterpolator() {
+        return timeInterpolator;
+    }
+
     public Animator setAnimationListener(AnimationListener animationListener){
         this.animationListener = animationListener;
         return this;
+    }
+
+    public AnimationListener getAnimationListener() {
+        return animationListener;
     }
 
     public void start(double... elements){
@@ -110,8 +126,8 @@ public class Animator {
 
     public Animator stop(){
         if (animatorTimer != null && animatorTimer.isRunning()){
-            animatorTimer.stop();
             animationListener.onStop();
+            animatorTimer.stop();
         }
 
         return this;

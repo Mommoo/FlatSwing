@@ -3,8 +3,8 @@ package com.mommoo.flat.button.ripple;
 import java.awt.*;
 
 public class RippleEffect implements RippleModel {
-    private int     rippleHoldDuration   = 200;
-    private int     rippleDuration       = 500;
+    private int     rippleHoldDuration   = 150;
+    private int     rippleDuration       = 300;
     private float   rippleColorOpacity   = 0.5f;
     private Color   rippleColor          = new Color(241, 241, 240);
     private boolean onEventLaterEffect   = true;

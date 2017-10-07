@@ -20,6 +20,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	private final RippleEffect RIPPLE_EFFECT = new RippleEffect();
 	private final FlatButtonViewModel buttonViewModel = new FlatButtonViewModel(this, RIPPLE_EFFECT);
+
 	private final List<ActionListener> ACTION_LISTENER_LIST = new ArrayList<>();
 	private OnClickListener onClickListener = e -> {};
 	private boolean autoClick;
@@ -47,7 +48,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		flatButton.doClick();
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatButton test");
-		flatFrame.setSize(400,200);
+		flatFrame.setSize(400,300);
 		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
 		flatFrame.getContainer().add(flatButton);
 		flatFrame.setLocationOnScreenCenter();
@@ -68,6 +69,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		setContentAreaFilled(false);
 		setFocusPainted(false);
 		setBorderPainted(false);
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	private void addRippleAnimMouseListener(){

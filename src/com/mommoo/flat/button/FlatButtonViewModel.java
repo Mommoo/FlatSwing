@@ -36,6 +36,7 @@ class FlatButtonViewModel {
 
     void executeRippleEffect(Point startLocation, ActionEvent actionEvent){
         rippleMouseEventListener.userMouseLocation = startLocation;
+        rippleMouseEventListener.animationReady();
 
         if (rippleModel.isOnEventLaterEffect()){
             rippleMouseEventListener.animationEndListener = () -> {
@@ -60,36 +61,31 @@ class FlatButtonViewModel {
         private Point userMouseLocation = new Point(0, 0);
         private Animator animator = new Animator();
 
-        private int takenDuration = 0;
+        private int restDuration;
+        private float opacity = 1.0f;
         private double radius;
 
         private Runnable animationEndListener = () -> {};
+        private Color rippleOpacityColor;
 
         private ActionEvent convertMouseEventToActionEvent(){
             MouseEvent mouseEvent = getMouseEvent();
             return new ActionEvent(mouseEvent.getSource(), mouseEvent.getID(), mouseEvent.paramString());
         }
 
-        private void postDelay(Runnable runnable, int duration){
-            Timer timer = new Timer(0, e ->{
-                runnable.run();
-                ((Timer)e.getSource()).stop();
-            });
-            timer.setInitialDelay(duration);
-            timer.start();
-        }
-
         private void animationReady() {
-            takenDuration = 0;
+            restDuration = rippleModel.getRippleDuration();
+            rippleOpacityColor = createOpacityColor();
+            opacity = 1.0f;
             radius = 0;
             isAnimationEnd = false;
         }
 
         private void animationEnd() {
             radius = 0;
-            isAnimationEnd = true;
+            executePostAnimation(() -> {
 
-            postDelay(() -> {
+                isAnimationEnd = true;
                 viewModel.repaint();
 
                 if (isMouseClicked() && rippleModel.isOnEventLaterEffect()){
@@ -98,7 +94,7 @@ class FlatButtonViewModel {
 
                 animationEndListener.run();
 
-            }, rippleModel.getRippleHoldDuration());
+            });
         }
 
         private void executeEvent(ActionEvent actionEvent){
@@ -153,12 +149,13 @@ class FlatButtonViewModel {
 
                         @Override
                         public void onStop() {
-                            takenDuration = (int) ((System.currentTimeMillis() - startTime) / 2L);
+                            restDuration = rippleModel.getRippleDuration() - (int) ((System.currentTimeMillis() - startTime) / 2L);
+                            restDuration = Math.max(100, restDuration);
                         }
 
                         @Override
                         public void onEnd() {
-                            takenDuration = rippleModel.getRippleDuration();
+                            restDuration = 0;
                         }
                     })
                     .start(getDiagonalSize());
@@ -167,9 +164,9 @@ class FlatButtonViewModel {
         private void executePostRippleEffect(){
             animator.stop()
                     .setTimeInterpolator(new AccelerateInterpolator())
-                    .setDuration(rippleModel.getRippleDuration() - takenDuration)
+                    .setDuration(restDuration)
                     .setAnimationListener(new AnimationAdapter() {
-                        final double previousRadius = radius;
+                        private final double previousRadius = radius;
 
                         @Override
                         public void onStart() {
@@ -194,14 +191,36 @@ class FlatButtonViewModel {
                     .start(getDiagonalSize() - radius);
         }
 
+        private void executePostAnimation(Runnable animationEndListener){
+            animator.stop()
+                    .setDuration(rippleModel.getRippleHoldDuration())
+                    .setTimeInterpolator(new AccelerateInterpolator())
+                    .setAnimationListener(new AnimationAdapter(){
+                        @Override
+                        public void onAnimation(List<Double> resultList) {
+                            opacity = 1.0f - resultList.get(0).floatValue();
+                            viewModel.repaint();
+                        }
+
+                        @Override
+                        public void onEnd() {
+                            animationEndListener.run();
+                        }
+                    })
+                    .start(1.0f);
+        }
+
         private double getDiagonalSize() {
-            return Math.sqrt(Math.pow(viewModel.getWidth(), 2) + Math.pow(viewModel.getHeight(), 2));
+            return Math.sqrt(Math.pow(viewModel.getWidth(), 2) + Math.pow(viewModel.getHeight(), 2)) * 2;
         }
 
         private void drawRipple(Graphics2D graphics2D){
             if (!isAnimationEnd){
-                graphics2D.setColor(createOpacityColor());
+                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
+                graphics2D.setComposite(ac);
+                graphics2D.setColor(rippleOpacityColor);
                 graphics2D.fill(ellipse2D);
+                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
         }
 
