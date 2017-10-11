@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.nio.file.FileSystem;
 
 public class FontManager {
-    private static final String SEPARATOR = File.separator;
     private FontManager(){}
 
     public static Font getDefaultFont(int style, int fontSize){

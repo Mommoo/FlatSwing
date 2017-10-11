@@ -15,7 +15,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
 
-public class FlatTextArea extends JTextPane implements EditorListener{
+public class FlatTextArea extends JTextPane{
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
 
     private ComputableDimension previousDimen = new ComputableDimension();
@@ -74,7 +74,7 @@ public class FlatTextArea extends JTextPane implements EditorListener{
 
     private void init() {
         blockStrangeParentMethodInvoked();
-        setEditorKit(new FlatWrapEditorKit(this));
+        setEditorKit(new FlatWrapEditorKit(createEditorListener()));
         setCaret(new FlatCaret());
         getDocument().addDocumentListener(createDocumentListener());
     }
@@ -105,6 +105,20 @@ public class FlatTextArea extends JTextPane implements EditorListener{
         };
     }
 
+    private EditorListener createEditorListener(){
+        return new EditorListener() {
+            @Override
+            public boolean isVerticalCentered() {
+                return FlatTextArea.this.isVerticalCentered();
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return autoContentsFitSize();
+            }
+        };
+    }
+
 
     private Dimension autoContentsFitSize(){
 
@@ -128,7 +142,7 @@ public class FlatTextArea extends JTextPane implements EditorListener{
 
     @Override
     public Dimension getPreferredSize() {
-        if (isBeforeDrawing()){
+        if (userWantedDimension == null && isBeforeDrawing()){
             return autoContentsFitSize();
         }
         return super.getPreferredSize();
@@ -204,7 +218,6 @@ public class FlatTextArea extends JTextPane implements EditorListener{
         }
     }
 
-    @Deprecated
     @Override
     public void setPreferredSize(Dimension preferredSize) {
         userWantedDimension = preferredSize;
@@ -226,7 +239,6 @@ public class FlatTextArea extends JTextPane implements EditorListener{
         isNeedToCentered = true;
     }
 
-    @Override
     public boolean isVerticalCentered() {
         return isNeedToCentered;
     }

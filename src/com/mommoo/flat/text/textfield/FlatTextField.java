@@ -1,7 +1,7 @@
 package com.mommoo.flat.text.textfield;
 
+import com.mommoo.example.ExampleFactory;
 import com.mommoo.flat.component.FlatPanel;
-import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
 import com.mommoo.flat.layout.linear.LinearLayout;
@@ -9,7 +9,6 @@ import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.util.ColorManager;
-import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,6 +58,15 @@ public class FlatTextField extends FlatPanel {
 		underLine.setPreferredSize(new Dimension(100,DEFAULT_BORDER_WIDTH));
 	}
 
+	public static void main(String[] args){
+		ExampleFactory.FlatTextFieldExample.example1();
+	}
+
+	public void setHint(String hint){
+		this.isSetHint = true;
+		imageTextField.textFieldProxy.setHint(hint);
+	}
+
 	private void setTextFieldFocusListener(){
 		imageTextField.textFieldProxy
 				.getTextField()
@@ -66,7 +74,7 @@ public class FlatTextField extends FlatPanel {
 					@Override
 					public void focusGained(FocusEvent e) {
 						underLine.setBackground(focusGainedColor);
-						if (isCurrentHintAppeared()) imageTextField.textFieldProxy.setText("");
+						if (imageTextField.textFieldProxy.isHintAppeared()) imageTextField.textFieldProxy.setNormalText("");
 					}
 
 					@Override
@@ -77,9 +85,12 @@ public class FlatTextField extends FlatPanel {
 				});
 	}
 
-	public void setHint(String hint){
-		this.isSetHint = true;
-		imageTextField.textFieldProxy.setHint(hint);
+	public String getHint(){
+		return imageTextField.textFieldProxy.getHint();
+	}
+
+	public Color getHintForeground(){
+		return imageTextField.textFieldProxy.getHintForeground();
 	}
 
 	public void addKeyListener(KeyListener listener){
@@ -120,19 +131,18 @@ public class FlatTextField extends FlatPanel {
 		this.underLine.setBackground(color);
 	}
 
-	private boolean isCurrentHintAppeared(){
-		boolean isEqualsHintText = imageTextField.textFieldProxy.getHint().equals(imageTextField.textFieldProxy.getTextField().getText());
-		boolean isEqualsHintForegroundColor = imageTextField.textFieldProxy.getHintColor().equals(imageTextField.textFieldProxy.getTextField().getForeground());
-		return isSetHint && isEqualsHintText && isEqualsHintForegroundColor;
-	}
+//	private boolean isCurrentHintAppeared(){
+//		boolean isEqualsHintText = imageTextField.textFieldProxy.getHint().equals(imageTextField.textFieldProxy.getTextField().getText());
+//		boolean isEqualsHintForegroundColor = imageTextField.textFieldProxy.getHintForeground().equals(imageTextField.textFieldProxy.getTextField().getForeground());
+//		return isSetHint && isEqualsHintText && isEqualsHintForegroundColor;
+//	}
 
 	JTextField getTextField(){
 		return imageTextField.textFieldProxy.getTextField();
 	}
 
-	public String getText(){
-		if (isCurrentHintAppeared()) return "";
-		return imageTextField.textFieldProxy.getText();
+	public void setHintForeground(Color hintForeground){
+		imageTextField.textFieldProxy.setHintForeground(hintForeground);
 	}
 
 	public void setText(String text){
@@ -196,43 +206,19 @@ public class FlatTextField extends FlatPanel {
 		repaint();
 	}
 
-	public static void main(String[] args){
-		FlatTextField normalTextField = new FlatTextField(false);
-		normalTextField.setHint("write name");
-//		normalTextField.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-		normalTextField.setBackground(Color.WHITE);
-
-		FlatTextField normalImageTextField = new FlatTextField(false);
-		normalImageTextField.setIconImage(ImageManager.WRITE);
-		normalImageTextField.setHint("write name");
-		normalImageTextField.setBackground(Color.WHITE);
-		normalImageTextField.setLineBorderWidth(10);
-
-		FlatTextField passwordTextField = new FlatTextField(true);
-		passwordTextField.setIconImage(ImageManager.WRITE);
-		passwordTextField.setBackground(Color.WHITE);
-		passwordTextField.setHint("write password");
-
-		//normalTextField.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-		FlatFrame frame = new FlatFrame();
-		frame.setTitle("FlatTextField test");
-		frame.setSize(500,500);
-		frame.setLocationOnScreenCenter();
-		frame.getContainer().setBackground(Color.GRAY);
-		frame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
-		frame.getContainer().setLayout(new GridLayout(3,1,30,30));
-		frame.getContainer().add(normalTextField);
-		frame.getContainer().add(normalImageTextField);
-		frame.getContainer().add(passwordTextField);
-		frame.setResizable(true);
-		frame.show();
+	public String getText(){
+		if (imageTextField.textFieldProxy.isHintAppeared()) return imageTextField.textFieldProxy.getHint();
+		else return imageTextField.textFieldProxy.getText();
 	}
 
 	private class ImageTextField extends FlatPanel{
 		private boolean isNeedReDraw;
 		private TextFieldProxy textFieldProxy;
 
+		/**
+		 * Confirm Order
+		 * @param passwordMode
+		 */
 		private ImageTextField(boolean passwordMode){
 			textFieldProxy = createProperTextFieldProxy(passwordMode);
 			setLayout(new LinearLayout(0));
@@ -247,18 +233,7 @@ public class FlatTextField extends FlatPanel {
 		}
 
 		private TextFieldProxy createProperTextFieldProxy(boolean isPasswordMode){
-			if (isPasswordMode) this.textFieldProxy = new PasswordTextField();
-			else this.textFieldProxy = new NormalTextField();
-
-			initTextField();
-
-			return this.textFieldProxy;
-		}
-
-		private void initTextField(){
-			JTextField textField = this.textFieldProxy.getTextField();
-//			textField.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-			textField.setOpaque(false);
+			return isPasswordMode ? new PasswordTextField() : new NormalTextField();
 		}
 
 		@Override

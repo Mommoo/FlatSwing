@@ -1,13 +1,13 @@
 package com.mommoo.flat.frame.titlebar.navigation.button;
 
-import com.mommoo.flat.component.FlatComponent;
+import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.titlebar.navigation.listener.FocusGainListener;
 import com.mommoo.flat.frame.titlebar.navigation.listener.FocusLostListener;
 import com.mommoo.flat.frame.titlebar.navigation.listener.MouseFocusAnimationListener;
 
 import java.awt.*;
 
-public abstract class NavigationButton extends FlatComponent {
+public abstract class NavigationButton extends FlatPanel implements ViewModel{
     private static final long serialVersionUID = 1L;
     private static final BasicStroke BASIC_STROKE = new BasicStroke(2.0f);
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
@@ -15,27 +15,21 @@ public abstract class NavigationButton extends FlatComponent {
     private Color buttonIconColor = Color.BLACK;
     private Color focusGainColor = Color.LIGHT_GRAY;
 
-    private MouseFocusAnimationListener animationListener;
+    private NavigationButtonModel buttonModel = new NavigationButtonModel(this);
 
     NavigationButton(){
         setCursor(HAND_CURSOR);
-        setMouseListener();
+        addMouseListener(buttonModel.getHoverAnimListener());
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        final Graphics2D G_2D = (Graphics2D)g;
-        G_2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        G_2D.setColor(buttonIconColor);
-        G_2D.setStroke(BASIC_STROKE);
-        final int STANDARD_RECT_SIZE = 7*getHeight()/20;
-        paintShape(STANDARD_RECT_SIZE ,G_2D);
-    }
-
-    private void setMouseListener(){
-        animationListener = new MouseFocusAnimationListener(this, focusGainColor, Color.DARK_GRAY);
-        addMouseListener(animationListener);
+    protected void postDraw(Graphics2D graphics2D, int availableWidth, int availableHeight) {
+        buttonModel.paint(graphics2D);
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.setColor(buttonIconColor);
+        graphics2D.setStroke(BASIC_STROKE);
+        final int STANDARD_RECT_SIZE = 7 * availableHeight / 20;
+        paintShape(STANDARD_RECT_SIZE ,graphics2D);
     }
 
     public void setButtonIconColor(Color color){
@@ -47,17 +41,16 @@ public abstract class NavigationButton extends FlatComponent {
         return this.buttonIconColor;
     }
 
-    public void setFocusColor(Color focusGainColor, Color focusLostColor){
-        this.focusGainColor = focusGainColor;
-        animationListener.setFocusAnimColor(focusGainColor, focusLostColor);
+    public void setHoverColor(Color hoverColor){
+        this.buttonModel.setHoverColor(hoverColor);
     }
 
-    public void setFocusGainListener(FocusGainListener focusGainListener){
-        animationListener.setFocusGainListener(focusGainListener);
+    public void setHoverInListener(Runnable hoverInListener){
+        this.buttonModel.setHoverInListener(hoverInListener);
     }
 
-    public void setFocusLostListener(FocusLostListener focusLostListener){
-        animationListener.setFocusLostListener(focusLostListener);
+    public void setHoverOutListener(Runnable hoverOutListener){
+        this.buttonModel.setHoverOutListener(hoverOutListener);
     }
 
     protected abstract void paintShape(final int STANDARD_RECT_SIZE, final Graphics2D GRAPHICS_2D);

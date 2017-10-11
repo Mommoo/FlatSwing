@@ -50,21 +50,21 @@ public class NavigationControlPanel extends JPanel {
         return NavigationButtonType.EXIT.ordinal();
     }
 
-    private void setExitButtonColor(Color color){
+    private void setExitButtonColor(){
         int index = findArrayIndexExitButton();
-        NAVIGATION_BTN_ARRAY[index].setFocusColor(Color.RED.darker(), color);
+        NAVIGATION_BTN_ARRAY[index].setHoverColor(Color.RED.darker());
         final Color originalMenuIconColor = NAVIGATION_BTN_ARRAY[index].getButtonIconColor();
-        NAVIGATION_BTN_ARRAY[index].setFocusGainListener(()-> NAVIGATION_BTN_ARRAY[index].setButtonIconColor(Color.WHITE));
-        NAVIGATION_BTN_ARRAY[index].setFocusLostListener(()-> NAVIGATION_BTN_ARRAY[index].setButtonIconColor(originalMenuIconColor));
+        NAVIGATION_BTN_ARRAY[index].setHoverInListener(()-> NAVIGATION_BTN_ARRAY[index].setButtonIconColor(Color.WHITE));
+        NAVIGATION_BTN_ARRAY[index].setHoverOutListener(()-> NAVIGATION_BTN_ARRAY[index].setButtonIconColor(originalMenuIconColor));
     }
 
     public void setButtonColor(Color color){
         for (NavigationButton navigationButton : NAVIGATION_BTN_ARRAY){
             navigationButton.setBackground(color);
-            navigationButton.setFocusColor(color.darker(), color);
+            navigationButton.setHoverColor(color.darker());
         }
 
-        setExitButtonColor(color);
+        setExitButtonColor();
     }
 
     public void setButtonIconColor(Color color){
@@ -82,7 +82,7 @@ public class NavigationControlPanel extends JPanel {
 
         for (int i = 0 , size = NAVIGATION_BTN_ARRAY.length ; i < size ; i++){
             NavigationButtonType buttonType = buttonTypes[i];
-            NAVIGATION_BTN_ARRAY[i].addActionListener(event -> controlListener.onNavigationClick(buttonType));
+            NAVIGATION_BTN_ARRAY[i].setOnClickListener(component -> controlListener.onNavigationClick(buttonType));
         }
     }
 }

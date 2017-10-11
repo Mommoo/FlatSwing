@@ -156,6 +156,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	public void doClick(){
 		autoClick = true;
+		repaint();
 	}
 
 	public RippleEffect getRippleEffect(){

@@ -1,8 +1,6 @@
 package com.mommoo.animation;
 
-import com.mommoo.animation.timeInterpolator.AccelerateInterpolator;
-import com.mommoo.animation.timeInterpolator.LinearTimeInterpolator;
-import com.mommoo.animation.timeInterpolator.TimeInterpolator;
+import com.mommoo.animation.timeInterpolator.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -26,8 +24,12 @@ public class Animator {
     private int takenTime;
 
     public static void main(String[] args){
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 500);
+        frame.setVisible(true);
         SwingUtilities.invokeLater(()-> new Animator()
-                .setTimeInterpolator(new AccelerateInterpolator())
+                .setTimeInterpolator(new AnticipateInterpolator())
                 .setAnimationListener(new AnimationListener() {
                     @Override
                     public void onStart() {

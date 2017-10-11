@@ -138,11 +138,28 @@ final class CommonJFrame extends JFrame {
 		return new Point(super.getLocation().x + shadowDip,super.getLocation().y + shadowDip);
 	}
 
-	
+	@Override
+	public int getX() {
+		return super.getX() + shadowDip;
+	}
+
+	@Override
+	public int getY() {
+		return super.getY() + shadowDip;
+	}
+
+	@Override
+	public Point getLocationOnScreen() {
+		Point locationOnScreen = super.getLocationOnScreen();
+		locationOnScreen.x += shadowDip;
+		locationOnScreen.y += shadowDip;
+		return locationOnScreen;
+	}
+
 	@Override
 	public Dimension getSize(){
 		final Dimension PARENT_DIMENSION = super.getSize();
-		return new Dimension(PARENT_DIMENSION.width - borderStrokeWidth*2 - shadowDip*2 ,
+		return new Dimension(PARENT_DIMENSION.width - shadowDip*2 ,
 				PARENT_DIMENSION.height - shadowDip*2);
 	}
 
@@ -172,7 +189,7 @@ final class CommonJFrame extends JFrame {
 	public void setSize(Dimension d) {
 		super.setSize(d.width+ shadowDip * 2,d.height + shadowDip * 2);
 	}
-	
+
 	void setBorderColor(Color color){
 		this.borderColor = color;
 		this.customizablePanel.setBorder(BorderFactory.createLineBorder(borderColor, borderStrokeWidth));

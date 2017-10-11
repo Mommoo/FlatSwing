@@ -1,8 +1,7 @@
 package com.mommoo.flat.image;
 
+import com.mommoo.example.ExampleFactory;
 import com.mommoo.flat.component.FlatPanel;
-import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,41 +20,41 @@ public class FlatImagePanel extends FlatPanel {
 
     private float alpha = 1.0f;
 
-    public static void main(String[] args){
-        FlatFrame flatFrame = new FlatFrame();
-        flatFrame.setSize(500,500);
-        flatFrame.setResizable(true);
-        flatFrame.setLocationOnScreenCenter();
+    public FlatImagePanel() {
 
-        FlatImagePanel imagePanel = new FlatImagePanel();
-        imagePanel.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
-        imagePanel.setImage(ImageManager.TEST, ImageOption.MATCH_PARENT);
-        imagePanel.setAlpha(0.8f);
-
-        flatFrame.getContainer().add(imagePanel);
-
-        flatFrame.show();
     }
 
-    public void setImage(Image image, ImageOption option){
+    public FlatImagePanel(Image image) {
+        setImage(image);
+    }
+
+    public FlatImagePanel(Image image, ImageOption option) {
+        setImage(image, option);
+    }
+
+    public static void main(String[] args) {
+        ExampleFactory.FlatImagePanelExample.example2();
+    }
+
+    public void setImage(Image image, ImageOption option) {
         this.image = image;
         this.option = option;
     }
 
-    public Image getImage(){
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(Image image){
+    public void setImage(Image image) {
         setImage(image, ImageOption.BASIC_IMAGE_SIZE);
     }
 
-    public void reDraw(){
+    public void reDraw() {
         reDraw = true;
         repaint();
     }
 
-    public void setAlpha(float alpha){
+    public void setAlpha(float alpha) {
         this.alpha = alpha;
     }
 
@@ -90,10 +89,10 @@ public class FlatImagePanel extends FlatPanel {
         } else if (option == ImageOption.BASIC_IMAGE_SIZE_CENTER) {
 
             Dimension imageDimension = getImageDimension();
-            imageX += (availableWidth  - imageDimension.width)/2;
-            imageY += (availableHeight - imageDimension.height)/2;
+            imageX += (availableWidth - imageDimension.width) / 2;
+            imageY += (availableHeight - imageDimension.height) / 2;
 
-        } else{
+        } else {
 
             int resizedWidth = 0;
             int resizedHeight = 0;
@@ -115,7 +114,7 @@ public class FlatImagePanel extends FlatPanel {
 
             }
 
-            if (reDraw){
+            if (reDraw) {
                 resizedImage = getSyncScaledImage(this.image, resizedWidth, resizedHeight);
                 reDraw = false;
             }
@@ -124,21 +123,24 @@ public class FlatImagePanel extends FlatPanel {
         }
 
         g2d.clipRect(imageX, imageY, availableWidth, availableHeight);
-        g2d.drawImage(image,imageX,imageY,null);
+        g2d.drawImage(image, imageX, imageY, null);
     }
 
-    private Image getSyncScaledImage(Image image, int width, int height){
+    private Image getSyncScaledImage(Image image, int width, int height) {
         Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         mediaTracker.addImage(resizedImage, 0);
 
-        try { mediaTracker.waitForID(0); }
-        catch (InterruptedException e) { e.printStackTrace(); }
+        try {
+            mediaTracker.waitForID(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         mediaTracker.removeImage(resizedImage);
         return resizedImage;
     }
 
-    private Dimension getImageDimension(){
+    private Dimension getImageDimension() {
         ImageIcon imageIcon = new ImageIcon(image);
         return new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight());
     }

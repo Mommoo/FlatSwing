@@ -8,6 +8,11 @@ import java.awt.*;
  */
 public class FlatPanel extends JPanel {
 
+    private MouseClickAdapter mouseClickAdapter;
+    private OnClickListener onClickListener = comp -> {};
+    private OnPaintListener onPaintListener = g2d -> {};
+    private OnLayoutListener onLayoutListener = (width, height) -> {};
+
     public FlatPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         init();
@@ -32,6 +37,35 @@ public class FlatPanel extends JPanel {
         setOpaque(false);
     }
 
+    @Override
+    public void paint(Graphics g) {
+        Insets insets = getInsets();
+        int availableWidth = getWidth() - insets.left - insets.right;
+        int availableHeight = getHeight() - insets.top - insets.bottom;
+
+        Graphics2D graphics2D = (Graphics2D)g;
+        preDraw(graphics2D, availableWidth, availableHeight);
+
+        super.paint(g);
+
+        onPaintListener.onPaint(graphics2D);
+        postDraw(graphics2D, availableWidth, availableHeight);
+        draw(graphics2D, availableWidth, availableHeight);
+    }
+
+    protected void preDraw(Graphics2D graphics2D, int availableWidth, int availableHeight){
+
+    }
+
+    protected void postDraw(Graphics2D graphics2D, int availableWidth, int availableHeight){
+
+    }
+
+    @Deprecated
+    protected void draw(Graphics2D graphics2D, int availableWidth, int availableHeight){
+
+    }
+
     public boolean isComponentContained(Component component){
         for (Component comp : getComponents()){
             if (comp == component) return true;
@@ -39,16 +73,45 @@ public class FlatPanel extends JPanel {
         return false;
     }
 
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        Insets insets = getInsets();
-        int availableWidth = getWidth() - insets.left - insets.right;
-        int availableHeight = getHeight() - insets.top - insets.bottom;
-        draw((Graphics2D)g, availableWidth, availableHeight);
+    public OnClickListener getOnClickListener() {
+        return onClickListener;
     }
 
-    protected void draw(Graphics2D graphics2D, int availableWidth, int availableHeight){
+    public void setOnClickListener(OnClickListener onClickListener){
+        if (onClickListener == null) return;
+        this.onClickListener = onClickListener;
+        this.mouseClickAdapter = new MouseClickAdapter(onClickListener);
+        addMouseListener(new MouseClickAdapter(onClickListener));
+    }
 
+    public void removeOnClickListener(){
+        removeMouseListener(this.mouseClickAdapter);
+        this.onClickListener = component -> {};
+    }
+
+    public OnPaintListener getOnPaintListener() {
+        return onPaintListener;
+    }
+
+    public void setOnPaintListener(OnPaintListener onPaintListener){
+        if (onPaintListener == null) return;
+        this.onPaintListener = onPaintListener;
+    }
+
+    public void removeOnPaintListener(){
+        onPaintListener = g -> {};
+    }
+
+    public OnLayoutListener getOnLayoutListener() {
+        return onLayoutListener;
+    }
+
+    public void setOnLayoutListener(OnLayoutListener onLayoutListener){
+        if (onLayoutListener == null) return;
+        this.onLayoutListener = onLayoutListener;
+    }
+
+    public void removeOnLayoutListener(){
+        onLayoutListener = (width, height) -> {};
     }
 }

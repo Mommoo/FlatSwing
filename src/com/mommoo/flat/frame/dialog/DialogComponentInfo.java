@@ -5,17 +5,20 @@ import com.mommoo.util.FontManager;
 import java.awt.*;
 
 public class DialogComponentInfo {
+    private static final Font DEFAULT_FONT = FontManager.getNanumGothicFont(Font.PLAIN,12);
     private String text = "text";
     private Color textColor = Color.BLACK;
     private Color backgroundColor = Color.WHITE;
-    private Font textFont = FontManager.getNanumGothicFont(Font.PLAIN,12);
+    private Font textFont = DEFAULT_FONT;
 
-    public void setText(String text){
+    public DialogComponentInfo setText(String text){
         this.text = text;
+        return this;
     }
 
-    public void setTextFont(Font textFont){
+    public DialogComponentInfo setTextFont(Font textFont){
         this.textFont = textFont;
+        return this;
     }
 
     public String getText(){
@@ -30,12 +33,14 @@ public class DialogComponentInfo {
         return textColor;
     }
 
-    public void setTextColor(Color color){
+    public DialogComponentInfo setTextColor(Color color){
         this.textColor = color;
+        return this;
     }
 
-    public void setBackgroundColor(Color color){
+    public DialogComponentInfo setBackgroundColor(Color color){
         this.backgroundColor = color;
+        return this;
     }
 
     public Color getBackgroundColor(){

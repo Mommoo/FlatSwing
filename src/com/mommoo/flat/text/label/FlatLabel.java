@@ -52,15 +52,16 @@ public class FlatLabel extends FlatTextArea {
 
 //			FlatLabel flatLabel = new FlatLabel("A Beautiful Label!!\n This is automatically line jump if string width longer than label width. You just use it well!");
 		FlatLabel flatLabel = new FlatLabel("Test");
+		flatLabel.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
 		flatLabel.setVerticalCenteredTextAlignment();
 		flatLabel.setFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
 		flatLabel.setOnClickListener(component -> System.out.println(((FlatLabel) component).getText()));
 //		flatLabel.setLineSpacing(0.7f);
-
+		flatLabel.setPreferredSize(new Dimension(200,200));
 		flatFrame.setSize(500, 700);
-
 		flatFrame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL));
-		flatFrame.getContainer().add(flatLabel, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+		flatFrame.getContainer().add(flatLabel);//, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+
 		flatLabel.setOpaque(true);
 		flatLabel.setBackground(Color.RED);
 		flatFrame.show();
@@ -68,7 +69,6 @@ public class FlatLabel extends FlatTextArea {
 
 	private void init(){
 		setEnableDragging(false);
-//		setFont(FontManager.getNanumGothicFont(Font.PLAIN, TEXT_FONT_SIZE));
 	}
 
 	@Override

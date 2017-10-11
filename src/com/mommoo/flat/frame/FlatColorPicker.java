@@ -40,6 +40,9 @@ public class FlatColorPicker {
     private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
+    private static final Font BOLD_FONT  = FontManager.getNanumGothicFont(Font.BOLD,SCREEN_MANAGER.dip2px(11));
+    private static final Font PLAIN_FONT = FontManager.getNanumGothicFont(Font.PLAIN,SCREEN_MANAGER.dip2px(11));
+
     private final ArrayList<Observer> OBSERVER_LIST = new ArrayList<>();
 
     private final FlatFrame PICKER_VIEW = new FlatFrame();
@@ -502,7 +505,7 @@ public class FlatColorPicker {
         private void initColorGuideView(){
             COLOR_GUIDE_LINE.setLayout(new FlowLayout(FlowLayout.LEFT));
             final JLabel COLOR_GUIDE_TEXT = new JLabel("선택 색상 :  ");
-            COLOR_GUIDE_TEXT.setFont(FontManager.getNanumGothicFont(Font.BOLD,ScreenManager.getInstance().dip2px(10)));
+            COLOR_GUIDE_TEXT.setFont(BOLD_FONT);
             COLOR_GUIDE_LINE.add(COLOR_GUIDE_TEXT);
             COLOR_GUIDE_LINE.add(COLOR_PANEL);
             Dimension d = COLOR_GUIDE_LINE.getPreferredSize();
@@ -536,16 +539,12 @@ public class FlatColorPicker {
 
             private void initComponent(){
                 final int PADDING = SCREEN_MANAGER.dip2px(5);
-                final int FONT_SIZE = SCREEN_MANAGER.dip2px(10);
-                final Font TEXT_FONT = FontManager.getNanumGothicFont(Font.BOLD,FONT_SIZE);
-                final Font FIGURE_FONT = FontManager.getNanumGothicFont(Font.PLAIN,FONT_SIZE);
-
-                GUIDE_TEXT.setFont(TEXT_FONT);
+                GUIDE_TEXT.setFont(BOLD_FONT);
                 GUIDE_VALUE.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
                 GUIDE_VALUE.setBackground(Color.WHITE);
                 GUIDE_VALUE.setHorizontalAlignment(JTextField.CENTER);
                 GUIDE_VALUE.setEditable(false);
-                FIGURE_TEXT.setFont(FIGURE_FONT);
+                FIGURE_TEXT.setFont(PLAIN_FONT);
             }
 
             private void setValue(String value){
@@ -585,7 +584,7 @@ public class FlatColorPicker {
 
     class ManipulationView extends JPanel{
         private final ScreenManager SCREEN_MANAGER = ScreenManager.getInstance();
-        private final Font font = FontManager.getNanumGothicFont(Font.BOLD,SCREEN_MANAGER.dip2px(11));
+
         private final FlatButton CONFIRM_BUTTON = new FlatButton("확인");
         private final FlatButton CANCEL_BUTTON = new FlatButton("취소");
         private final JPanel MANIPULATE_AREA = new JPanel();
@@ -605,7 +604,7 @@ public class FlatColorPicker {
             int padding = SCREEN_MANAGER.dip2px(6);
             for(FlatButton btn : flatButtons){
                 btn.setBackground(THEME_COLOR);
-                btn.setFont(font);
+                btn.setFont(BOLD_FONT);
                 btn.setBorder(BorderFactory.createEmptyBorder(padding,padding*2,padding,padding*2));
             }
             CONFIRM_BUTTON.setOnClickListener(o->{
@@ -619,8 +618,8 @@ public class FlatColorPicker {
         private void initManipulationArea(){
             MANIPULATE_AREA.setLayout(new FlowLayout());
             MANIPULATE_AREA.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(1.0f)));
-            SHOP.setFont(font);
-            HEX_COLOR_VALUE.setFont(font.deriveFont(Font.PLAIN));
+            SHOP.setFont(BOLD_FONT);
+            HEX_COLOR_VALUE.setFont(BOLD_FONT.deriveFont(Font.PLAIN));
             HEX_COLOR_VALUE.setHorizontalAlignment(JTextField.CENTER);
             MANIPULATE_AREA.add(SHOP);
             MANIPULATE_AREA.add(HEX_COLOR_VALUE);

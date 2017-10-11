@@ -1,20 +1,10 @@
 package com.mommoo.flat.list;
 
-import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.flat.layout.linear.LinearLayout;
-import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
-import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+import com.mommoo.example.ExampleFactory;
 import com.mommoo.flat.list.listener.OnDragListener;
 import com.mommoo.flat.list.listener.OnSelectionListener;
-import com.mommoo.flat.text.label.FlatLabel;
-import com.mommoo.flat.text.textarea.FlatTextAlignment;
-import com.mommoo.flat.text.textarea.FlatTextArea;
-import com.mommoo.util.FontManager;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -26,7 +16,6 @@ public class FlatListView<T extends Component> {
     private final FlatVerticalScrollPane<T> SCROLL_PANE = new FlatVerticalScrollPane<>();
     private final ArrayList<T> compList = new ArrayList<>();
     private final Scroller SCROLLER = new Scroller();
-
 
     public FlatListView() { }
 
@@ -45,41 +34,6 @@ public class FlatListView<T extends Component> {
 
     public Component getComponent() {
         return SCROLL_PANE;
-    }
-
-    public static void main(String[] args){
-//        SwingUtilities.invokeLater(()->{ });
-        FlatFrame frame = new FlatFrame();
-        frame.setTitle("Beautiful FlatList");
-        frame.setSize(500, 500);
-        Font font = FontManager.getNanumGothicFont(Font.PLAIN, 50);
-
-        FlatListView<FlatTextArea> list2 = new FlatListView<>();
-
-        for (int i = 0 ; i < 100 ; i ++) {
-            FlatLabel area = new FlatLabel("index : " + i);
-            area.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            area.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
-            area.setFont(font);
-            list2.addItem(area);
-        }
-
-        list2.getScroller().smoothScrollByPosition(true, 30);
-
-        list2.setOnSelectionListener((beginIndex, endIndex, selectionList) -> {
-            System.out.println("selected index from : " + beginIndex +", to : " + endIndex);
-        });
-        list2.setOnDragListener((beginIndex, endIndex, selectionList) -> {
-            System.out.println("drag index from : " + beginIndex +", to : " + endIndex);
-        });
-        frame.getContainer().add(list2.getComponent());
-        list2.setDivider(Color.BLACK, 1);
-
-        frame.setLocationOnScreenCenter();
-        frame.setResizable(true);
-
-
-        frame.show();
     }
 
     public void addItems(T... items) {
@@ -291,6 +245,10 @@ public class FlatListView<T extends Component> {
         public void setScrollTrackColor(Color trackColor){
             SCROLL_PANE.setVerticalScrollTrackColor(trackColor);
         }
+    }
+
+    public static void main(String[] args){
+        ExampleFactory.FlatListViewExample.example1();
     }
 
 }

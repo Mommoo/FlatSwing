@@ -165,8 +165,8 @@ public class LinearLayout implements LayoutManager2, Serializable {
         spaceInspector.setWeightSum(weightSum);
     }
 
-    public void getWeightSum(){
-        spaceInspector.getWeightSum();
+    public int getWeightSum(){
+        return spaceInspector.getWeightSum();
     }
 }
 

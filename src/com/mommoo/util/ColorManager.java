@@ -8,15 +8,18 @@ import java.awt.*;
 public class ColorManager {
     private ColorManager(){}
 
+    private static Color DEFAULT_COLOR = Color.decode("#999999");
+    private static Color COLOR_ACCENT = Color.decode("#E91E63");
+
     public static Color getTransParentColor(){
         return new Color(0.0f, 0.0f, 0.0f, 0.0f);
     }
 
     public static Color getFlatComponentDefaultColor(){
-        return Color.decode("#eeeeee");
+        return DEFAULT_COLOR;
     }
 
     public static Color getColorAccent(){
-        return Color.decode("#E91E63");
+        return COLOR_ACCENT;
     }
 }

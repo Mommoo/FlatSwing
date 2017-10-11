@@ -31,7 +31,7 @@ class FlatButtonViewModel {
 
     void paintRippleEffect(Graphics2D graphics2D) {
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        rippleMouseEventListener.drawRipple(graphics2D);
+        rippleMouseEventListener.drawRippleEffect(graphics2D);
     }
 
     void executeRippleEffect(Point startLocation, ActionEvent actionEvent){
@@ -83,7 +83,7 @@ class FlatButtonViewModel {
 
         private void animationEnd() {
             radius = 0;
-            executePostAnimation(() -> {
+            executePostAlphaAnimation(() -> {
 
                 isAnimationEnd = true;
                 viewModel.repaint();
@@ -191,7 +191,7 @@ class FlatButtonViewModel {
                     .start(getDiagonalSize() - radius);
         }
 
-        private void executePostAnimation(Runnable animationEndListener){
+        private void executePostAlphaAnimation(Runnable animationEndListener){
             animator.stop()
                     .setDuration(rippleModel.getRippleHoldDuration())
                     .setTimeInterpolator(new AccelerateInterpolator())
@@ -214,13 +214,11 @@ class FlatButtonViewModel {
             return Math.sqrt(Math.pow(viewModel.getWidth(), 2) + Math.pow(viewModel.getHeight(), 2)) * 2;
         }
 
-        private void drawRipple(Graphics2D graphics2D){
+        private void drawRippleEffect(Graphics2D graphics2D){
             if (!isAnimationEnd){
-                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-                graphics2D.setComposite(ac);
+                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 graphics2D.setColor(rippleOpacityColor);
                 graphics2D.fill(ellipse2D);
-                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
         }
 

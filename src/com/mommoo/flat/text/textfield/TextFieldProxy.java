@@ -1,50 +1,52 @@
 package com.mommoo.flat.text.textfield;
 
-import com.mommoo.util.FontManager;
-import com.mommoo.util.ScreenManager;
+import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 
 abstract class TextFieldProxy {
-    private static final ScreenManager SM = ScreenManager.getInstance();
-    private static final int TEXT_FONT_SIZE = SM.dip2px(10);
-    private static final Color DEFAULT_HINT_COLOR = Color.decode("#999999");
-
-
-    private final JTextField targetTextField;
-
+    boolean isHintFirst;
+    Color hintForeground = ColorManager.getFlatComponentDefaultColor();
     Color originalForegroundColor;
-    Color hintColor = DEFAULT_HINT_COLOR;
+    private JTextField targetTextField;
     String hint = "";
 
-    TextFieldProxy(JTextField textField){
-        this.targetTextField = textField;
+    TextFieldProxy(){ }
+
+    void bind(JTextField textField){
+        this.targetTextField = decorateTextField(textField);
         this.originalForegroundColor = this.targetTextField.getForeground();
-        initTextField();
-        addTextWatchListener();
     }
 
-    private void initTextField(){
-        this.targetTextField.setBorder(BorderFactory.createEmptyBorder(0, 0,0, 0));
-        this.targetTextField.setFont(FontManager.getNanumGothicFont(Font.PLAIN,TEXT_FONT_SIZE));
+
+    private JTextField decorateTextField(JTextField textField){
+        textField.setBorder(BorderFactory.createEmptyBorder(0, 0,0, 0));
+        textField.setOpaque(false);
+        return textField;
     }
 
-    private void addTextWatchListener(){
-//        this.targetTextField.addCaretListener(e->{
-//            if (this.targetTextField.getText().equals("")){
-//                setHintText();
-//            }
-//        });
+    boolean isHintAppeared(){
+        boolean isEqualsHintText = getHint().equals(getText());
+        boolean isEqualsForegroundColor = getHintForeground() == getTextField().getForeground();
+        return isEqualsHintText && isEqualsForegroundColor;
     }
 
     void setHint(String hint){
         this.hint = hint;
+        this.isHintFirst = true;
         setHintText();
     }
 
+    void setText(String text){
+        this.isHintFirst = false;
+        setNormalText(text);
+    }
+
     void clear(){
-        setText("");
+        setNormalText("");
         setHint(this.hint);
     }
 
@@ -52,17 +54,17 @@ abstract class TextFieldProxy {
         return this.hint;
     }
 
-    void setHintColor(Color hintColor){
-        this.hintColor = hintColor;
+    Color getHintForeground(){
+        return this.hintForeground;
     }
 
-    Color getHintColor(){
-        return this.hintColor;
+    void setHintForeground(Color hintColor){
+        this.hintForeground = hintColor;
     }
 
     abstract void setHintText();
 
-    abstract void setText(String text);
+    abstract void setNormalText(String text);
 
     String getText(){
         return this.targetTextField.getText();

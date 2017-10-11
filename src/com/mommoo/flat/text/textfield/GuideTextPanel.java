@@ -19,9 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuideTextPanel extends FlatPanel {
-
+    private static final Font DEFAULT_FONT = FontManager.getNanumGothicFont(Font.BOLD, 14).deriveFont(getAttribute());
     private final FlatLabel GUIDE_LABEL = new FlatLabel();
     private final FlatTextField flatTextField;
+
 
     public GuideTextPanel(FlatTextField flatTextField){
         this.flatTextField = flatTextField;
@@ -68,7 +69,7 @@ public class GuideTextPanel extends FlatPanel {
 
     }
 
-    private Map<TextAttribute, Object> getAttribute(){
+    private static Map<TextAttribute, Object> getAttribute(){
         Map<TextAttribute, Object> attributes = new HashMap<>();
         attributes.put(TextAttribute.TRACKING, 0.1);
         return attributes;
@@ -122,8 +123,7 @@ public class GuideTextPanel extends FlatPanel {
 
     private void initGuideLabel(){
         GUIDE_LABEL.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-        GUIDE_LABEL.setFont(FontManager.getNanumGothicFont(Font.BOLD, 14).deriveFont(getAttribute()));
-
+        GUIDE_LABEL.setFont(DEFAULT_FONT);
         GUIDE_LABEL.setOpaque(false);
     }
 }
