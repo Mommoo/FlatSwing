@@ -212,6 +212,10 @@ public class FlatTextArea extends JTextPane{
         addMouseListener(mouseClickAdapter);
     }
 
+    public OnClickListener getOnClickListener(){
+        return this.mouseClickAdapter.getOnClickListener();
+    }
+
     void setPreferredLabelSize(Dimension preferredSize){
         if (userWantedDimension == null){
             super.setPreferredSize(preferredSize);

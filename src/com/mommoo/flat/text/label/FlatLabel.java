@@ -23,7 +23,6 @@ import java.awt.*;
  */
 
 public class FlatLabel extends FlatTextArea {
-	private static final int TEXT_FONT_SIZE = ScreenManager.getInstance().dip2px(8);
 
 	public FlatLabel(){
 		init();

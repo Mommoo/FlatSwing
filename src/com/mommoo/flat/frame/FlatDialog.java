@@ -3,6 +3,7 @@ package com.mommoo.flat.frame;
 import com.mommoo.animation.AnimationAdapter;
 import com.mommoo.animation.Animator;
 import com.mommoo.animation.timeInterpolator.AnticipateInterpolator;
+import com.mommoo.flat.button.FlatButton;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.dialog.DialogButtonInfo;
 import com.mommoo.flat.frame.dialog.DialogComponentInfo;
@@ -32,7 +33,7 @@ public class FlatDialog {
 
 	private final static int PADDING = FLAT_DIALOG_WIDTH/28;
 
-	private final static int ANIMATION_DURATION = 300;
+	private final static int ANIMATION_DURATION = 400;
 
 	private final CommonJFrame COMMON_FRAME = createCommonJFrame();
 	private final JDialog HIDDEN_DIALOG_FOR_MODALITY = createHiddenModalDialog();
@@ -130,7 +131,8 @@ public class FlatDialog {
 		    BTN_PARENT_PANEL.add(createButton(buttonInfo));
         }
 
-
+		FlatLabel okButton = (FlatLabel)BTN_PARENT_PANEL.getComponent(builder.dialogButtonInfoList.size() - 1);
+		addEnterKeyListener(() -> okButton.getOnClickListener().onClick(okButton));
 		return BTN_PARENT_PANEL;
 	}
 
@@ -144,7 +146,6 @@ public class FlatDialog {
 			if (buttonInfo.isExit()){
 				executeExit(buttonInfo.isEndAnimation() ? ANIMATION_DURATION : 0);
 			}
-
 		});
 		return button;
 	}
@@ -168,19 +169,6 @@ public class FlatDialog {
 				.start(previousY  + COMMON_FRAME.getHeight());
 	}
 
-    private Component createOKButton(){
-        FlatLabel okButton = createButton(builder.buttonDialogComponentInfo);
-
-        OnClickListener onClickListener = component -> {
-            builder.onClickListener.onClick(okButton);
-            COMMON_FRAME.dispose();
-        };
-
-        okButton.setOnClickListener(onClickListener);
-
-        addEnterKeyListener(() -> onClickListener.onClick(okButton));
-        return okButton;
-    }
 
 	private Container getContainer(){
 		return COMMON_FRAME.getCustomizablePanel();
