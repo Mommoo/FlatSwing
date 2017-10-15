@@ -131,7 +131,6 @@ public class LinearLayout implements LayoutManager2, Serializable {
             int index = 0;
 
             for (Component comp : parent.getComponents()){
-                System.out.println(index + "  :  " + comp.getPreferredSize());
                 comp.setBounds(spaceInspector.getProperCompBounds(index++));
             }
 
