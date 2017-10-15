@@ -100,12 +100,12 @@ public class DialogContentView{
         @Override public void paint(Graphics g) {
             super.paint(g);
 //            for (Component comp : getComponents()){
-//                if (!comp.getPreferredSize().equals(comp.getMinimumSize())){
+//                if (!comp.getPreferredLabelSize().equals(comp.getMinimumSize())){
 //                    System.out.println("===========================");
 //                    System.out.println(comp);
-//                    System.out.println(comp.getPreferredSize());
+//                    System.out.println(comp.getPreferredLabelSize());
 //                    System.out.println(comp.getMinimumSize());
-//                    comp.setMinimumSize(comp.getPreferredSize());
+//                    comp.setMinimumSize(comp.getPreferredLabelSize());
 //
 //                    flag = true;
 //                }
@@ -116,7 +116,7 @@ public class DialogContentView{
 //                for (Component comp : getComponents()){
 //                    System.out.println("*********************");
 //                    System.out.println(comp);
-//                    System.out.println(comp.getPreferredSize());
+//                    System.out.println(comp.getPreferredLabelSize());
 //                    System.out.println(comp.getMinimumSize());
 //                    System.out.println(comp.getSize());
 //                    System.out.println(comp.getLocation());

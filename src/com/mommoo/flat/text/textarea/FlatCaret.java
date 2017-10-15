@@ -1,5 +1,6 @@
 package com.mommoo.flat.text.textarea;
 
+import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
@@ -16,6 +17,7 @@ class FlatCaret extends DefaultCaret{
 
     FlatCaret(){
         setBlinkRate(BLINK_RATE);
+        setUpdatePolicy(ALWAYS_UPDATE);
     }
 
     int getCursorWidth(){
@@ -28,6 +30,11 @@ class FlatCaret extends DefaultCaret{
 
     @Override
     public void paint(Graphics g) {
+        Graphics2D graphics2D = (Graphics2D)g;
+        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
+        super.paint(g);
+        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
         JTextComponent comp = getComponent();
 
         if (comp == null || !isVisible()) return;
@@ -43,7 +50,6 @@ class FlatCaret extends DefaultCaret{
         } catch (Exception e) {
             return;
         }
-
         // set cursorHeight;
         r.height = cacheMetrics.getHeight();
         g.setColor(comp.getCaretColor());

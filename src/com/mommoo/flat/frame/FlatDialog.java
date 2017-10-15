@@ -3,7 +3,6 @@ package com.mommoo.flat.frame;
 import com.mommoo.animation.AnimationAdapter;
 import com.mommoo.animation.Animator;
 import com.mommoo.animation.timeInterpolator.AnticipateInterpolator;
-import com.mommoo.flat.button.FlatButton;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.dialog.DialogButtonInfo;
 import com.mommoo.flat.frame.dialog.DialogComponentInfo;
@@ -18,7 +17,6 @@ import com.mommoo.util.KeyManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public class FlatDialog {
 
 	private final static int PADDING = FLAT_DIALOG_WIDTH/28;
 
-	private final static int ANIMATION_DURATION = 400;
+	private final static int ANIMATION_DURATION = 300;
 
 	private final CommonJFrame COMMON_FRAME = createCommonJFrame();
 	private final JDialog HIDDEN_DIALOG_FOR_MODALITY = createHiddenModalDialog();
@@ -81,6 +79,7 @@ public class FlatDialog {
 	private CommonJFrame createCommonJFrame(){
     	CommonJFrame COMMON_FRAME = new CommonJFrame();
 		COMMON_FRAME.setType(JFrame.Type.UTILITY);
+		COMMON_FRAME.setShadowWidth(SCREEN_MANAGER.dip2px(3));
 		COMMON_FRAME.setAlwaysOnTop(true);
 		COMMON_FRAME.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 		return COMMON_FRAME;
@@ -258,7 +257,7 @@ public class FlatDialog {
 	}
 
 	public static class Builder{
-		private static Font DEFAULT_TEXT_FONT    = FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(18));
+		private static Font DEFAULT_TITLE_FONT = FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(16));
 		private static Font DEFAULT_CONTENT_FONT = FontManager.getNanumGothicFont(Font.PLAIN, SCREEN_MANAGER.dip2px(10));
 		private static Font DEFAULT_BUTTON_FONT  = FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(9));
 
@@ -276,13 +275,11 @@ public class FlatDialog {
 		private int dialogWidth = FLAT_DIALOG_WIDTH;
 		private float lineSpacing = 0.3f;
 
-		private OnClickListener onClickListener = o -> {};
-
 		private Component locationComponent;
 		private FrameLocation frameLocation = FrameLocation.NONE;
 
 		public Builder(){
-			titleInfo.setTextFont(DEFAULT_TEXT_FONT);
+			titleInfo.setTextFont(DEFAULT_TITLE_FONT);
 			contentInfo.setTextFont(DEFAULT_CONTENT_FONT);
 
 			upperView.setPreferredSize(new Dimension(0,0));
@@ -408,7 +405,7 @@ public class FlatDialog {
 		}
 
 		public Builder setOnClickListener(OnClickListener onClickListener){
-			this.onClickListener = onClickListener;
+			this.buttonDialogComponentInfo.setOnClickListener(onClickListener);
 			return this;
 		}
 

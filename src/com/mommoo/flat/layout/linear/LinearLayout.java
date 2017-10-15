@@ -124,30 +124,30 @@ public class LinearLayout implements LayoutManager2, Serializable {
     @Override
     public void layoutContainer(Container parent) {
         synchronized (parent.getTreeLock()) {
-            fixComponentSizeAtOnce(parent);
+            //fixComponentSizeAtOnce(parent);
 
             spaceInspector.setData(parent, orientation, gap);
 
             int index = 0;
 
             for (Component comp : parent.getComponents()){
+                System.out.println(index + "  :  " + comp.getPreferredSize());
                 comp.setBounds(spaceInspector.getProperCompBounds(index++));
             }
 
         }
     }
 
-    private void fixComponentSizeAtOnce(Container container){
-
-        if (once) {
-            return;
-        }
-        once = true;
-
-        for (Component comp : container.getComponents()){
-            comp.setPreferredSize(comp.getPreferredSize());
-        }
-    }
+//    private void fixComponentSizeAtOnce(Container container){
+//        if (once) {
+//            return;
+//        }
+//        once = true;
+//
+//        for (Component comp : container.getComponents()){
+//            comp.setPreferredSize(comp.getPreferredSize());
+//        }
+//    }
 
     public void setOrientation(Orientation orientation){
         this.orientation = orientation;

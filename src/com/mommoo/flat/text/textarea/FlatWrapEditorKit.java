@@ -10,14 +10,12 @@ class FlatWrapEditorKit extends StyledEditorKit {
         return defaultFactory;
     }
 
-
     FlatWrapEditorKit(EditorListener editorListener) {
         this.editorListener = editorListener;
     }
 
     private class WrapColumnFactory implements ViewFactory {
         public View create(Element elem) {
-
             if (elem.getName() == null) {
                 return new LabelView(elem);
             }
@@ -38,7 +36,7 @@ class FlatWrapEditorKit extends StyledEditorKit {
                 case StyleConstants.IconElementName:
                     return new IconView(elem);
 
-                default :
+                default:
                     return new LabelView(elem);
             }
         }
@@ -49,33 +47,44 @@ class FlatWrapEditorKit extends StyledEditorKit {
             super(elem);
         }
 
+
         public View breakView(int axis, int p0, float pos, float len) {
-            if (axis == View.X_AXIS) {
-                checkPainter();
-                int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
+            if (editorListener.isWrapStyleWord()) {
+                return super.breakView(axis, p0, pos, len);
+            } else {
+                if (axis == View.X_AXIS) {
+                    checkPainter();
+                    int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
 
-                if (p0 == getStartOffset() && p1 == getEndOffset()) {
+                    if (p0 == getStartOffset() && p1 == getEndOffset()) {
 
-                    return this;
+                        return this;
+                    }
+
+                    return createFragment(p0, p1);
                 }
-
-                return createFragment(p0, p1);
+                return this;
             }
-            return this;
         }
 
         public int getBreakWeight(int axis, float pos, float len) {
-            if (axis == View.X_AXIS) {
-                checkPainter();
-                int p0 = getStartOffset();
-                int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
+            if (editorListener.isWrapStyleWord()) {
+                return super.getBreakWeight(axis, pos, len);
+            } else {
+                if (axis == View.X_AXIS) {
+                    checkPainter();
+                    int p0 = getStartOffset();
+                    int p1 = getGlyphPainter().getBoundedPosition(this, p0, pos, len);
 
-                if (p1 == p0) {
-                    return View.BadBreakWeight;
+                    if (p1 == p0) {
+                        return View.BadBreakWeight;
+                    }
+                    return View.GoodBreakWeight;
                 }
                 return View.GoodBreakWeight;
             }
-            return View.GoodBreakWeight;
+
+
         }
 
         public float getMinimumSpan(int axis) {
@@ -92,18 +101,32 @@ class FlatWrapEditorKit extends StyledEditorKit {
     }
 
     private class CenteredBoxView extends BoxView {
-
         private CenteredBoxView(Element elem, int axis) {
             super(elem, axis);
         }
 
+
         protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
             super.layoutMajorAxis(targetSpan, axis, offsets, spans);
+
             if (editorListener.isVerticalCentered()) {
-                int offset = (getContainer().getHeight() - editorListener.getPreferredSize().height) / 2;
+
+                final int[] copyArray = new int[offsets.length];
+                System.arraycopy(offsets,0,copyArray,0,offsets.length);
+
+                int offset = (getContainer().getHeight() - editorListener.getContentsHeight())/2;
+
                 for (int i = 0; i < offsets.length; i++) {
                     offsets[i] += offset;
                 }
+
+                editorListener.executeTextMoveTask(marginHeight -> {
+                    for (int i = 0; i < offsets.length; i++) {
+                        offsets[i] = copyArray[i] + marginHeight;
+                    }
+                    editorListener.revalidate();
+                    editorListener.repaint();
+                });
             }
         }
     }

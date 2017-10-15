@@ -2,9 +2,11 @@ package com.mommoo.flat.component;
 
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.text.label.FlatLabel;
+import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
@@ -36,11 +38,19 @@ public class FlatScrollPane extends JScrollPane {
         init();
     }
 
-    private void init(){
-        getVerticalScrollBar().setUI(VERTICAL_SCROLL_BAR_UI);
-        getHorizontalScrollBar().setUI(HORIZONTAL_SCROLL_BAR_UI);
-        getVerticalScrollBar().setPreferredSize(new Dimension(10,0));
-        getHorizontalScrollBar().setPreferredSize(new Dimension(10,0));
+    public static void main(String[] ags){
+        FlatScrollPane flatScrollPane = new FlatScrollPane();
+        FlatTextArea flatLabel = new FlatTextArea();
+        flatLabel.setText("1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n2\n3\n4\n5\n6\n7\n8\n9\n");
+        flatLabel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        flatScrollPane.setViewportView(flatLabel);
+
+        FlatFrame flatFrame = new FlatFrame();
+        flatFrame.setTitle("FlatScrollPane Test");
+        flatFrame.setSize(500,300);
+        flatFrame.setLocationOnScreenCenter();
+        flatFrame.getContainer().add(flatScrollPane);
+        flatFrame.show();
     }
 
     public void setThemeColor(Color themeColor){
@@ -69,6 +79,13 @@ public class FlatScrollPane extends JScrollPane {
         getHorizontalScrollBar().setBackground(trackColor);
     }
 
+    private void init(){
+        getVerticalScrollBar().setUI(VERTICAL_SCROLL_BAR_UI);
+        getHorizontalScrollBar().setUI(HORIZONTAL_SCROLL_BAR_UI);
+        getVerticalScrollBar().setPreferredSize(new Dimension(10,0));
+        getHorizontalScrollBar().setPreferredSize(new Dimension(10,0));
+        setBorder(BorderFactory.createEmptyBorder());
+    }
 
     private class FlatScrollBarUI extends BasicScrollBarUI{
 
@@ -238,26 +255,11 @@ public class FlatScrollPane extends JScrollPane {
 //            }
 //
 //            @Override
-//            public Dimension getPreferredSize() {
+//            public Dimension getPreferredLabelSize() {
 //                return new Dimension(16, 16);
 //            }
 //
 //            protected abstract void paintArrow(Graphics2D graphics2D, Dimension parentDimension ,Path2D line);
 //        }
-    }
-
-    public static void main(String[] ags){
-        FlatScrollPane flatScrollPane = new FlatScrollPane();
-        FlatLabel flatLabel = new FlatLabel();
-        flatLabel.setText("1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n2\n3\n4\n5\n6\n7\n8\n9\n");
-        flatLabel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        flatScrollPane.setViewportView(flatLabel);
-
-        FlatFrame flatFrame = new FlatFrame();
-        flatFrame.setTitle("FlatScrollPane Test");
-        flatFrame.setSize(500,300);
-        flatFrame.setLocationOnScreenCenter();
-        flatFrame.getContainer().add(flatScrollPane);
-        flatFrame.show();
     }
 }

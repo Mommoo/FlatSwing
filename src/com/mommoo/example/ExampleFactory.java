@@ -15,6 +15,7 @@ import com.mommoo.flat.list.FlatListView;
 import com.mommoo.flat.list.listener.OnSelectionListener;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.FlatTextAlignment;
+import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.flat.text.textfield.FlatTextField;
 import com.mommoo.util.FontManager;
 import com.mommoo.util.ImageManager;
@@ -100,6 +101,31 @@ public class ExampleFactory {
             });
 
             frame.show();
+        }
+
+        public static void example2(){
+            FlatFrame frame = createCommonFrame();
+            frame.setSize(250,500);
+            frame.setTitle("Example2 : panelWrap Test");
+            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+            FlatListView<FlatPanel> listView = new FlatListView<>();
+            Font font = FontManager.getNanumGothicFont(Font.BOLD, 13);
+            for (int i = 0 ; i < 30 ; i++){
+                listView.addItem(createWrapPanel("position : " + (i + 1),font));
+            }
+            frame.getContainer().add(listView.getComponent(), new LinearConstraints().setWeight(5).setLinearSpace(LinearSpace.MATCH_PARENT));
+            frame.show();
+        }
+
+        private static FlatPanel createWrapPanel(String text,Font font){
+            FlatPanel panel = new FlatPanel(new BorderLayout());
+            FlatLabel label = new FlatLabel(text);
+            label.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
+            label.setVerticalCenteredTextAlignment();
+            panel.setPreferredSize(new Dimension(1,50));
+            label.setFont(font);
+            panel.add(label);
+            return panel;
         }
     }
 

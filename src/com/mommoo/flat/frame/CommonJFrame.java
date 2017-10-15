@@ -55,9 +55,9 @@ final class CommonJFrame extends JFrame {
 	}
 
 	private void drawShadow(Graphics2D g2) {
-		final int RGB_TONE = 100;
-		final Color START_COLOR = new Color(RGB_TONE, RGB_TONE, RGB_TONE,190);
-		final Color END_COLOR = new Color(RGB_TONE, RGB_TONE, RGB_TONE, 0);
+		final int RGB_TONE = 70;
+		final Color START_COLOR = new Color(RGB_TONE + 70, RGB_TONE + 70, RGB_TONE + 70,190);
+		final Color END_COLOR = new Color(RGB_TONE, RGB_TONE, RGB_TONE, 50);
 
 		final float[] DIST = { 0.0f, 1.0f };
 		final Color[] COLORS = { START_COLOR, END_COLOR };
