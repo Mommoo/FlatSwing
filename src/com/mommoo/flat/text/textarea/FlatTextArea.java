@@ -327,7 +327,13 @@ public class FlatTextArea extends JTextPane{
     }
 
     public void setHeightFittedToWidth(int preferredWidth) {
-        SwingUtilities.invokeLater(() -> setPreferredSize(getViewDimension(preferredWidth)));
+        SwingUtilities.invokeLater(() -> {
+            Dimension dimension = autoResizeHandler.getContentsFitSize(preferredWidth, wrapStyleWord);
+            Insets insets = getInsets();
+            dimension.width = preferredWidth;
+            dimension.height += insets.top + insets.bottom;
+            setPreferredSize(dimension);
+        });
     }
 
     private class AutoResizeModelImpl implements AutoResizeModel {

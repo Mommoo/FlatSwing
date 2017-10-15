@@ -63,11 +63,13 @@ public class FlatDialog {
 
         new FlatDialog.Builder()
                 .setTitle("Beautiful Dialog!")
-                .setContent("This is test message\n" +
-                        "When dialog message length increase, this dialog area is wider automatically \n" +
-                        "So, you don't consider that width or height size\n" +
-                        "Just use it!")
-                .setDialogWidth(400)
+//                .setContent("This is test message\n" +
+//                        "When dialog message length increase, this dialog area is wider automatically \n" +
+//                        "So, you don't consider that width or height size\n" +
+//                        "Just use it!")
+				.setTitle("이상하네")
+				.setContent("잘지내에에에에ㅔ")
+                .setDialogWidth(1000)
                 .setLocationScreenCenter()
                 .appendButton(buttonInfo)
                 .build()
