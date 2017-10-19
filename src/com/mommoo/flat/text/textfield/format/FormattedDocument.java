@@ -5,18 +5,19 @@ import com.mommoo.util.StringUtils;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import java.util.*;
 
 public class FormattedDocument extends PlainDocument{
-    private FlatTextFormat format = FlatTextFormat.NORMAL;
+    private Set<FlatTextFormat> formatSet = new HashSet<>();
     private boolean isHintStatus;
     private StringBuilder stringBuilder = new StringBuilder();
 
-    public FlatTextFormat getFormat() {
-        return format;
+    public List<FlatTextFormat> getFormat() {
+        return new ArrayList<>(formatSet);
     }
 
-    public void setFormat(FlatTextFormat format){
-        this.format = format;
+    public void setFormat(FlatTextFormat... formats){
+        formatSet.addAll(Arrays.asList(formats));
     }
 
     public void setHintStatus(boolean hintStatus){
@@ -27,36 +28,42 @@ public class FormattedDocument extends PlainDocument{
     public void insertString(int offs, String string, AttributeSet a) throws BadLocationException {
         if (isHintStatus) super.insertString(offs, string, a);
 
-        char[] charArray = string.toCharArray();
         stringBuilder.delete(0, stringBuilder.length());
-        switch(format){
-            case NORMAL : break;
 
-            case ONLY_NUMBER_DECIMAL :
-                for (char c : charArray){
-                    if (StringUtils.isCharNumber(c)) {
-                        stringBuilder.append(c);
-                    }
-                }
-                break;
-
-            case ONLY_TEXT :
-                for (char c : charArray){
-                    if (!StringUtils.isCharNumber(c)) {
-                        stringBuilder.append(c);
-                    }
-                }
-                break;
-
-            case EXCEPT_SPECIAL_CHARACTER:
-                for (char c : charArray){
-                    if (!StringUtils.isSpecialChar(c)) {
-                        stringBuilder.append(c);
-                    }
-                }
-                break;
-
+        for (char c : string.toCharArray()){
+            appendTextFitFormat(c);
         }
+
         super.insertString(offs, stringBuilder.toString(), a);
+    }
+
+    private void appendTextFitFormat(char c){
+        for (FlatTextFormat format : formatSet){
+            if (format == FlatTextFormat.NUMBER_DECIMAL){
+
+                if (StringUtils.isCharNumber(c)) {
+                    stringBuilder.append(c);
+                    return ;
+                }
+
+            } else if (format == FlatTextFormat.TEXT){
+
+                if (!StringUtils.isCharNumber(c)) {
+                    stringBuilder.append(c);
+                    return ;
+                }
+
+            } else if (format == FlatTextFormat.SPECIAL_CHARACTER){
+
+                if (!StringUtils.isSpecialChar(c)) {
+                    stringBuilder.append(c);
+                    return ;
+                }
+
+            } else {
+                stringBuilder.append(c);
+            }
+        }
+
     }
 }

@@ -2,8 +2,6 @@ package com.mommoo.example;
 
 import com.mommoo.flat.button.FlatButton;
 import com.mommoo.flat.component.FlatPanel;
-import com.mommoo.flat.component.OnClickListener;
-import com.mommoo.flat.frame.FlatDialog;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
@@ -12,19 +10,14 @@ import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.list.FlatListView;
-import com.mommoo.flat.list.listener.OnSelectionListener;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.FlatTextAlignment;
-import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.flat.text.textfield.FlatTextField;
 import com.mommoo.flat.text.textfield.format.FlatTextFormat;
 import com.mommoo.util.FontManager;
 import com.mommoo.util.ImageManager;
-import com.mommoo.util.ScreenManager;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class ExampleFactory {
     static FlatFrame createCommonFrame() {
@@ -144,7 +137,7 @@ public class ExampleFactory {
             for (int i = 0; i < 10; i++) {
                 FlatTextField component = new FlatTextField(true);
                 component.setHint("HINT");
-                component.setFormat(FlatTextFormat.ONLY_NUMBER_DECIMAL);
+                component.setFormat(FlatTextFormat.NUMBER_DECIMAL);
                 component.setHintForeground(Color.BLUE);
                 component.setForeground(Color.RED);
                 frame.getContainer().add(component, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
