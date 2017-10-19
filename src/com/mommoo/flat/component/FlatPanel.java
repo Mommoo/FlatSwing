@@ -13,6 +13,8 @@ public class FlatPanel extends JPanel {
     private OnPaintListener onPaintListener = g2d -> {};
     private OnLayoutListener onLayoutListener = (width, height) -> {};
 
+    private float alpha = 1.0f;
+
     public FlatPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
         init();
@@ -39,16 +41,20 @@ public class FlatPanel extends JPanel {
 
     @Override
     public void paint(Graphics g) {
+        Graphics2D graphics2D = (Graphics2D)g;
+
+        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+
         Insets insets = getInsets();
         int availableWidth = getWidth() - insets.left - insets.right;
         int availableHeight = getHeight() - insets.top - insets.bottom;
 
-        Graphics2D graphics2D = (Graphics2D)g;
         preDraw(graphics2D, availableWidth, availableHeight);
 
         super.paint(g);
 
         onPaintListener.onPaint(graphics2D);
+        onLayoutListener.onLayout(availableWidth, availableHeight);
         postDraw(graphics2D, availableWidth, availableHeight);
         draw(graphics2D, availableWidth, availableHeight);
     }
@@ -113,5 +119,13 @@ public class FlatPanel extends JPanel {
 
     public void removeOnLayoutListener(){
         onLayoutListener = (width, height) -> {};
+    }
+
+    public float getAlpha(){
+        return this.alpha;
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
     }
 }

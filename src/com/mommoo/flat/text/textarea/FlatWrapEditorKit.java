@@ -14,6 +14,8 @@ class FlatWrapEditorKit extends StyledEditorKit {
         this.editorListener = editorListener;
     }
 
+
+
     private class WrapColumnFactory implements ViewFactory {
         public View create(Element elem) {
             if (elem.getName() == null) {
@@ -25,7 +27,7 @@ class FlatWrapEditorKit extends StyledEditorKit {
                     return new WrapLabelView(elem);
 
                 case AbstractDocument.ParagraphElementName:
-                    return new ParagraphView(elem);
+                    return new NoWrapParagraphView(elem);
 
                 case AbstractDocument.SectionElementName:
                     return new CenteredBoxView(elem, View.Y_AXIS);
@@ -47,7 +49,7 @@ class FlatWrapEditorKit extends StyledEditorKit {
             super(elem);
         }
 
-
+        @Override
         public View breakView(int axis, int p0, float pos, float len) {
             if (editorListener.isWrapStyleWord()) {
                 return super.breakView(axis, p0, pos, len);
@@ -67,6 +69,7 @@ class FlatWrapEditorKit extends StyledEditorKit {
             }
         }
 
+        @Override
         public int getBreakWeight(int axis, float pos, float len) {
             if (editorListener.isWrapStyleWord()) {
                 return super.getBreakWeight(axis, pos, len);
@@ -87,16 +90,21 @@ class FlatWrapEditorKit extends StyledEditorKit {
 
         }
 
+        @Override
         public float getMinimumSpan(int axis) {
-            switch (axis) {
-
-                case View.X_AXIS:
-                    return 0f;
-                case View.Y_AXIS:
-                    return super.getMinimumSpan(axis);
-                default:
-                    throw new IllegalArgumentException("Invalid axis: " + axis);
+            if (editorListener.isLineWrap()) {
+                switch (axis) {
+                    case View.X_AXIS:
+                        return 0f;
+                    case View.Y_AXIS:
+                        return super.getMinimumSpan(axis);
+                    default:
+                        throw new IllegalArgumentException("Invalid axis: " + axis);
+                }
+            } else {
+                return super.getMinimumSpan(axis);
             }
+
         }
     }
 
@@ -105,29 +113,31 @@ class FlatWrapEditorKit extends StyledEditorKit {
             super(elem, axis);
         }
 
-
+        @Override
         protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
             super.layoutMajorAxis(targetSpan, axis, offsets, spans);
 
             if (editorListener.isVerticalCentered()) {
-
-                final int[] copyArray = new int[offsets.length];
-                System.arraycopy(offsets,0,copyArray,0,offsets.length);
-
-                int offset = (getContainer().getHeight() - editorListener.getContentsHeight())/2;
+                //여기를 컨텐츠의 프리펄 사이즈를 가져오면 안되구... 글자의 크기를 가져와야 한다...ㅇㅋ?
+                int offset = (editorListener.getViewHeight() - editorListener.getContentsHeight()) / 2;
 
                 for (int i = 0; i < offsets.length; i++) {
                     offsets[i] += offset;
                 }
-
-                editorListener.executeTextMoveTask(marginHeight -> {
-                    for (int i = 0; i < offsets.length; i++) {
-                        offsets[i] = copyArray[i] + marginHeight;
-                    }
-                    editorListener.revalidate();
-                    editorListener.repaint();
-                });
             }
+        }
+    }
+
+    private class NoWrapParagraphView extends ParagraphView {
+        private NoWrapParagraphView(Element elem) {
+            super(elem);
+        }
+
+        @Override
+        public float getMinimumSpan(int axis) {
+            if (editorListener.isLineWrap()) {
+                return super.getMinimumSpan(axis);
+            } else return super.getPreferredSpan(axis);
         }
     }
 }

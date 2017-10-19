@@ -5,27 +5,31 @@ import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.FontManager;
+import com.mommoo.util.RXTextUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.*;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.util.Stack;
-import java.util.function.IntConsumer;
+import java.awt.image.BufferedImage;
 
 public class FlatTextArea extends JTextPane{
     private final MutableAttributeSet ATTRIBUTE_SET = new SimpleAttributeSet();
-    private Stack<IntConsumer> textMoveListenerStack = new Stack<>();
+
+    private ContentsSizeCalculator contentsSizeCalculator = new ContentsSizeCalculator();
 
     private Dimension preferredDimension;
     private Dimension userWantedDimension;
     private MouseClickAdapter mouseClickAdapter;
 
-    private int lineCount;
+    private int lineCount = 1;
+    private int preferredWidth = - 1;
 
-    private boolean isNeedToInspect;
-
+    private boolean isNeedToCalculate = true;
     private boolean isNeedToCentered;
     private boolean lineWrap;
     private boolean wrapStyleWord;
@@ -53,53 +57,97 @@ public class FlatTextArea extends JTextPane{
             frame.setSize(500, 500);
             frame.setLocationOnScreenCenter();
 
-            FlatTextArea area = new FlatTextArea("This is a Flexiable TextArea!!\n\n when no have space to print text, jump next line automatically");
+            FlatTextArea area = new FlatTextArea();
             area.setVerticalCenteredTextAlignment();
             area.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
             area.setOpaque(true);
             area.setBackground(Color.RED);
-//            area.setLineSpacing(3.0f);
             area.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
             area.setCaretWidth(4);
             area.setSelectionColor(Color.BLUE);
-//            area.setHeightFittedToWidth(200);
-            area.setPreferredSize(new Dimension(350,350));
+//            area.fixWidth(200);
+            area.setText("This is a Flexiable TextArea!!\n\n when no have space to print text, jump next line automatically");
+//            area.setPreferredSize(new Dimension(350,400));
             area.setCaretColor(Color.PINK);
-//            area.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+            area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
             area.setLineWrap(true);
             area.setWrapStyleWord(true);
 //            FlatScrollPane pane = new FlatScrollPane(area);
             JScrollPane pane = new JScrollPane(area);
 
-            frame.getContainer().add(area);
-            frame.getContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            JTextArea area2 = new JTextArea();
+            area2.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
+            area2.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+            area2.setText(area.getText());
+//            area2.setWrapStyleWord(true);
+//            area2.setLineWrap(true);
+            frame.getContainer().add(pane);
+//            frame.getContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+//            System.out.println(area.getPreferredSize());
             frame.show();
 
         });
     }
 
-    private void blockStrangeParentMethodInvoked() {
-        super.setPreferredSize(super.getPreferredSize());
-    }
-
     private void init() {
-        blockStrangeParentMethodInvoked();
-        setEditorKit(new FlatWrapEditorKit(new EditorListenerImpl()));
+        setEditorKit(new FlatWrapEditorKit(new EditorProperty()));
         setCaret(new FlatCaret());
-        getDocument().addDocumentListener(createDocumentListener());
         setLineWrap(true);
         setWrapStyleWord(true);
+        getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            private void update(){
+                isNeedToCalculate = true;
+                repaint();
+            }
+        });
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        if (isNeedToCalculate){
+            isNeedToCalculate = false;
+            setPreferredDimension(getAvailableWidth());
+        }
+
+        super.paint(g);
+    }
+
+    private void setPreferredDimension(int width){
+        ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(width);
+        preferredDimension = contentsBounds.getDimension();
+        lineCount = contentsBounds.getLineCount();
+        super.setPreferredSize(preferredDimension);
     }
 
     private int getAvailableWidth() {
-        Insets childInsets = getInsets();
         Container parent = getParent();
-        Insets parentInsets = parent.getInsets();
+        Insets childInsets = getInsets();
         if (userWantedDimension != null){
             return userWantedDimension.width - childInsets.left - childInsets.right;
+        } else if(preferredWidth != -1){
+            return preferredWidth - childInsets.left - childInsets.right;
+        } else if (getParent() == null) {
+            return 0;
         } else if (lineWrap) {
+            Insets parentInsets = parent.getInsets();
             return parent.getWidth() - parentInsets.left - parentInsets.right - childInsets.left - childInsets.right;
         } else {
+            Insets parentInsets = parent.getInsets();
             if (parent.getWidth() - parentInsets.left - parentInsets.right == getWidth()) {
                 return getWidth() - childInsets.right - childInsets.left;
             } else {
@@ -108,91 +156,10 @@ public class FlatTextArea extends JTextPane{
         }
     }
 
-    private DocumentListener createDocumentListener() {
-        return new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                changedUpdate(e);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                changedUpdate(e);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                isNeedToInspect = true;
-                repaint();
-            }
-        };
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        if (isNeedToInspect) {
-            isNeedToInspect = false;
-
-            preferredDimension = getViewDimension(getAvailableWidth());
-
-            int previousLineCount = lineCount;
-            int viewCount = getWrappedLines();
-            int wrapLineCount = autoResizeHandler.getWrapLineCount();
-
-            FlatTextArea.this.lineCount = wrapLineCount;
-
-            if (wrapStyleWord && viewCount != wrapLineCount && wrapLineCount != 1 && viewCount > 0) {
-                preferredDimension.height = getContentsLineHeight(viewCount) + getInsets().bottom + getInsets().top;
-                FlatTextArea.this.lineCount = viewCount;
-            }
-
-            if (textMoveListenerStack.empty() || previousLineCount == lineCount){
-                revalidate();
-                textMoveListenerStack.clear();
-            } else {
-                g.setColor(getBackground());
-                g.fillRect(0,0,getWidth(),getHeight());
-                textMoveListenerStack.pop().accept((getHeight() - preferredDimension.height)/2);
-            }
-            FlatTextArea.super.setPreferredSize(preferredDimension);
-        }
-
-    }
-
-    private int getWrappedLines() {
-        int lines = 0;
-
-        View view = getUI().getRootView(this).getView(0);
-
-        int paragraphs = view.getViewCount();
-
-        for (int i = 0; i < paragraphs; i++) {
-            lines += view.getView(i).getViewCount();
-        }
-
-        return lines;
-    }
-
     private int getContentsLineHeight(int lineCount) {
         int fontHeight = getFontMetrics(getFont()).getHeight();
-        int lineHeight = (int)(fontHeight * getLineSpacing());
-        return (fontHeight * lineCount) + (lineHeight * (lineCount - 1));
-    }
-
-    private Dimension getViewDimension(int width) {
-        Insets insets = getInsets();
-        return new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width, wrapStyleWord))
-                .addDimension(insets.left + insets.right, insets.top + insets.bottom);
-
-    }
-
-    private Dimension getPreferredLabelSize() {
-        if (preferredDimension == null) {
-            return getViewDimension(getAvailableWidth());
-        }
-        return preferredDimension;
+        float lineHeight = fontHeight * getLineSpacing();
+        return (fontHeight * lineCount) + Math.round((lineHeight * (lineCount - 1)));
     }
 
     @Override
@@ -212,11 +179,20 @@ public class FlatTextArea extends JTextPane{
             return userWantedDimension;
         }
 
-        if (preferredDimension == null) {
-            return getViewDimension(getAvailableWidth());
+        if (preferredDimension == null){
+            setPreferredDimension(getAvailableWidth());
         }
 
-        return super.getPreferredSize();
+        if (preferredWidth != -1){
+            Insets insets = getInsets();
+            ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(preferredWidth - insets.left - insets.right);
+            preferredDimension = contentsBounds.getDimension();
+            /* fix col width */
+            preferredDimension.width = preferredWidth;
+            lineCount = contentsBounds.getLineCount();
+        }
+
+        return preferredDimension;
     }
 
     @Override
@@ -282,18 +258,19 @@ public class FlatTextArea extends JTextPane{
     }
 
     @Override
-    public boolean getScrollableTracksViewportWidth() {
-        Container parent = SwingUtilities.getUnwrappedParent(this);
-        if (parent instanceof JViewport) {
-            return parent.getWidth() > getPreferredLabelSize().width;
-        }
-        return false;
+    public void setPreferredSize(Dimension preferredSize) {
+        userWantedDimension = preferredSize;
+        setPreferredDimension(getAvailableWidth());
+        super.setPreferredSize(preferredSize);
     }
 
     @Override
-    public void setPreferredSize(Dimension preferredSize) {
-        userWantedDimension = preferredSize;
-        super.setPreferredSize(preferredSize);
+    public boolean getScrollableTracksViewportWidth() {
+        Container parent = SwingUtilities.getUnwrappedParent(this);
+        if (parent instanceof JViewport) {
+            return parent.getWidth() > getPreferredSize().width;
+        }
+        return false;
     }
 
     public OnClickListener getOnClickListener() {
@@ -326,14 +303,38 @@ public class FlatTextArea extends JTextPane{
         }
     }
 
-    public void setHeightFittedToWidth(int preferredWidth) {
-        SwingUtilities.invokeLater(() -> {
-            Dimension dimension = autoResizeHandler.getContentsFitSize(preferredWidth, wrapStyleWord);
-            Insets insets = getInsets();
-            dimension.width = preferredWidth;
-            dimension.height += insets.top + insets.bottom;
-            setPreferredSize(dimension);
-        });
+    public void fixWidth(int preferredWidth) {
+        this.preferredWidth = preferredWidth ;
+        Insets insets = getInsets();
+        setPreferredDimension(preferredWidth - insets.left - insets.right);
+    }
+
+    private class EditorProperty implements EditorListener{
+
+        @Override
+        public boolean isVerticalCentered() {
+            return FlatTextArea.this.isVerticalCentered();
+        }
+
+        @Override
+        public boolean isLineWrap() {
+            return FlatTextArea.this.isLineWrap();
+        }
+
+        @Override
+        public boolean isWrapStyleWord() {
+            return FlatTextArea.this.isWrapStyleWord();
+        }
+
+        @Override
+        public int getViewHeight() {
+            return getHeight();
+        }
+
+        @Override
+        public int getContentsHeight() {
+            return getContentsLineHeight(lineCount) + getInsets().top + getInsets().bottom;
+        }
     }
 
     private class AutoResizeModelImpl implements AutoResizeModel {
@@ -354,36 +355,40 @@ public class FlatTextArea extends JTextPane{
         }
     }
 
-    private class EditorListenerImpl implements EditorListener{
-        @Override
-        public boolean isVerticalCentered() {
-            return FlatTextArea.this.isVerticalCentered();
+    private class ContentsSizeCalculator{
+        private JTextArea GRAPHIC_BUFFER = new JTextArea();
+
+        private Component getGraphicBuffer(Dimension dimension){
+            GRAPHIC_BUFFER.setDocument(getDocument());
+            GRAPHIC_BUFFER.setBorder(getBorder());
+            GRAPHIC_BUFFER.setMargin(getInsets());
+            GRAPHIC_BUFFER.setWrapStyleWord(isWrapStyleWord());
+            GRAPHIC_BUFFER.setLineWrap(isLineWrap());
+            GRAPHIC_BUFFER.setFont(getFont());
+            GRAPHIC_BUFFER.setDocument(getDocument());
+            GRAPHIC_BUFFER.setPreferredSize(dimension);
+            GRAPHIC_BUFFER.setSize(dimension);
+            return GRAPHIC_BUFFER;
         }
 
-        @Override
-        public boolean isWrapStyleWord() {
-            return FlatTextArea.this.isWrapStyleWord();
+        private Graphics createGraphics(Dimension dimension){
+            return new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_RGB).getGraphics();
         }
 
-        @Override
-        public void revalidate() {
-            FlatTextArea.this.revalidate();
-        }
+        public ContentsBounds getBounds(int width){
 
-        @Override
-        public void repaint() {
-            FlatTextArea.this.repaint();
-        }
+            Insets insets = getInsets();
+            Dimension viewDimension = new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width, wrapStyleWord))
+                    .setMinimumSize(10, 10)
+                    .addDimension(insets.left + insets.right, insets.top + insets.bottom);
 
-        @Override
-        public void executeTextMoveTask(IntConsumer task) {
-            textMoveListenerStack.add(task);
-        }
+            Component graphicBuffer = getGraphicBuffer(viewDimension);
+            graphicBuffer.paint(createGraphics(viewDimension));
 
-        @Override
-        public int getContentsHeight() {
-            return getContentsLineHeight(lineCount);
+            int lineCount = RXTextUtilities.getWrappedLines((JTextArea)graphicBuffer);
+            int height = getContentsLineHeight(lineCount) + getInsets().top + getInsets().bottom;
+
+            return new ContentsBounds(viewDimension.width, height, lineCount);
         }
     }
-
 }

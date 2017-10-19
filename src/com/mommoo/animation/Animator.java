@@ -123,6 +123,7 @@ public class Animator {
         });
 
         animatorTimer.setInitialDelay(delay);
+        animatorTimer.setCoalesce(true);
         animatorTimer.start();
     }
 

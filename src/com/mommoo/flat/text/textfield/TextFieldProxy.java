@@ -1,10 +1,13 @@
 package com.mommoo.flat.text.textfield;
 
+import com.mommoo.flat.text.textfield.format.FlatTextFormat;
+import com.mommoo.flat.text.textfield.format.FormattedDocument;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.*;
 import java.awt.*;
 
 abstract class TextFieldProxy {
@@ -12,7 +15,9 @@ abstract class TextFieldProxy {
     Color hintForeground = ColorManager.getFlatComponentDefaultColor();
     Color originalForegroundColor;
     private JTextField targetTextField;
-    String hint = "";
+    private String hint = "";
+
+    private FormattedDocument formattedDocument = new FormattedDocument();
 
     TextFieldProxy(){ }
 
@@ -25,8 +30,10 @@ abstract class TextFieldProxy {
     private JTextField decorateTextField(JTextField textField){
         textField.setBorder(BorderFactory.createEmptyBorder(0, 0,0, 0));
         textField.setOpaque(false);
+        textField.setDocument(formattedDocument);
         return textField;
     }
+
 
     boolean isHintAppeared(){
         boolean isEqualsHintText = getHint().equals(getText());
@@ -35,12 +42,15 @@ abstract class TextFieldProxy {
     }
 
     void setHint(String hint){
+        formattedDocument.setHintStatus(true);
         this.hint = hint;
         this.isHintFirst = true;
         setHintText();
+        formattedDocument.setHintStatus(false);
     }
 
     void setText(String text){
+        formattedDocument.setHintStatus(false);
         this.isHintFirst = false;
         setNormalText(text);
     }
@@ -72,5 +82,13 @@ abstract class TextFieldProxy {
 
     JTextField getTextField(){
         return this.targetTextField;
+    }
+
+    FlatTextFormat getFormat(){
+        return ((FormattedDocument)this.targetTextField.getDocument()).getFormat();
+    }
+
+    void setFormat(FlatTextFormat format){
+        ((FormattedDocument)this.targetTextField.getDocument()).setFormat(format);
     }
 }

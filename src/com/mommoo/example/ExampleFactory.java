@@ -17,6 +17,7 @@ import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.FlatTextAlignment;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.flat.text.textfield.FlatTextField;
+import com.mommoo.flat.text.textfield.format.FlatTextFormat;
 import com.mommoo.util.FontManager;
 import com.mommoo.util.ImageManager;
 import com.mommoo.util.ScreenManager;
@@ -50,19 +51,22 @@ public class ExampleFactory {
         public static void example2() {
             FlatFrame frame = createCommonFrame();
             frame.setTitle("Example2 : Grid Image Galley(9x9) ");
-            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+//            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+            FlatPanel panel = new FlatPanel(new LinearLayout(Orientation.VERTICAL));
+            panel.setForeground(new Color(0,0,0,20));
+            panel.setBackground(new Color(24, 24, 24,20));
+            frame.getContainer().add(panel);
+            panel.add(createPanelOfImages(ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 
-            frame.getContainer().add(createPanelOfImages(ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            frame.getContainer().add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            frame.getContainer().add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 
-            frame.getContainer().add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            frame.getContainer().add(createPanelOfImages(ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            frame.getContainer().add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-
-            frame.getContainer().add(createPanelOfImages(ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            frame.getContainer().add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            frame.getContainer().add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            panel.add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 
             frame.show();
         }
@@ -70,7 +74,8 @@ public class ExampleFactory {
         private static Component createPanelOfImages(Image... images) {
             FlatPanel parentPanel = new FlatPanel(new LinearLayout());
             for (Image image : images) {
-                parentPanel.add(new FlatImagePanel(image, ImageOption.MATCH_PARENT), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+                FlatImagePanel flatImagePanel = new FlatImagePanel(image, ImageOption.MATCH_PARENT);
+                parentPanel.add(flatImagePanel, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
             }
 
             return parentPanel;
@@ -109,7 +114,7 @@ public class ExampleFactory {
             frame.setTitle("Example2 : panelWrap Test");
             frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
             FlatListView<FlatPanel> listView = new FlatListView<>();
-            Font font = FontManager.getNanumGothicFont(Font.BOLD, 13);
+            Font font = FontManager.getNanumGothicFont(Font.BOLD, 30);
             for (int i = 0 ; i < 30 ; i++){
                 listView.addItem(createWrapPanel("position : " + (i + 1),font));
             }
@@ -119,10 +124,11 @@ public class ExampleFactory {
 
         private static FlatPanel createWrapPanel(String text,Font font){
             FlatPanel panel = new FlatPanel(new BorderLayout());
+            panel.setAlpha(0.8f);
             FlatLabel label = new FlatLabel(text);
             label.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
             label.setVerticalCenteredTextAlignment();
-            panel.setPreferredSize(new Dimension(1,50));
+//            panel.setPreferredSize(new Dimension(1,50));
             label.setFont(font);
             panel.add(label);
             return panel;
@@ -138,6 +144,7 @@ public class ExampleFactory {
             for (int i = 0; i < 10; i++) {
                 FlatTextField component = new FlatTextField(true);
                 component.setHint("HINT");
+                component.setFormat(FlatTextFormat.ONLY_NUMBER_DECIMAL);
                 component.setHintForeground(Color.BLUE);
                 component.setForeground(Color.RED);
                 frame.getContainer().add(component, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));

@@ -47,6 +47,6 @@ public class PasswordTextField extends TextFieldProxy {
         this.originalForegroundColor = passwordField.getForeground();
         passwordField.setForeground(hintForeground);
         passwordField.setEchoChar((char)0);
-        this.passwordField.setText(hint);
+        this.passwordField.setText(getHint());
     }
 }

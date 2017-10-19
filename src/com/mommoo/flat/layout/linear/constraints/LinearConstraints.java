@@ -4,6 +4,21 @@ public class LinearConstraints implements Cloneable{
     private int weight = 0;
     private LinearSpace linearSpace = LinearSpace.WRAP_CONTENT;
 
+    public LinearConstraints(){ }
+
+    public LinearConstraints(int weight){
+        this.weight = weight;
+    }
+
+    public LinearConstraints(LinearSpace linearSpace){
+        this.linearSpace = linearSpace;
+    }
+
+    public LinearConstraints(int weight, LinearSpace linearSpace){
+        this.weight = weight;
+        this.linearSpace = linearSpace;
+    }
+
     public LinearConstraints setWeight(int weight){
         this.weight = weight;
         return this;
@@ -28,7 +43,6 @@ public class LinearConstraints implements Cloneable{
             return (LinearConstraints)super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
-            System.out.println("clone failed");
             return this;
         }
     }

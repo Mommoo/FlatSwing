@@ -264,7 +264,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     private class ViewPortAWTEventListener implements AWTEventListener{
-        private Window window = SwingUtilities.getWindowAncestor(FlatViewPort.this);
         private final MouseEventHandler mouseEventHandler = new MouseEventHandler();
         private boolean valid;
         private boolean isViewPortMouseEntered;

@@ -21,8 +21,8 @@ public class NormalTextField extends TextFieldProxy {
                 super.paint(g);
             }
 
-            private void setProperForegroundColor(){
-                if (isHintFirst){
+            private void setProperForegroundColor() {
+                if (isHintFirst) {
                     setForeground(hintForeground);
                 } else {
                     setForeground(originalForegroundColor);
@@ -33,13 +33,13 @@ public class NormalTextField extends TextFieldProxy {
 
     @Override
     void setNormalText(String text) {
-        getTextField().setForeground(this.originalForegroundColor == null ? getTextField().getForeground() : this.originalForegroundColor);
         getTextField().setText(text);
+        getTextField().setForeground(this.originalForegroundColor == null ? getTextField().getForeground() : this.originalForegroundColor);
     }
 
     @Override
     void setHintText() {
-        getTextField().setText(hint);
+        getTextField().setText(getHint());
         this.originalForegroundColor = getTextField().getForeground();
         getTextField().setForeground(hintForeground);
     }

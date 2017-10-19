@@ -144,7 +144,7 @@ public class LinearLayout implements LayoutManager2, Serializable {
 //        once = true;
 //
 //        for (Component comp : container.getComponents()){
-//            comp.setPreferredSize(comp.getPreferredSize());
+//            comp.setPreferredSize(comp.getContentsHeight());
 //        }
 //    }
 

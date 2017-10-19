@@ -5,9 +5,8 @@ import java.util.function.IntConsumer;
 
 public interface EditorListener {
     public boolean isVerticalCentered();
+    public boolean isLineWrap();
     public boolean isWrapStyleWord();
-    public void revalidate();
-    public void repaint();
-    public void executeTextMoveTask(IntConsumer task);
+    public int getViewHeight();
     public int getContentsHeight();
 }

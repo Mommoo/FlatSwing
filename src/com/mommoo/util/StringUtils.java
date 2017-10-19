@@ -78,13 +78,45 @@ public class StringUtils {
         return resultList;
     }
 
-    public static void main(String[] args) {
-        String[] keys = {"_", "|", "/","."};
-        String string = "abc|def_ggoood sdf.goodbye";
+    public static boolean isNumber(String string){
+        try{
+            Integer.parseInt(string);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
 
-//        System.out.println(Arrays.toString(string.split("_|.")));
-//        System.out.println(string.replaceAll("[ .\t]","1"));
-        System.out.println("abc|edf|a12316166|sdfsdf_".lastIndexOf("|",18));
-        System.out.println(lastIndexOfAny("111111111111111111111111111113 22222222 1111111 5555555  555555555555 51", new String[]{"\t"," "}));
+    /**
+     * ASCII Table 0 ~ 9
+     *            48 ~ 57
+     */
+    public static boolean isCharNumber(char c){
+        int asciiCode = (int)c;
+        return asciiCode <= 57 && asciiCode >= 48;
+    }
+
+
+    /**
+     * ASCII Table's special characters
+     *
+     * ! " # $ % & ' ( ) * + , - . /       range : 33 ~ 47
+     * : ; < = > ? @                       range : 58 ~ 64
+     * [ \ ] ^ _ `                         range : 91 ~ 96
+     * { | } ~                             range : 123 ~ 126
+     *
+     */
+    public static boolean isSpecialChar(char c){
+        int asciiCode = (int)c;
+        return  (33 <= asciiCode && asciiCode <= 47) ||
+                (58 <= asciiCode && asciiCode <= 64) ||
+                (91 <= asciiCode && asciiCode <= 96) ||
+                (123 <= asciiCode && asciiCode <= 126);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(isCharNumber('a'));
+        System.out.println(isCharNumber('0'));
+        System.out.println(isCharNumber('9'));
     }
 }

@@ -8,6 +8,7 @@ import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+import com.mommoo.flat.text.textfield.format.FlatTextFormat;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
@@ -24,12 +25,10 @@ public class FlatTextField extends FlatPanel {
 
 	private final ImageTextField imageTextField;
 	private final FlatPanel underLine = new FlatPanel();
-	private boolean isSetHint;
 	private boolean isPasswordMode;
 
 	public FlatTextField(boolean passwordMode){
 		this.isPasswordMode = passwordMode;
-
 		imageTextField = new ImageTextField(passwordMode);
 
 		initFlatTextFiled();
@@ -63,7 +62,6 @@ public class FlatTextField extends FlatPanel {
 	}
 
 	public void setHint(String hint){
-		this.isSetHint = true;
 		imageTextField.textFieldProxy.setHint(hint);
 	}
 
@@ -80,7 +78,7 @@ public class FlatTextField extends FlatPanel {
 					@Override
 					public void focusLost(FocusEvent e) {
 						underLine.setBackground(focusLostColor);
-						if (imageTextField.textFieldProxy.getText().equals("")) imageTextField.textFieldProxy.setHintText();
+						if (imageTextField.textFieldProxy.getText().equals("")) imageTextField.textFieldProxy.setHint(getHint());
 					}
 				});
 	}
@@ -131,11 +129,13 @@ public class FlatTextField extends FlatPanel {
 		this.underLine.setBackground(color);
 	}
 
-//	private boolean isCurrentHintAppeared(){
-//		boolean isEqualsHintText = imageTextField.textFieldProxy.getHint().equals(imageTextField.textFieldProxy.getTextField().getText());
-//		boolean isEqualsHintForegroundColor = imageTextField.textFieldProxy.getHintForeground().equals(imageTextField.textFieldProxy.getTextField().getForeground());
-//		return isSetHint && isEqualsHintText && isEqualsHintForegroundColor;
-//	}
+	public FlatTextFormat getFormat(){
+		return imageTextField.textFieldProxy.getFormat();
+	}
+
+	public void setFormat(FlatTextFormat format){
+		imageTextField.textFieldProxy.setFormat(format);
+	}
 
 	JTextField getTextField(){
 		return imageTextField.textFieldProxy.getTextField();

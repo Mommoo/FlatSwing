@@ -219,6 +219,7 @@ class FlatButtonViewModel {
                 graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 graphics2D.setColor(rippleOpacityColor);
                 graphics2D.fill(ellipse2D);
+                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
         }
 

@@ -63,13 +63,10 @@ public class FlatDialog {
 
         new FlatDialog.Builder()
                 .setTitle("Beautiful Dialog!")
-//                .setContent("This is test message\n" +
-//                        "When dialog message length increase, this dialog area is wider automatically \n" +
-//                        "So, you don't consider that width or height size\n" +
-//                        "Just use it!")
-				.setTitle("이상하네")
-				.setContent("잘지내에에에에ㅔ")
-                .setDialogWidth(1000)
+                .setContent("This is test message\n" +
+                        "When dialog message length increase, this dialog area is wider automatically \n" +
+                        "So, you don't consider that width or height size\n" +
+                        "Just use it!")
                 .setLocationScreenCenter()
                 .appendButton(buttonInfo)
                 .build()
@@ -109,7 +106,7 @@ public class FlatDialog {
 	private Component createTitleLabel(){
 		FlatLabel TITLE_LABEL = createCommonLabel(builder.titleInfo);
 		TITLE_LABEL.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
-		TITLE_LABEL.setHeightFittedToWidth(builder.dialogWidth);
+		TITLE_LABEL.fixWidth(builder.dialogWidth);
 		return TITLE_LABEL;
 	}
 
@@ -117,7 +114,7 @@ public class FlatDialog {
 		FlatLabel CONTENT = createCommonLabel(builder.contentInfo);
 		CONTENT.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
 		CONTENT.setLineSpacing(builder.lineSpacing);
-		CONTENT.setHeightFittedToWidth(builder.dialogWidth);
+		CONTENT.fixWidth(builder.dialogWidth);
 		return CONTENT;
 	}
 
@@ -242,18 +239,10 @@ public class FlatDialog {
 		}
 	}
 
-	public Color getButtonBackgroundColor(){
-		return builder.buttonDialogComponentInfo.getBackgroundColor();
-	}
-
 	public void show(){
 		COMMON_FRAME.pack();
 		COMMON_FRAME.setLocation(getProperLocation());
 		COMMON_FRAME.setVisible(true);
-		COMMON_FRAME.getCustomizablePanel().requestFocus();
-		COMMON_FRAME.getCustomizablePanel().requestFocusInWindow();
-		COMMON_FRAME.requestFocus();
-		COMMON_FRAME.requestFocusInWindow();
 
 		HIDDEN_DIALOG_FOR_MODALITY.setVisible(true);
 	}

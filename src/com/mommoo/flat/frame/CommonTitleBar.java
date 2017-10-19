@@ -1,5 +1,8 @@
 package com.mommoo.flat.frame;
 
+import com.mommoo.animation.AnimationAdapter;
+import com.mommoo.animation.Animator;
+import com.mommoo.animation.timeInterpolator.AccelerateInterpolator;
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.titlebar.TitleLabel;
 import com.mommoo.flat.frame.titlebar.navigation.controller.NavigationControlPanel;
@@ -13,6 +16,7 @@ import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 class CommonTitleBar extends FlatPanel {
 	private static final int TITLE_BAR_HEIGHT = 50;
@@ -58,10 +62,49 @@ class CommonTitleBar extends FlatPanel {
 			f.setProcessIconImage(ImageManager.TEST);
 			f.setEnableSizeButton(true);
 			f.setResizable(true);
-			f.getContainer().setBackground(Color.RED);
+//			f.getContainer().setBackground(Color.RED);
+			f.getContainer().setOpaque(true);
+			f.getContainer().setLayout(null);
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.add(new JButton("GOODFOSDFSO"));
+			f.getContainer().add(new JButton("COOL")).setBounds(0,0,200,200);
+			f.getContainer().add(panel).setBounds(200,200,200,200);
 			f.setTitle("A Beautiful Frame. You can customizing you want!");
 			f.setLocationOnScreenCenter();
 			f.show();
+
+			new Animator()
+					.setTimeInterpolator(new AccelerateInterpolator())
+					.setDuration(1000)
+					.setAnimationListener(new AnimationAdapter(){
+						@Override
+						public void onAnimation(List<Double> resultList) {
+							super.onAnimation(resultList);
+//							try {
+//								Thread.sleep(100);
+//							} catch (InterruptedException e) {
+//								e.printStackTrace();
+//							}
+							f.getContainer().getComponent(1).setLocation(200 - resultList.get(0).intValue(), 200 - resultList.get(0).intValue());
+
+						}
+					})
+					.start(200);
+			((JPanel)f.getJFrame().getContentPane()).setDoubleBuffered(true);
+			new Animator()
+					.setTimeInterpolator(new AccelerateInterpolator())
+					.setDuration(1000)
+					.setAnimationListener(new AnimationAdapter(){
+						@Override
+						public void onAnimation(List<Double> resultList) {
+							super.onAnimation(resultList);
+							f.getJFrame().setSize(new Dimension(700, 500 - resultList.get(0).intValue()));
+//							f.getJFrame().repaint();
+							f.getJFrame().revalidate();
+//							f.getJFrame().setSize(700, 500 - resultList.get(0).intValue());
+						}
+					})
+					.start(200);
 		});
 	}
 

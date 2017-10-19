@@ -18,8 +18,6 @@ public class FlatImagePanel extends FlatPanel {
 
     private boolean reDraw = true;
 
-    private float alpha = 1.0f;
-
     public FlatImagePanel() {
 
     }
@@ -54,9 +52,7 @@ public class FlatImagePanel extends FlatPanel {
         repaint();
     }
 
-    public void setAlpha(float alpha) {
-        this.alpha = alpha;
-    }
+
 
     @Override
     protected boolean isPaintingOrigin() {
@@ -72,7 +68,6 @@ public class FlatImagePanel extends FlatPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
         Insets insets = getInsets();
 

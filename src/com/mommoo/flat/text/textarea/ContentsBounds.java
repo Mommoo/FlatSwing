@@ -25,6 +25,10 @@ class ContentsBounds {
         return contentsHeight;
     }
 
+    Dimension getDimension(){
+        return new Dimension(contentsWidth, contentsHeight);
+    }
+
     int getLineCount(){
         return lineCount;
     }
