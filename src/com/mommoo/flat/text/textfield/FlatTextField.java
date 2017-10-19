@@ -135,8 +135,8 @@ public class FlatTextField extends FlatPanel {
 		return Collections.unmodifiableList(imageTextField.textFieldProxy.getFormatList());
 	}
 
-	public void setFormat(FlatTextFormat format){
-		imageTextField.textFieldProxy.setFormat(format);
+	public void setFormat(FlatTextFormat... formats){
+		imageTextField.textFieldProxy.setFormat(formats);
 	}
 
 	JTextField getTextField(){
