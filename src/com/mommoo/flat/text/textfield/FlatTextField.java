@@ -237,8 +237,8 @@ public class FlatTextField extends FlatPanel {
 		}
 
 		@Override
-		protected void draw(Graphics2D graphics2D, int availableWidth, int availableHeight) {
-			super.draw(graphics2D, availableWidth, availableHeight);
+		protected void postDraw(Graphics2D graphics2D, int availableWidth, int availableHeight) {
+			super.postDraw(graphics2D, availableWidth, availableHeight);
 
 			if (!isNeedReDraw) return;
 
