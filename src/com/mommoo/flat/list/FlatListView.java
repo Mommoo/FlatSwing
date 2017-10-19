@@ -80,6 +80,10 @@ public class FlatListView<T extends Component> {
         repaint();
     }
 
+    public void clear(){
+        removeItems(0, getItemSize() - 1);
+    }
+
     public void setDivider(Color color, int thick) {
         if (thick < 1) thick = 1;
         getViewPortView().setDivider(color, thick);
