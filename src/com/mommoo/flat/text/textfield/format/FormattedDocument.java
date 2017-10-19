@@ -12,7 +12,7 @@ public class FormattedDocument extends PlainDocument{
     private boolean isHintStatus;
     private StringBuilder stringBuilder = new StringBuilder();
 
-    public List<FlatTextFormat> getFormat() {
+    public List<FlatTextFormat> getFormatList() {
         return new ArrayList<>(formatSet);
     }
 

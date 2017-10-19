@@ -5,10 +5,8 @@ import com.mommoo.flat.text.textfield.format.FormattedDocument;
 import com.mommoo.util.ColorManager;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.*;
 import java.awt.*;
+import java.util.List;
 
 abstract class TextFieldProxy {
     boolean isHintFirst;
@@ -84,11 +82,11 @@ abstract class TextFieldProxy {
         return this.targetTextField;
     }
 
-    FlatTextFormat getFormat(){
-        return ((FormattedDocument)this.targetTextField.getDocument()).getFormat();
+    List<FlatTextFormat> getFormatList(){
+        return ((FormattedDocument)this.targetTextField.getDocument()).getFormatList();
     }
 
-    void setFormat(FlatTextFormat format){
-        ((FormattedDocument)this.targetTextField.getDocument()).setFormat(format);
+    void setFormat(FlatTextFormat... formats){
+        ((FormattedDocument)this.targetTextField.getDocument()).setFormat(formats);
     }
 }

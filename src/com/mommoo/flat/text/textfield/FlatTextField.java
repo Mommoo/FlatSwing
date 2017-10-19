@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
+import java.util.Collections;
+import java.util.List;
 
 public class FlatTextField extends FlatPanel {
 	private static final int DEFAULT_BORDER_WIDTH = 2;
@@ -129,8 +131,8 @@ public class FlatTextField extends FlatPanel {
 		this.underLine.setBackground(color);
 	}
 
-	public FlatTextFormat getFormat(){
-		return imageTextField.textFieldProxy.getFormat();
+	public List<FlatTextFormat> getFormatList(){
+		return Collections.unmodifiableList(imageTextField.textFieldProxy.getFormatList());
 	}
 
 	public void setFormat(FlatTextFormat format){
