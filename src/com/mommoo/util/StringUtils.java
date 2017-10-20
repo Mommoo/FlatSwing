@@ -115,8 +115,7 @@ public class StringUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(isCharNumber('a'));
-        System.out.println(isCharNumber('0'));
-        System.out.println(isCharNumber('9'));
+        System.out.println("20170131".matches("2017.?1.?1"));
+        System.out.println("TODO_20179111".matches("TODO_2017.1.1"));
     }
 }

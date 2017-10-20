@@ -26,7 +26,10 @@ public class FormattedDocument extends PlainDocument{
 
     @Override
     public void insertString(int offs, String string, AttributeSet a) throws BadLocationException {
-        if (isHintStatus) super.insertString(offs, string, a);
+        if (isHintStatus) {
+            super.insertString(offs, string, a);
+            return;
+        }
 
         stringBuilder.delete(0, stringBuilder.length());
 
@@ -38,6 +41,11 @@ public class FormattedDocument extends PlainDocument{
     }
 
     private void appendTextFitFormat(char c){
+        if (formatSet.size() == 0){
+            stringBuilder.append(c);
+            return;
+        }
+
         for (FlatTextFormat format : formatSet){
             if (format == FlatTextFormat.NUMBER_DECIMAL){
 

@@ -2,23 +2,29 @@ package com.mommoo.flat.frame;
 
 import com.mommoo.util.ColorManager;
 import com.mommoo.helper.ComponentResizer;
+import com.sun.prism.j2d.paint.RadialGradientPaint;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.MultipleGradientPaint.CycleMethod;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
+import com.sun.prism.j2d.paint.MultipleGradientPaint.CycleMethod;
+import sun.security.provider.SHA;
 
 final class CommonJFrame extends JFrame {
 	private static final int DEFAULT_BORDER_STROKE_WIDTH = 1;
 	private static final int DEFAULT_SHADOW_DIP = 10;
 	private static final Color DEFAULT_BORDER_COLOR = Color.BLACK;
 
+	private final Rectangle2D SHADOW_SHAPE_RECT = new Rectangle2D.Float();
 	private final ComponentResizer COMPONENT_RE_SIZER = new ComponentResizer();
 	private final JPanel customizablePanel = new JPanel();
 
 	private Color borderColor = DEFAULT_BORDER_COLOR;
 	private int borderStrokeWidth = DEFAULT_BORDER_STROKE_WIDTH;
 	private int shadowDip = DEFAULT_SHADOW_DIP;
+
+	private ShadowPaintHandler shadowPaintHandler = new ShadowPaintHandler();
 
 	CommonJFrame() {
 		setUndecorated(true);
@@ -55,64 +61,53 @@ final class CommonJFrame extends JFrame {
 	}
 
 	private void drawShadow(Graphics2D g2) {
-		final int RGB_TONE = 70;
-		final Color START_COLOR = new Color(RGB_TONE + 70, RGB_TONE + 70, RGB_TONE + 70,190);
-		final Color END_COLOR = new Color(RGB_TONE, RGB_TONE, RGB_TONE, 50);
 
-		final float[] DIST = { 0.0f, 1.0f };
-		final Color[] COLORS = { START_COLOR, END_COLOR };
 
-		final Dimension PARENT_DIMENSION = super.getSize();
-		final int WIDTH = PARENT_DIMENSION.width;
-		final int HEIGHT = PARENT_DIMENSION.height;
 
-		/* RadialGradient */
-		RadialGradientPaint topLeftPaint = new RadialGradientPaint(
-				new Rectangle2D.Float(0, 0, shadowDip * 2, shadowDip * 2), DIST, COLORS, CycleMethod.NO_CYCLE);
-
-		g2.setPaint(topLeftPaint);
-		g2.fill(new Rectangle2D.Float(0, 0, shadowDip, shadowDip));
-
-		RadialGradientPaint topRightPaint = new RadialGradientPaint(
-				new Rectangle2D.Float(WIDTH - shadowDip * 2, 0, shadowDip * 2, shadowDip * 2), DIST, COLORS,
-				CycleMethod.NO_CYCLE);
-
-		g2.setPaint(topRightPaint);
-		g2.fill(new Rectangle2D.Float(WIDTH - shadowDip, 0, shadowDip, shadowDip));
-
-		RadialGradientPaint bottomLeftPaint = new RadialGradientPaint(
-				new Rectangle2D.Float(0, HEIGHT - shadowDip * 2, shadowDip * 2, shadowDip * 2), DIST,
-				COLORS, CycleMethod.NO_CYCLE);
-		g2.setPaint(bottomLeftPaint);
-		g2.fill(new Rectangle2D.Float(0, HEIGHT - shadowDip, shadowDip, shadowDip));
-
-		RadialGradientPaint bottomRightPaint = new RadialGradientPaint(
-				new Rectangle2D.Float(WIDTH - shadowDip * 2, HEIGHT - shadowDip * 2, shadowDip * 2,
-						shadowDip * 2),
-				DIST, COLORS, CycleMethod.NO_CYCLE);
-		g2.setPaint(bottomRightPaint);
-		g2.fill(new Rectangle2D.Float(WIDTH - shadowDip, HEIGHT - shadowDip, shadowDip, shadowDip));
-
-		/* RectGradient */
-		GradientPaint leftPaint = new GradientPaint(shadowDip, shadowDip, START_COLOR, 0, shadowDip, END_COLOR);
-		g2.setPaint(leftPaint);
-		g2.fill(new Rectangle2D.Float(0, shadowDip, shadowDip, HEIGHT - shadowDip * 2));
-
-		GradientPaint topPaint = new GradientPaint(shadowDip, shadowDip, START_COLOR, shadowDip, 0, END_COLOR);
-		g2.setPaint(topPaint);
-		g2.fillRect(shadowDip, 0, WIDTH - (shadowDip * 2), shadowDip);
-
-		GradientPaint rightPaint = new GradientPaint(WIDTH - shadowDip, shadowDip, START_COLOR, WIDTH,
-				shadowDip, END_COLOR);
-		g2.setPaint(rightPaint);
-		g2.fillRect(WIDTH - shadowDip, shadowDip, shadowDip, HEIGHT - shadowDip * 2);
-
-		GradientPaint bottomPaint = new GradientPaint(shadowDip, HEIGHT - shadowDip, START_COLOR, shadowDip,
-				HEIGHT, END_COLOR);
-		g2.setPaint(bottomPaint);
-		g2.fillRect(shadowDip, HEIGHT - shadowDip, WIDTH - (shadowDip * 2), shadowDip);
+//		SHADOW_SHAPE_RECT.setFrame(0, 0, shadowDip, shadowDip);
+//		g2.fill(SHADOW_SHAPE_RECT);
+//
+//		SHADOW_SHAPE_RECT.setFrame(WIDTH - shadowDip * 2, 0, shadowDip * 2, shadowDip * 2);
+//		RadialGradientPaint topRightPaint = new RadialGradientPaint(SHADOW_SHAPE_RECT, DIST, COLORS, CycleMethod.NO_CYCLE);
+//
+//		g2.setPaint(topRightPaint);
+//		g2.fill(new Rectangle2D.Float(WIDTH - shadowDip, 0, shadowDip, shadowDip));
+//
+//		RadialGradientPaint bottomLeftPaint = new RadialGradientPaint(
+//				new Rectangle2D.Float(0, HEIGHT - shadowDip * 2, shadowDip * 2, shadowDip * 2), DIST,
+//				COLORS, CycleMethod.NO_CYCLE);
+//		g2.setPaint(bottomLeftPaint);
+//		g2.fill(new Rectangle2D.Float(0, HEIGHT - shadowDip, shadowDip, shadowDip));
+//
+//		RadialGradientPaint bottomRightPaint = new RadialGradientPaint(
+//				new Rectangle2D.Float(WIDTH - shadowDip * 2, HEIGHT - shadowDip * 2, shadowDip * 2,
+//						shadowDip * 2),
+//				DIST, COLORS, CycleMethod.NO_CYCLE);
+//		g2.setPaint(bottomRightPaint);
+//		g2.fill(new Rectangle2D.Float(WIDTH - shadowDip, HEIGHT - shadowDip, shadowDip, shadowDip));
+//
+//		/* RectGradient */
+//		GradientPaint leftPaint = new GradientPaint(shadowDip, shadowDip, START_COLOR, 0, shadowDip, END_COLOR);
+//		g2.setPaint(leftPaint);
+//		g2.fill(new Rectangle2D.Float(0, shadowDip, shadowDip, HEIGHT - shadowDip * 2));
+//
+//		GradientPaint topPaint = new GradientPaint(shadowDip, shadowDip, START_COLOR, shadowDip, 0, END_COLOR);
+//		g2.setPaint(topPaint);
+//		g2.fillRect(shadowDip, 0, WIDTH - (shadowDip * 2), shadowDip);
+//
+//		GradientPaint rightPaint = new GradientPaint(WIDTH - shadowDip, shadowDip, START_COLOR, WIDTH,
+//				shadowDip, END_COLOR);
+//		g2.setPaint(rightPaint);
+//		g2.fillRect(WIDTH - shadowDip, shadowDip, shadowDip, HEIGHT - shadowDip * 2);
+//
+//		GradientPaint bottomPaint = new GradientPaint(shadowDip, HEIGHT - shadowDip, START_COLOR, shadowDip,
+//				HEIGHT, END_COLOR);
+//		g2.setPaint(bottomPaint);
+//		g2.fillRect(shadowDip, HEIGHT - shadowDip, WIDTH - (shadowDip * 2), shadowDip);
 
 	}
+
+
 
 	@Override
 	public void paint(Graphics g) {
@@ -120,7 +115,63 @@ final class CommonJFrame extends JFrame {
 		final Graphics2D graphics2D = (Graphics2D) g;
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		drawShadow(graphics2D);
+		final int WIDTH = getWidth();
+		final int HEIGHT = getHeight();
+
+		shadowPaintHandler.changePaint(WIDTH, HEIGHT, shadowDip);
+
+		/* RadialGradient */
+		drawTopLeftCornerShadow(graphics2D);
+		drawTopRightCornerShadow(graphics2D);
+		drawBottomLeftCornerShadow(graphics2D);
+		drawBottomRightCornerShadow(graphics2D);
+
+		/* gradient */
+		drawTopShadow(graphics2D);
+		drawLeftShadow(graphics2D);
+		drawRightShadow(graphics2D);
+		drawBottomShadow(graphics2D);
+	}
+
+	private void drawTopLeftCornerShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getTopLeftShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getTopLeftShadowShape());
+
+	}
+
+	private void drawTopRightCornerShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getTopRightShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getTopRightShadowShape());
+	}
+
+	private void drawBottomLeftCornerShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getBottomLeftShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getBottomLeftShadowShape());
+	}
+
+	private void drawBottomRightCornerShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getBottomRightShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getBottomRightShadowShape());
+	}
+
+	private void drawTopShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getTopShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getTopShadowShape());
+	}
+
+	private void drawLeftShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getLeftShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getLeftShadowShape());
+	}
+
+	private void drawRightShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getRightShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getRightShadowShape());
+	}
+
+	private void drawBottomShadow(Graphics2D graphics2D){
+		graphics2D.setPaint(shadowPaintHandler.getBottomShadowGradient());
+		graphics2D.fill(shadowPaintHandler.getBottomShadowShape());
 	}
 
 	@Override
