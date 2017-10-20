@@ -145,5 +145,23 @@ public class ExampleFactory {
             ((FlatTextField)frame.getContainer().getComponent(3)).setText("가나다");
             frame.show();
         }
+
+        public static void example2() {
+            FlatFrame frame = createCommonFrame();
+            frame.setTitle("Example2 : Basic Textfield");
+            frame.getContainer().setLayout(new FlowLayout());
+
+            FlatTextField textField = new FlatTextField(false);
+            textField.setIconImage(ImageManager.DOG);
+            textField.setTextFieldPadding(50);
+            textField.setImagePadding(10);
+            textField.setColumns(40);
+            textField.setHint("I'm a Dog");
+
+            frame.getContainer().add(textField);
+            frame.setLocationOnScreenCenter();
+            frame.show();
+
+        }
     }
 }

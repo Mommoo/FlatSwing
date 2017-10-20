@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
 
-
 class ShadowPaintHandler {
     private static final float[] DIST = { 0.0f, 1.0f };
     private static final Color[] COLORS = { new Color(75, 75, 75, 90), new Color(80, 80, 80, 10) };
