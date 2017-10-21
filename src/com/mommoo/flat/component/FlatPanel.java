@@ -135,6 +135,10 @@ public class FlatPanel extends JPanel {
         this.alpha = alpha;
     }
 
+    public Component getComponent(String key){
+        return COMPONENT_MAP.get(key);
+    }
+
     public Component add(Component comp, String componentKey) {
         COMPONENT_MAP.put(componentKey, comp);
         return super.add(comp);
