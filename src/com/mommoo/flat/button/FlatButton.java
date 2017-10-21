@@ -23,6 +23,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	private final List<ActionListener> ACTION_LISTENER_LIST = new ArrayList<>();
 	private OnClickListener onClickListener = e -> {};
+	private int cornerRound = 0;
 	private boolean autoClick;
 	
 	public FlatButton(){
@@ -122,6 +123,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	@Override
 	public void paint(Graphics g){
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		paintBackground(g);
 		paintPreBorder(g);
 		inspectAutoClick();
@@ -130,9 +132,10 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		paintPostBorder(g);
 	}
 
+
 	private void paintBackground(Graphics g){
 		g.setColor(getBackground());
-		g.fillRect(0, 0, getWidth(), getHeight());
+		g.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRound, cornerRound);
 	}
 
 	private void paintPreBorder(Graphics g){
@@ -152,6 +155,14 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		if (!RIPPLE_EFFECT.isRippleDrawOverBorder()){
 			getBorder().paintBorder(this, g, 0,0,getWidth(), getHeight());
 		}
+	}
+
+	public int getCornerRound(){
+		return this.cornerRound;
+	}
+
+	public void setCornerRound(int cornerRound){
+		this.cornerRound = cornerRound;
 	}
 
 	public void doClick(){
