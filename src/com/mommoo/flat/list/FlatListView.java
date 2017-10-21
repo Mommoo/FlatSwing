@@ -81,7 +81,11 @@ public class FlatListView<T extends Component> {
     }
 
     public void clear(){
-        removeItems(0, getItemSize() - 1);
+        for (int index = 0 , size = getItemSize(); index < size ; index++){
+            removeItem(index, false);
+        }
+
+        repaint();
     }
 
     public void setDivider(Color color, int thick) {

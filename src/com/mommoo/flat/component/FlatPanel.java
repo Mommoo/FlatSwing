@@ -171,6 +171,7 @@ public class FlatPanel extends JPanel {
         }
     }
 
+    @Override
     public void remove(int index) {
         String key = getKey(index);
         if (key != null) COMPONENT_MAP.remove(key);
@@ -197,12 +198,14 @@ public class FlatPanel extends JPanel {
         return getKey(getComponent(index));
     }
 
+    @Override
     public void remove(Component comp) {
         String key = getKey(comp);
         if (key != null) COMPONENT_MAP.remove(key);
         super.remove(comp);
     }
 
+    @Override
     public void removeAll() {
         COMPONENT_MAP.clear();
         super.removeAll();
