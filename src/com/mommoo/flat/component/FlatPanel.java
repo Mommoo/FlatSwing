@@ -2,6 +2,10 @@ package com.mommoo.flat.component;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by mommoo on 2017-07-14.
@@ -14,6 +18,8 @@ public class FlatPanel extends JPanel {
     private OnLayoutListener onLayoutListener = (width, height) -> {};
 
     private float alpha = 1.0f;
+
+    private final Map<String, Component> COMPONENT_MAP = new HashMap<>();
 
     public FlatPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
@@ -127,5 +133,74 @@ public class FlatPanel extends JPanel {
 
     public void setAlpha(float alpha) {
         this.alpha = alpha;
+    }
+
+    public Component add(Component comp, String componentKey) {
+        COMPONENT_MAP.put(componentKey, comp);
+        return super.add(comp);
+    }
+
+    public Component add(String name, Component comp, String componentKey) {
+        COMPONENT_MAP.put(componentKey, comp);
+        return super.add(name, comp);
+    }
+
+    public Component add(Component comp, int index, String componentKey) {
+        COMPONENT_MAP.put(componentKey, comp);
+        return super.add(comp, index);
+    }
+
+    public void add(Component comp, Object constraints, String componentKey) {
+        COMPONENT_MAP.put(componentKey, comp);
+        super.add(comp, constraints);
+    }
+
+    public void add(Component comp, Object constraints, int index, String componentKey) {
+        COMPONENT_MAP.put(componentKey, comp);
+        super.add(comp, constraints, index);
+    }
+
+    public void remove(String componentKey){
+        if (COMPONENT_MAP.get(componentKey) != null){
+            super.remove(COMPONENT_MAP.get(componentKey));
+            COMPONENT_MAP.remove(componentKey);
+        }
+    }
+
+    public void remove(int index) {
+        String key = getKey(index);
+        if (key != null) COMPONENT_MAP.remove(key);
+        super.remove(index);
+    }
+
+    public String getKey(Component component){
+
+        Optional<Map.Entry<String, Component>> optional =
+                COMPONENT_MAP
+                        .entrySet()
+                        .stream()
+                        .filter( entry -> entry.getValue() == component)
+                        .findFirst();
+
+        if (optional.isPresent()){
+            return optional.get().getKey();
+        }
+
+        return null;
+    }
+
+    public String getKey(int index){
+        return getKey(getComponent(index));
+    }
+
+    public void remove(Component comp) {
+        String key = getKey(comp);
+        if (key != null) COMPONENT_MAP.remove(key);
+        super.remove(comp);
+    }
+
+    public void removeAll() {
+        COMPONENT_MAP.clear();
+        super.removeAll();
     }
 }

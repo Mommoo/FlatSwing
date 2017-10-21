@@ -56,14 +56,14 @@ public class FormattedDocument extends PlainDocument{
 
             } else if (format == FlatTextFormat.TEXT){
 
-                if (!StringUtils.isCharNumber(c)) {
+                if (!StringUtils.isCharNumber(c) && !StringUtils.isSpecialChar(c)) {
                     stringBuilder.append(c);
                     return ;
                 }
 
             } else if (format == FlatTextFormat.SPECIAL_CHARACTER){
 
-                if (!StringUtils.isSpecialChar(c)) {
+                if (StringUtils.isSpecialChar(c)) {
                     stringBuilder.append(c);
                     return ;
                 }

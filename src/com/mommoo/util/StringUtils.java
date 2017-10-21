@@ -99,7 +99,7 @@ public class StringUtils {
 
     /**
      * ASCII Table's special characters
-     *
+     * (space)                             range : 32
      * ! " # $ % & ' ( ) * + , - . /       range : 33 ~ 47
      * : ; < = > ? @                       range : 58 ~ 64
      * [ \ ] ^ _ `                         range : 91 ~ 96
@@ -108,7 +108,7 @@ public class StringUtils {
      */
     public static boolean isSpecialChar(char c){
         int asciiCode = (int)c;
-        return  (33 <= asciiCode && asciiCode <= 47) ||
+        return  (32 <= asciiCode && asciiCode <= 47) ||
                 (58 <= asciiCode && asciiCode <= 64) ||
                 (91 <= asciiCode && asciiCode <= 96) ||
                 (123 <= asciiCode && asciiCode <= 126);
