@@ -81,7 +81,7 @@ public class FlatListView<T extends Component> {
     }
 
     public void clear(){
-        for (int index = 0 , size = getItemSize(); index < size ; index++){
+        for (int index = getItemSize() - 1 ; index >= 0 ; index--){
             removeItem(index, false);
         }
 
