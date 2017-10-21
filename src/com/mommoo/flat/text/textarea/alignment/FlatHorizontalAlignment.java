@@ -1,21 +1,20 @@
-package com.mommoo.flat.text.textarea;
+package com.mommoo.flat.text.textarea.alignment;
 
-@Deprecated
-public enum FlatTextAlignment {
+public enum FlatHorizontalAlignment {
     /**
      * A possible value for paragraph alignment.  This
      * specifies that the text is aligned to the left
      * indent and extra whitespace should be placed on
      * the right.
      */
-    ALIGN_LEFT,
+    LEFT,
     /**
      * A possible value for paragraph alignment.  This
      * specifies that the text is aligned to the center
      * and extra whitespace should be placed equally on
      * the left and right.
      */
-    ALIGN_CENTER,
+    CENTER,
 
     /**
      * A possible value for paragraph alignment.  This
@@ -23,7 +22,7 @@ public enum FlatTextAlignment {
      * indent and extra whitespace should be placed on
      * the left.
      */
-    ALIGN_RIGHT,
+    RIGHT,
 
     /**
      * A possible value for paragraph alignment.  This
@@ -33,5 +32,5 @@ public enum FlatTextAlignment {
      * except on the last line which should be aligned
      * to the left.
      */
-    ALIGN_JUSTIFIED;
+    JUSTIFIED;
 }

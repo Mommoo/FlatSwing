@@ -3,6 +3,8 @@ package com.mommoo.flat.text.textarea;
 import com.mommoo.flat.component.MouseClickAdapter;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.flat.text.textarea.alignment.FlatHorizontalAlignment;
+import com.mommoo.flat.text.textarea.alignment.FlatVerticalAlignment;
 import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.FontManager;
 import com.mommoo.util.RXTextUtilities;
@@ -30,10 +32,10 @@ public class FlatTextArea extends JTextPane{
     private int preferredWidth = - 1;
 
     private boolean isNeedToCalculate = true;
-    private boolean isNeedToCentered;
     private boolean lineWrap;
     private boolean wrapStyleWord;
 
+    private FlatVerticalAlignment flatVerticalAlignment = FlatVerticalAlignment.TOP;
 
     public FlatTextArea() {
         init();
@@ -58,8 +60,8 @@ public class FlatTextArea extends JTextPane{
             frame.setLocationOnScreenCenter();
 
             FlatTextArea area = new FlatTextArea();
-            area.setVerticalCenteredTextAlignment();
-            area.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
+            area.setHorizontalAlignment(FlatHorizontalAlignment.CENTER);
+            area.setVerticalAlignment(FlatVerticalAlignment.BOTTOM);
             area.setOpaque(true);
             area.setBackground(Color.RED);
             area.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
@@ -74,16 +76,8 @@ public class FlatTextArea extends JTextPane{
             area.setWrapStyleWord(true);
 //            FlatScrollPane pane = new FlatScrollPane(area);
             JScrollPane pane = new JScrollPane(area);
-
-            JTextArea area2 = new JTextArea();
-            area2.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
-            area2.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-            area2.setText(area.getText());
-//            area2.setWrapStyleWord(true);
-//            area2.setLineWrap(true);
             frame.getContainer().add(pane);
 //            frame.getContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-//            System.out.println(area.getPreferredSize());
             frame.show();
 
         });
@@ -246,9 +240,32 @@ public class FlatTextArea extends JTextPane{
         getStyledDocument().setParagraphAttributes(0, Integer.MAX_VALUE, ATTRIBUTE_SET, true);
     }
 
+    @Deprecated
     public void setTextAlignment(FlatTextAlignment alignment) {
         StyleConstants.setAlignment(ATTRIBUTE_SET, alignment.ordinal());
         setParagraphAttributes(ATTRIBUTE_SET, true);
+    }
+
+    @Deprecated
+    public void setVerticalCenteredTextAlignment() {
+        setVerticalAlignment(FlatVerticalAlignment.CENTER);
+    }
+
+    public FlatHorizontalAlignment getHorizontalAlignment(){
+        return FlatHorizontalAlignment.values()[StyleConstants.getAlignment(ATTRIBUTE_SET)];
+    }
+
+    public void setHorizontalAlignment(FlatHorizontalAlignment alignment){
+        StyleConstants.setAlignment(ATTRIBUTE_SET, alignment.ordinal());
+        setParagraphAttributes(ATTRIBUTE_SET, true);
+    }
+
+    public FlatVerticalAlignment getVerticalAlignment() {
+        return flatVerticalAlignment;
+    }
+
+    public void setVerticalAlignment(FlatVerticalAlignment alignment){
+        this.flatVerticalAlignment = alignment;
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {
@@ -275,14 +292,6 @@ public class FlatTextArea extends JTextPane{
 
     public OnClickListener getOnClickListener() {
         return this.mouseClickAdapter.getOnClickListener();
-    }
-
-    public void setVerticalCenteredTextAlignment() {
-        isNeedToCentered = true;
-    }
-
-    public boolean isVerticalCentered() {
-        return isNeedToCentered;
     }
 
     /**
@@ -312,8 +321,8 @@ public class FlatTextArea extends JTextPane{
     private class EditorProperty implements EditorListener{
 
         @Override
-        public boolean isVerticalCentered() {
-            return FlatTextArea.this.isVerticalCentered();
+        public FlatVerticalAlignment getVerticalAlignment() {
+            return FlatTextArea.this.getVerticalAlignment();
         }
 
         @Override

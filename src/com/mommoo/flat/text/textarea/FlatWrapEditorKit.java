@@ -15,7 +15,6 @@ class FlatWrapEditorKit extends StyledEditorKit {
     }
 
 
-
     private class WrapColumnFactory implements ViewFactory {
         public View create(Element elem) {
             if (elem.getName() == null) {
@@ -116,14 +115,23 @@ class FlatWrapEditorKit extends StyledEditorKit {
         @Override
         protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
             super.layoutMajorAxis(targetSpan, axis, offsets, spans);
+            int offset = 0;
+            switch (editorListener.getVerticalAlignment()) {
+                case TOP:
+                    return;
 
-            if (editorListener.isVerticalCentered()) {
-                //여기를 컨텐츠의 프리펄 사이즈를 가져오면 안되구... 글자의 크기를 가져와야 한다...ㅇㅋ?
-                int offset = (editorListener.getViewHeight() - editorListener.getContentsHeight()) / 2;
+                case CENTER:
+                    //여기를 컨텐츠의 프리펄 사이즈를 가져오면 안되구... 글자의 크기를 가져와야 한다...ㅇㅋ?
+                    offset = (editorListener.getViewHeight() - editorListener.getContentsHeight()) / 2;
+                    break;
 
-                for (int i = 0; i < offsets.length; i++) {
-                    offsets[i] += offset;
-                }
+                case BOTTOM:
+                    offset = (editorListener.getViewHeight() - editorListener.getContentsHeight());
+                    break;
+            }
+
+            for (int i = 0; i < offsets.length; i++) {
+                offsets[i] += offset;
             }
         }
     }

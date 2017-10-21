@@ -12,7 +12,6 @@ public class LinearLayout implements LayoutManager2, Serializable {
     private static final int GAP = 10;
     private Orientation orientation;
     private LinearSpaceInspector spaceInspector = new LinearSpaceInspector();
-    private boolean once;
 
     private int gap;
 
