@@ -64,15 +64,13 @@ public class FlatCheckBox extends FlatPanel {
 	public void setChecked(boolean check){
 		CHECK_BOX.setChecked(check);
 	}
-	
-	public void setOnClickEvent(OnClickListener onClickListener){
-		CHECK_BOX.setOnClickListener(onClickListener);
-	}
 
 	public static void main(String[] args){
 		FlatCheckBox flatCheckBox = new FlatCheckBox("beautiful check box");
 		flatCheckBox.setAnchored(true);
 		flatCheckBox.setChecked(true);
+		flatCheckBox.setCheckBoxLineColor(Color.BLUE);
+		flatCheckBox.setCheckColor(Color.BLUE);
 
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatCheckBox Test");
@@ -81,5 +79,25 @@ public class FlatCheckBox extends FlatPanel {
 		flatFrame.getContainer().add(flatCheckBox);
 		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
 		flatFrame.show();
+	}
+
+	public Color getCheckColor(){
+		return CHECK_BOX.getCheckColor();
+	}
+
+	public void setCheckColor(Color color){
+		CHECK_BOX.setCheckColor(color);
+	}
+
+	public Color getCheckBoxLineColor(){
+		return CHECK_BOX.getCheckBoxColor();
+	}
+	
+	public void setOnClickEvent(OnClickListener onClickListener){
+		CHECK_BOX.setOnClickListener(onClickListener);
+	}
+
+	public void setCheckBoxLineColor(Color boxLineColor){
+		CHECK_BOX.setCheckBoxColor(boxLineColor);
 	}
 }
