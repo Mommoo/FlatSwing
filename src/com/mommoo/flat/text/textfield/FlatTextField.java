@@ -53,7 +53,7 @@ public class FlatTextField extends FlatPanel {
 		FlatPanel underLine = new FlatPanel();
 		underLine.setOpaque(true);
 		underLine.setBackground(focusLostColor);
-		underLine.setPreferredSize(new Dimension(100, DEFAULT_BORDER_WIDTH));
+		underLine.setPreferredSize(new Dimension(1, DEFAULT_BORDER_WIDTH));
 		return underLine;
 	}
 

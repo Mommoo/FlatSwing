@@ -56,6 +56,14 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
         computeScrollWorker.smoothScrollByPosition(relative, position);
     }
 
+    int getScrollAnimationDuration(){
+        return computeScrollWorker.getScrollAnimationDuration();
+    }
+
+    void setScrollAnimationDuration(int scrollAnimationDuration){
+        computeScrollWorker.setScrollAnimationDuration(scrollAnimationDuration);
+    }
+
     private void scroll(int value){
         getVerticalScrollBar().setValue(value);
     }
@@ -125,6 +133,17 @@ class FlatVerticalScrollPane<T extends Component> extends FlatScrollPane{
     }
 
     private class ComputeScrollWorker {
+        private int scrollAnimationDuration = 500;
+
+        private int getScrollAnimationDuration(){
+            return this.scrollAnimationDuration;
+        }
+
+        private void setScrollAnimationDuration(int scrollAnimationDuration){
+            if (scrollAnimationDuration <= 0) return;
+            this.scrollAnimationDuration = scrollAnimationDuration;
+        }
+
         private int getScrollValueByPosition(int position){
             Component targetComp = VIEW_PORT.getComponent(position);
             return targetComp.getY();

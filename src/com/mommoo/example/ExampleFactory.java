@@ -17,6 +17,7 @@ import com.mommoo.flat.text.textfield.format.FlatTextFormat;
 import com.mommoo.util.FontManager;
 import com.mommoo.util.ImageManager;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class ExampleFactory {
@@ -147,21 +148,34 @@ public class ExampleFactory {
         }
 
         public static void example2() {
-            FlatFrame frame = createCommonFrame();
+//            FlatFrame frame = createCommonFrame();
+//            frame.getContainer().setLayout(new FlowLayout());
+            FlatFrame frame = new FlatFrame();
             frame.setTitle("Example2 : Basic Textfield");
-            frame.getContainer().setLayout(new FlowLayout());
+            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL, 1));
 
-            FlatTextField textField = new FlatTextField(false);
-            textField.setIconImage(ImageManager.DOG);
-            textField.setTextFieldPadding(50);
-            textField.setImagePadding(10);
-            textField.setColumns(40);
-            textField.setHint("I'm a Dog");
-
-            frame.getContainer().add(textField);
+            frame.getContainer().add(createTextField(), new LinearConstraints(LinearSpace.MATCH_PARENT));
+            frame.getContainer().add(createTextField(), new LinearConstraints(LinearSpace.MATCH_PARENT));
+            JPanel panel = new JPanel();
+            JButton button = new JButton("가나다");
+            panel.add(button);
+            button.setFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
+            frame.getContainer().add(panel);
+            frame.getJFrame().pack();
             frame.setLocationOnScreenCenter();
             frame.show();
 
+        }
+
+        private static Component createTextField(){
+            FlatTextField textField = new FlatTextField(false);
+            textField.setIconImage(ImageManager.DOG);
+            textField.setFont(FontManager.getNanumGothicFont(Font.BOLD, 16));
+            textField.setTextFieldPadding(20,0,20,0);
+            textField.setImagePadding(10);
+//            textField.setColumns(40);
+            textField.setHint("I'm a Dog");
+            return textField;
         }
     }
 }

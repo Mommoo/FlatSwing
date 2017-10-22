@@ -238,6 +238,14 @@ public class FlatListView<T extends Component> {
             SCROLL_PANE.smoothScrollByPosition(relative, position);
         }
 
+        public int getScrollAnimationDuration(){
+            return SCROLL_PANE.getScrollAnimationDuration();
+        }
+
+        public void setScrollAnimationDuration(int scrollAnimationDuration){
+            SCROLL_PANE.setScrollAnimationDuration(scrollAnimationDuration);
+        }
+
         public Color getScrollBarColor() {
             return SCROLL_PANE.getThemeColor();
         }
