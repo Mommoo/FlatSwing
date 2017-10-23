@@ -3,12 +3,20 @@ package com.mommoo.flat.select;
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.flat.layout.linear.Orientation;
+import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.LinearLayout;
+import com.mommoo.util.ImageManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FlatCheckBox extends FlatPanel {
 	private static final int GAP = ScreenManager.getInstance().dip2px(8);
@@ -17,16 +25,12 @@ public class FlatCheckBox extends FlatPanel {
 	private boolean isAnchor;
 	
 	public FlatCheckBox(String guideText){
-		initFlatCheckBox();
-		add(CHECK_BOX);
-		add(GUIDE_LABEL);
-		this.GUIDE_LABEL.setText(guideText);
-		this.GUIDE_LABEL.setOpaque(false);
-	}
-
-	private void initFlatCheckBox(){
 		setLayout(new LinearLayout(GAP));
 		setBackground(Color.WHITE);
+		add(CHECK_BOX,   new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+		add(GUIDE_LABEL, new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+		GUIDE_LABEL.setText(guideText);
+		GUIDE_LABEL.setOpaque(false);
 	}
 	
 	public String getText(){
@@ -65,19 +69,25 @@ public class FlatCheckBox extends FlatPanel {
 		CHECK_BOX.setChecked(check);
 	}
 
-	public static void main(String[] args){
-		FlatCheckBox flatCheckBox = new FlatCheckBox("beautiful check box");
+	public static void main(String[] args) throws Exception{
+		FlatCheckBox flatCheckBox = new FlatCheckBox("Beautiful Check Box1");
 		flatCheckBox.setAnchored(true);
 		flatCheckBox.setChecked(true);
 		flatCheckBox.setCheckBoxLineColor(Color.BLUE);
 		flatCheckBox.setCheckColor(Color.BLUE);
 
+		FlatCheckBox flatCheckBox2 = new FlatCheckBox("Beautiful Check Box2");
+		flatCheckBox2.setCheckBoxLineColor(Color.BLUE);
+		flatCheckBox2.setCheckColor(Color.BLUE);
+
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatCheckBox Test");
 		flatFrame.setSize(500,300);
 		flatFrame.setLocationOnScreenCenter();
+		flatFrame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
 		flatFrame.getContainer().add(flatCheckBox);
-		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
+		flatFrame.getContainer().add(flatCheckBox2);
+//		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
 		flatFrame.show();
 	}
 

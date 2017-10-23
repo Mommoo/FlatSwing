@@ -6,17 +6,20 @@ import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
 import com.mommoo.util.ImageManager;
+import com.mommoo.util.ImageUtils;
 import com.mommoo.util.ScreenManager;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 class CheckBox extends FlatPanel{
     private static final ScreenManager screenManager = ScreenManager.getInstance();
     private static final Dimension CHECK_BOX_DIMENSION = new Dimension(screenManager.dip2px(15), screenManager.dip2px(15));
+    private static final Map<Color, BufferedImage> checkMap = new HashMap<>();
+    private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 
     private MouseClickAdapter userMouseClickAdapter;
 
@@ -30,38 +33,39 @@ class CheckBox extends FlatPanel{
 //        addMouseListener(new HoverColorChangeListener());
         add(new FlatImagePanel(ImageManager.CHECK,ImageOption.MATCH_PARENT));
         getCheckImageView().setVisible(false);
+        setCursor(HAND_CURSOR);
     }
 
-    private static BufferedImage createNewColorCheckBoxImage(Color color) {
-        try {
-            File checkBoxImageFile = new File(CheckBox.class.getResource("/com/mommoo/resource/img/check.png").toURI());
-            BufferedImage bufferedImage = ImageIO.read(checkBoxImageFile);
-
-            int width  = bufferedImage.getWidth();
-            int height = bufferedImage.getHeight();
-
-            BufferedImage newColorCheckImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-
-                    int rgba = bufferedImage.getRGB(x, y);
-                    boolean isTrans = (rgba & 0xff000000) == 0;
-
-                    if (isTrans) {
-                        newColorCheckImage.setRGB(x, y, (color.getRGB()&0x00ffffff));
-                    } else {
-                        newColorCheckImage.setRGB(x, y, color.getRGB());
-                    }
-                }
-            }
-
-            return newColorCheckImage;
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static BufferedImage getColorCheckImage(Color color){
+        if (checkMap.get(color) == null){
+            checkMap.put(color, createNewColorCheckImage(color));
         }
 
-        return null;
+        return checkMap.get(color);
+    }
+
+    private static BufferedImage createNewColorCheckImage(Color color) {
+        BufferedImage bufferedImage = ImageUtils.toBufferedImage(ImageManager.CHECK, true);
+        int width  = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
+
+        BufferedImage newColorCheckImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+
+                int rgba = bufferedImage.getRGB(x, y);
+                boolean isTrans = (rgba & 0xff000000) == 0;
+
+                if (isTrans) {
+                    newColorCheckImage.setRGB(x, y, (color.getRGB()&0x00ffffff));
+                } else {
+                    newColorCheckImage.setRGB(x, y, color.getRGB());
+                }
+            }
+        }
+
+        return newColorCheckImage;
     }
 
     Color getCheckColor(){
@@ -69,14 +73,8 @@ class CheckBox extends FlatPanel{
     }
 
     void setCheckColor(Color checkColor){
-        BufferedImage bufferedImage = createNewColorCheckBoxImage(checkColor);
-
-        if (bufferedImage != null){
-            this.checkColor = checkColor;
-            FlatImagePanel imagePanel = (FlatImagePanel) getComponent(0);
-            imagePanel.setImage(bufferedImage, ImageOption.MATCH_PARENT);
-            imagePanel.reDraw();
-        }
+        this.checkColor = checkColor;
+        getCheckImageView().setImage(getColorCheckImage(checkColor), ImageOption.MATCH_PARENT);
     }
 
     Color getCheckBoxColor(){

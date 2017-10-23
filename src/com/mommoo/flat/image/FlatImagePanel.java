@@ -12,18 +12,16 @@ import java.awt.*;
 public class FlatImagePanel extends FlatPanel {
     private Image image;
     private Image resizedImage;
-    private ImageOption option;
+    private ImageOption option = ImageOption.BASIC_IMAGE_SIZE;
 
     private MediaTracker mediaTracker = new MediaTracker(this);
 
     private boolean reDraw = true;
 
-    public FlatImagePanel() {
-
-    }
+    public FlatImagePanel() { }
 
     public FlatImagePanel(Image image) {
-        setImage(image);
+        setImage(image, ImageOption.BASIC_IMAGE_SIZE);
     }
 
     public FlatImagePanel(Image image, ImageOption option) {
@@ -34,17 +32,21 @@ public class FlatImagePanel extends FlatPanel {
         ExampleFactory.FlatImagePanelExample.example2();
     }
 
-    public void setImage(Image image, ImageOption option) {
+    public FlatImagePanel setImage(Image image, ImageOption option) {
         this.image = image;
         this.option = option;
+        reDraw();
+        return this;
     }
 
     public Image getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
-        setImage(image, ImageOption.BASIC_IMAGE_SIZE);
+    public FlatImagePanel setImage(Image image) {
+        this.image = image;
+        reDraw();
+        return this;
     }
 
     public void reDraw() {
