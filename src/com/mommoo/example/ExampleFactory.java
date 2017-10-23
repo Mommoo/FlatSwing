@@ -168,6 +168,7 @@ public class ExampleFactory {
         }
 
         private static Component createTextField(){
+
             FlatTextField textField = new FlatTextField(false);
             textField.setIconImage(ImageManager.DOG);
             textField.setFont(FontManager.getNanumGothicFont(Font.BOLD, 16));
@@ -175,7 +176,9 @@ public class ExampleFactory {
             textField.setImagePadding(10);
 //            textField.setColumns(40);
             textField.setHint("I'm a Dog");
-            return textField;
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(textField);
+            return panel;
         }
     }
 }

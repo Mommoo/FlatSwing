@@ -29,8 +29,7 @@ class CheckBox extends FlatPanel{
     CheckBox(){
         setCheckBoxColor(checkBoxColor);
         setLayout(new BorderLayout());
-        setOnClickListener(comp-> getComponent(0).setVisible(!getComponent(0).isVisible()));
-//        addMouseListener(new HoverColorChangeListener());
+        super.setOnClickListener(comp-> getComponent(0).setVisible(!getComponent(0).isVisible()));
         add(new FlatImagePanel(ImageManager.CHECK,ImageOption.MATCH_PARENT));
         getCheckImageView().setVisible(false);
         setCursor(HAND_CURSOR);
@@ -85,15 +84,21 @@ class CheckBox extends FlatPanel{
         setBorder(BorderFactory.createLineBorder(checkBoxColor, 1));
     }
 
-    void doClick(){
-        getOnClickListener().onClick(this);
-        if (this.userMouseClickAdapter != null) this.userMouseClickAdapter.getOnClickListener().onClick(this);
+    void doClick(Component source){
+        getOnClickListener().onClick(source);
+        if (this.userMouseClickAdapter != null) this.userMouseClickAdapter.getOnClickListener().onClick(source);
     }
 
-    public void setOnClickListener(OnClickListener onClickListener){
-        if (userMouseClickAdapter != null) removeMouseListener(userMouseClickAdapter);
-        this.userMouseClickAdapter = new MouseClickAdapter(onClickListener);
-        addMouseListener(this.userMouseClickAdapter);
+    void setOnClickListener(Component source, OnClickListener onClickListener){
+        removeOnClickListener();
+        addMouseListener(userMouseClickAdapter = new MouseClickAdapter(source, onClickListener));
+    }
+
+    @Override
+    public void removeOnClickListener() {
+        if (userMouseClickAdapter != null) {
+            removeMouseListener(userMouseClickAdapter);
+        }
     }
 
     boolean isChecked(){

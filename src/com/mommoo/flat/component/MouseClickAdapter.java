@@ -6,9 +6,15 @@ import java.awt.event.MouseEvent;
 
 public class MouseClickAdapter extends FlatMouseAdapter{
     private final OnClickListener onClickListener;
+    private Component source;
 
     public MouseClickAdapter(OnClickListener onClickListener){
         this.onClickListener = onClickListener;
+    }
+
+    public MouseClickAdapter(Component source, OnClickListener onClickListener){
+        this(onClickListener);
+        this.source = source;
     }
 
     public OnClickListener getOnClickListener() {
@@ -18,8 +24,9 @@ public class MouseClickAdapter extends FlatMouseAdapter{
     @Override
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
+        if (source == null) source = e.getComponent();
         if (isMouseClicked()){
-            onClickListener.onClick(e.getComponent());
+            onClickListener.onClick(source);
         }
     }
 }

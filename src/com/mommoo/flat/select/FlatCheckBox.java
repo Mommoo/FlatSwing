@@ -8,29 +8,33 @@ import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.layout.linear.LinearLayout;
-import com.mommoo.util.ImageManager;
 import com.mommoo.util.ScreenManager;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FlatCheckBox extends FlatPanel {
 	private static final int GAP = ScreenManager.getInstance().dip2px(3);
-	private final CheckBox CHECK_BOX = new CheckBox();
-	private final FlatLabel GUIDE_LABEL = new FlatLabel();
 	private boolean isAnchor;
 	
 	public FlatCheckBox(String guideText){
 		super.setLayout(new LinearLayout(GAP));
 		setBackground(Color.WHITE);
-		add(CHECK_BOX,   new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
-		add(GUIDE_LABEL, new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
-		GUIDE_LABEL.setText(guideText);
-		GUIDE_LABEL.setOpaque(false);
+		add(new CheckBox(),   new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT), "checkBox");
+		add(createGuideTextLabel(guideText), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT), "guideLabel");
+	}
+
+	private Component createGuideTextLabel(String guideText){
+		FlatLabel guideTextLabel = new FlatLabel(guideText);
+		guideTextLabel.setOpaque(false);
+		return guideTextLabel;
+	}
+
+	private CheckBox getCheckBox(){
+		return (CheckBox)getComponent("checkBox");
+	}
+
+	private FlatLabel getGuideTextLabel(){
+		return (FlatLabel) getComponent("guideLabel");
 	}
 
 	public static void main(String[] args) throws Exception{
@@ -69,8 +73,8 @@ public class FlatCheckBox extends FlatPanel {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		CHECK_BOX.setEnabled(enabled);
-		GUIDE_LABEL.setEnabled(enabled);
+		getCheckBox().setEnabled(enabled);
+		getGuideTextLabel().setEnabled(enabled);
 	}
 
 	@Override
@@ -88,27 +92,33 @@ public class FlatCheckBox extends FlatPanel {
 	}
 	
 	public String getText(){
-		return GUIDE_LABEL.getText();
+		return getGuideTextLabel().getText();
 	}
 	
 	public Color getTextColor(){
-		return GUIDE_LABEL.getForeground();
+		return getGuideTextLabel().getForeground();
 	}
 	
 	public void setTextColor(Color color){
-		GUIDE_LABEL.setForeground(color);
+		getGuideTextLabel().setForeground(color);
 	}
 
 	@Override
 	public void setFont(Font font){
 		super.setFont(font);
-		if (GUIDE_LABEL != null) GUIDE_LABEL.setFont(font);
+		if (getGuideTextLabel() != null) getGuideTextLabel().setFont(font);
 	}
 	
 	public void setAnchored(boolean isAnchored){
 		this.isAnchor = isAnchored;
-		GUIDE_LABEL.setCursor(isAnchored ? new Cursor(Cursor.HAND_CURSOR) : new Cursor(Cursor.DEFAULT_CURSOR));
-        GUIDE_LABEL.setOnClickListener(comp -> CHECK_BOX.doClick());
+		getGuideTextLabel().setCursor(isAnchored ? new Cursor(Cursor.HAND_CURSOR) : new Cursor(Cursor.DEFAULT_CURSOR));
+
+		if (isAnchored){
+			getGuideTextLabel().setOnClickListener(comp -> getCheckBox().doClick(this));
+		} else {
+			getGuideTextLabel().removeOnClickListener();
+		}
+
 	}
 	
 	public boolean isAnchor(){
@@ -116,11 +126,11 @@ public class FlatCheckBox extends FlatPanel {
 	}
 	
 	public boolean isChecked(){
-		return this.CHECK_BOX.isChecked();
+		return getCheckBox().isChecked();
 	}
 	
 	public void setChecked(boolean check){
-		CHECK_BOX.setChecked(check);
+		getCheckBox().setChecked(check);
 	}
 
 	public void setGap(int gap){
@@ -128,22 +138,30 @@ public class FlatCheckBox extends FlatPanel {
 	}
 
 	public Color getCheckColor(){
-		return CHECK_BOX.getCheckColor();
+		return getCheckBox().getCheckColor();
 	}
 
 	public void setCheckColor(Color color){
-		CHECK_BOX.setCheckColor(color);
+		getCheckBox().setCheckColor(color);
 	}
 
 	public Color getCheckBoxLineColor(){
-		return CHECK_BOX.getCheckBoxColor();
-	}
-	
-	public void setOnClickEvent(OnClickListener onClickListener){
-		CHECK_BOX.setOnClickListener(onClickListener);
+		return getCheckBox().getCheckBoxColor();
 	}
 
 	public void setCheckBoxLineColor(Color boxLineColor){
-		CHECK_BOX.setCheckBoxColor(boxLineColor);
+		getCheckBox().setCheckBoxColor(boxLineColor);
+	}
+
+	@Override
+	public void setOnClickListener(OnClickListener onClickListener) {
+		super.setOnClickListener(onClickListener);
+		getCheckBox().setOnClickListener(this, getOnClickListener());
+	}
+
+	@Override
+	public void removeOnClickListener() {
+		super.removeOnClickListener();
+		getCheckBox().removeOnClickListener();
 	}
 }

@@ -136,6 +136,7 @@ public class FlatPanel extends JPanel {
     }
 
     public Component getComponent(String key){
+        if (COMPONENT_MAP == null) return null;
         return COMPONENT_MAP.get(key);
     }
 

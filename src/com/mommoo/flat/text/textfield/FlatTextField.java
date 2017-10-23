@@ -149,6 +149,7 @@ public class FlatTextField extends FlatPanel {
 
 	public void clear(){
 		getTextFieldProxy().clear();
+		getTextField().transferFocus();
 	}
 
 	@Override

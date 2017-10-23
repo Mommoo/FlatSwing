@@ -269,9 +269,14 @@ public class FlatTextArea extends JTextPane{
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {
-        if (this.mouseClickAdapter != null) removeMouseListener(this.mouseClickAdapter);
-        this.mouseClickAdapter = new MouseClickAdapter(onClickListener);
-        addMouseListener(mouseClickAdapter);
+        removeOnClickListener();
+        addMouseListener(mouseClickAdapter = new MouseClickAdapter(onClickListener));
+    }
+
+    public void removeOnClickListener(){
+        if (this.mouseClickAdapter != null){
+            removeMouseListener(this.mouseClickAdapter);
+        }
     }
 
     @Override
