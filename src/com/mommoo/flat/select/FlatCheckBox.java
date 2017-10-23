@@ -44,6 +44,7 @@ public class FlatCheckBox extends FlatPanel {
 		flatCheckBox2.setGap(20);
 		flatCheckBox2.setCheckBoxLineColor(Color.BLUE);
 		flatCheckBox2.setCheckColor(Color.BLUE);
+		flatCheckBox2.setEnabled(false);
 
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatCheckBox Test");
@@ -54,6 +55,22 @@ public class FlatCheckBox extends FlatPanel {
 		flatFrame.getContainer().add(flatCheckBox2);
 //		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
 		flatFrame.show();
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		if (!isEnabled()){
+			g.setColor(Color.BLACK);
+			g.drawLine(0, getHeight()/2, getWidth(), getHeight()/2);
+		}
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		CHECK_BOX.setEnabled(enabled);
+		GUIDE_LABEL.setEnabled(enabled);
 	}
 
 	@Override
