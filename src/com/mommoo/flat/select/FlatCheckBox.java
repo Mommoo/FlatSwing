@@ -19,18 +19,55 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FlatCheckBox extends FlatPanel {
-	private static final int GAP = ScreenManager.getInstance().dip2px(8);
+	private static final int GAP = ScreenManager.getInstance().dip2px(3);
 	private final CheckBox CHECK_BOX = new CheckBox();
 	private final FlatLabel GUIDE_LABEL = new FlatLabel();
 	private boolean isAnchor;
 	
 	public FlatCheckBox(String guideText){
-		setLayout(new LinearLayout(GAP));
+		super.setLayout(new LinearLayout(GAP));
 		setBackground(Color.WHITE);
 		add(CHECK_BOX,   new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
 		add(GUIDE_LABEL, new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
 		GUIDE_LABEL.setText(guideText);
 		GUIDE_LABEL.setOpaque(false);
+	}
+
+	public static void main(String[] args) throws Exception{
+		FlatCheckBox flatCheckBox = new FlatCheckBox("Beautiful Check Box1");
+		flatCheckBox.setAnchored(true);
+		flatCheckBox.setChecked(true);
+		flatCheckBox.setCheckBoxLineColor(Color.BLUE);
+		flatCheckBox.setCheckColor(Color.BLUE);
+
+		FlatCheckBox flatCheckBox2 = new FlatCheckBox("Beautiful Check Box2");
+		flatCheckBox2.setGap(20);
+		flatCheckBox2.setCheckBoxLineColor(Color.BLUE);
+		flatCheckBox2.setCheckColor(Color.BLUE);
+
+		FlatFrame flatFrame = new FlatFrame();
+		flatFrame.setTitle("FlatCheckBox Test");
+		flatFrame.setSize(500,300);
+		flatFrame.setLocationOnScreenCenter();
+		flatFrame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+		flatFrame.getContainer().add(flatCheckBox);
+		flatFrame.getContainer().add(flatCheckBox2);
+//		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
+		flatFrame.show();
+	}
+
+	@Override
+	public LayoutManager getLayout(){
+		return null;
+	}
+
+	@Override
+	public void setLayout(LayoutManager layout){
+
+	}
+
+	public int getGap(){
+		return ((LinearLayout)super.getLayout()).getGap();
 	}
 	
 	public String getText(){
@@ -69,26 +106,8 @@ public class FlatCheckBox extends FlatPanel {
 		CHECK_BOX.setChecked(check);
 	}
 
-	public static void main(String[] args) throws Exception{
-		FlatCheckBox flatCheckBox = new FlatCheckBox("Beautiful Check Box1");
-		flatCheckBox.setAnchored(true);
-		flatCheckBox.setChecked(true);
-		flatCheckBox.setCheckBoxLineColor(Color.BLUE);
-		flatCheckBox.setCheckColor(Color.BLUE);
-
-		FlatCheckBox flatCheckBox2 = new FlatCheckBox("Beautiful Check Box2");
-		flatCheckBox2.setCheckBoxLineColor(Color.BLUE);
-		flatCheckBox2.setCheckColor(Color.BLUE);
-
-		FlatFrame flatFrame = new FlatFrame();
-		flatFrame.setTitle("FlatCheckBox Test");
-		flatFrame.setSize(500,300);
-		flatFrame.setLocationOnScreenCenter();
-		flatFrame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
-		flatFrame.getContainer().add(flatCheckBox);
-		flatFrame.getContainer().add(flatCheckBox2);
-//		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(100,100,100,100));
-		flatFrame.show();
+	public void setGap(int gap){
+		((LinearLayout)super.getLayout()).setGap(gap);
 	}
 
 	public Color getCheckColor(){
