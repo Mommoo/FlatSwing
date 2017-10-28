@@ -10,6 +10,7 @@ class LinearSpaceInspector {
     private Orientation orientation;
     private LinearSpaceCalculator calculator = new LinearSpaceCalculator();
     private int addedWeight;
+    private boolean isAutoWeightSum = true;
 
     LinearSpaceInspector(){ }
 
@@ -41,7 +42,7 @@ class LinearSpaceInspector {
     }
 
     private void setWeightSumIfAbsent(){
-        if (addedWeight > 0 && calculator.getWeightSum() == 0) {
+        if (addedWeight >0 && isAutoWeightSum()){
             calculator.setWeightSum(addedWeight);
         }
     }
@@ -52,6 +53,15 @@ class LinearSpaceInspector {
         this.orientation = orientation;
         calculator.setData(this.container,this.orientation, gap);
 
+    }
+
+    boolean isAutoWeightSum(){
+        return this.isAutoWeightSum;
+    }
+
+    LinearSpaceInspector setAutoWeightSum(boolean autoWeightSum){
+        this.isAutoWeightSum = autoWeightSum;
+        return this;
     }
 
     void setWeightSum(int weightSum){

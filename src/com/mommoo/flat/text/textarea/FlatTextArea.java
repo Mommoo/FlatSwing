@@ -67,9 +67,7 @@ public class FlatTextArea extends JTextPane{
             area.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
             area.setCaretWidth(4);
             area.setSelectionColor(Color.BLUE);
-//            area.fixWidth(200);
             area.setText("This is a Flexiable TextArea!!\n\n when no have space to print text, jump next line automatically");
-//            area.setPreferredSize(new Dimension(350,400));
             area.setCaretColor(Color.PINK);
             area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
             area.setLineWrap(true);

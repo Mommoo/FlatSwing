@@ -5,6 +5,7 @@ import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.io.*;
 
@@ -17,7 +18,6 @@ public class Example {
         frame.setSize(500,500 + FlatFrame.getTitleBarHeight());
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
-        frame.getContainer().add(new LinearLayoutPanel2());
         frame.show();
     }
 

@@ -136,17 +136,6 @@ public class LinearLayout implements LayoutManager2, Serializable {
         }
     }
 
-//    private void fixComponentSizeAtOnce(Container container){
-//        if (once) {
-//            return;
-//        }
-//        once = true;
-//
-//        for (Component comp : container.getComponents()){
-//            comp.setPreferredSize(comp.getContentsHeight());
-//        }
-//    }
-
     public void setOrientation(Orientation orientation){
         this.orientation = orientation;
     }
@@ -160,7 +149,12 @@ public class LinearLayout implements LayoutManager2, Serializable {
     }
 
     public void setWeightSum(int weightSum){
-        spaceInspector.setWeightSum(weightSum);
+        if (weightSum >= 0){
+            throw new IllegalArgumentException("weightSum can not smaller than zero value");
+        }
+        spaceInspector
+                .setAutoWeightSum(false)
+                .setWeightSum(weightSum);
     }
 
     public int getWeightSum(){
