@@ -96,6 +96,7 @@ class LinearSpaceInspector {
         int y = insets.top;
         int width  = linearCompDimen.getComponentSize().width;
         int height = linearCompDimen.getComponentSize().height;
+
         boolean isCenter = linearCompDimen.isCenter();
 
         if (isHorizontal){

@@ -89,13 +89,20 @@ public class ExampleFactory {
             insertPanel.add(button, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 
             frame.getContainer().add(insertPanel, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            FlatListView<FlatLabel> listView = new FlatListView<>();
+            FlatListView<Component> listView = new FlatListView<>();
             frame.getContainer().add(listView.getComponent(), new LinearConstraints().setWeight(5).setLinearSpace(LinearSpace.MATCH_PARENT));
 
             button.setOnClickListener(e -> {
                 FlatLabel label = new FlatLabel("POSITION " + (listView.getItemSize() + 1) + " : " + textField.getText());
-                label.setFont(label.getFont().deriveFont(30.0f));
-                listView.addItem(label);
+                JPanel panel = new JPanel();
+                label.setFont(label.getFont().deriveFont(50.0f));
+                panel.setLayout(new LinearLayout(10));
+
+                panel.add(label, new LinearConstraints(2));
+
+                panel.add(new JLabel("ddddddddddd"), new LinearConstraints(4));
+
+                listView.addItem(panel);
                 listView.getScroller().smoothScrollByPosition(true, listView.getItemSize() - 1);
             });
 
@@ -108,7 +115,7 @@ public class ExampleFactory {
             frame.setTitle("Example2 : panelWrap Test");
             frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
             FlatListView<FlatPanel> listView = new FlatListView<>();
-            Font font = FontManager.getNanumGothicFont(Font.BOLD, 30);
+            Font font = FontManager.getNanumGothicFont(Font.BOLD, 50);
             for (int i = 0 ; i < 30 ; i++){
                 listView.addItem(createWrapPanel("position : " + (i + 1),font));
             }
@@ -120,8 +127,7 @@ public class ExampleFactory {
             FlatPanel panel = new FlatPanel(new BorderLayout());
             panel.setAlpha(0.8f);
             FlatLabel label = new FlatLabel(text);
-            label.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
-            label.setVerticalCenteredTextAlignment();
+
 //            panel.setPreferredSize(new Dimension(1,50));
             label.setFont(font);
             panel.add(label);

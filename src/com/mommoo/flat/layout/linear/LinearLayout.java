@@ -2,6 +2,7 @@ package com.mommoo.flat.layout.linear;
 
 
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.text.textarea.FlatTextArea;
 
 import javax.swing.*;
 import java.awt.*;
@@ -123,16 +124,22 @@ public class LinearLayout implements LayoutManager2, Serializable {
     @Override
     public void layoutContainer(Container parent) {
         synchronized (parent.getTreeLock()) {
-            //fixComponentSizeAtOnce(parent);
-
             spaceInspector.setData(parent, orientation, gap);
 
             int index = 0;
 
             for (Component comp : parent.getComponents()){
                 comp.setBounds(spaceInspector.getProperCompBounds(index++));
+
+                validateCompIfFlatTextArea(comp);
             }
 
+        }
+    }
+
+    private void validateCompIfFlatTextArea(Component comp){
+        if (comp instanceof FlatTextArea && orientation == Orientation.HORIZONTAL){
+            ((FlatTextArea) comp).fixWidth(comp.getBounds().width);
         }
     }
 
