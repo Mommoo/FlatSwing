@@ -44,7 +44,6 @@ class NavigationButtonModel {
         this.hoverOutListener = hoverOutListener;
     }
 
-
     class HoverAnimListener extends FlatMouseAdapter {
         private static final int HOVER_IN_DURATION  = 100;
         private static final int HOVER_OUT_DURATION = 100;
