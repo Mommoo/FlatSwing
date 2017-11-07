@@ -27,14 +27,16 @@ import static com.mommoo.flat.frame.FrameLocation.RELATIVE_AT_COMPONENT;
 
 public class FlatDialog {
 	private final static ScreenManager SCREEN_MANAGER = ScreenManager.getInstance();
-	private final static int FLAT_DIALOG_WIDTH = SCREEN_MANAGER.getWindowWidth()/5;
+	private final static int FLAT_DIALOG_WIDTH = SCREEN_MANAGER.getWindowWidth()/4;
 
-	private final static int PADDING = FLAT_DIALOG_WIDTH/28;
+	private final static int PADDING = SCREEN_MANAGER.dip2px(16);
 
 	private final static int ANIMATION_DURATION = 300;
 
-	private final CommonJFrame COMMON_FRAME = createCommonJFrame();
-	private final JDialog HIDDEN_DIALOG_FOR_MODALITY = createHiddenModalDialog();
+	private static final JFrame TRANSLUCENT_BACKGROUND_FRAME = createTranslucentBackgroundFrame();
+
+	private final CommonJFrame DIALOG_FRAME = createCommonJFrame();
+	private final JDialog HIDDEN_DIALOG_FOR_MODALITY = createHiddenModalDialog(DIALOG_FRAME);
 
 	private final Builder builder;
 
@@ -53,7 +55,6 @@ public class FlatDialog {
 		container.add(createContentLabel(), constraints);
 		container.add(builder.lowerView,    constraints);
 		container.add(createButtonPanel(),  constraints);
-
 	}
 	
     public static void main(String[] args){
@@ -67,6 +68,7 @@ public class FlatDialog {
                         "When dialog message length increase, this dialog area is wider automatically \n" +
                         "So, you don't consider that width or height size\n" +
                         "Just use it!")
+				.setWindowTranslucent(0.2f)
                 .setLocationScreenCenter()
                 .appendButton(buttonInfo)
                 .build()
@@ -75,23 +77,34 @@ public class FlatDialog {
         System.out.println("blocked this message when dialog showing, if you exit dialog, you can see this message");
     }
 
-	private CommonJFrame createCommonJFrame(){
+	private static CommonJFrame createCommonJFrame(){
     	CommonJFrame COMMON_FRAME = new CommonJFrame();
 		COMMON_FRAME.setType(JFrame.Type.UTILITY);
-		COMMON_FRAME.setShadowWidth(SCREEN_MANAGER.dip2px(3));
+		COMMON_FRAME.setShadowWidth(SCREEN_MANAGER.dip2px(10));
 		COMMON_FRAME.setAlwaysOnTop(true);
 		COMMON_FRAME.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 		return COMMON_FRAME;
 	}
 
-	private JDialog createHiddenModalDialog(){
-		JDialog HIDDEN_DIALOG_FOR_MODALITY = new JDialog(COMMON_FRAME, true);
+	private static JDialog createHiddenModalDialog(Frame owner){
+		JDialog HIDDEN_DIALOG_FOR_MODALITY = new JDialog(owner, true);
 		HIDDEN_DIALOG_FOR_MODALITY.setUndecorated(true);
 		HIDDEN_DIALOG_FOR_MODALITY.setSize(0,0);
 		HIDDEN_DIALOG_FOR_MODALITY.setFocusable(false);
 		HIDDEN_DIALOG_FOR_MODALITY.setFocusableWindowState(false);
 		HIDDEN_DIALOG_FOR_MODALITY.setAutoRequestFocus(false);
 		return HIDDEN_DIALOG_FOR_MODALITY;
+	}
+
+	private static JFrame createTranslucentBackgroundFrame(){
+		JFrame translucentFrame = new JFrame();
+		translucentFrame.setSize(SCREEN_MANAGER.getScreenWidth(), SCREEN_MANAGER.getScreenHeight());
+		translucentFrame.setUndecorated(true);
+		translucentFrame.setType(Window.Type.UTILITY);
+		translucentFrame.setFocusable(false);
+		translucentFrame.setFocusableWindowState(false);
+		translucentFrame.setAutoRequestFocus(false);
+		return translucentFrame;
 	}
 
 	private FlatLabel createCommonLabel(DialogComponentInfo dialogComponentInfo){
@@ -105,14 +118,14 @@ public class FlatDialog {
 
 	private Component createTitleLabel(){
 		FlatLabel TITLE_LABEL = createCommonLabel(builder.titleInfo);
-		TITLE_LABEL.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
+		TITLE_LABEL.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING/2,PADDING));
 		TITLE_LABEL.fixWidth(builder.dialogWidth);
 		return TITLE_LABEL;
 	}
 
 	private Component createContentLabel(){
 		FlatLabel CONTENT = createCommonLabel(builder.contentInfo);
-		CONTENT.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
+		CONTENT.setBorder(BorderFactory.createEmptyBorder(0,PADDING,PADDING/2,PADDING));
 		CONTENT.setLineSpacing(builder.lineSpacing);
 		CONTENT.fixWidth(builder.dialogWidth);
 		return CONTENT;
@@ -120,7 +133,7 @@ public class FlatDialog {
 
 	private Component createButtonPanel(){
 		JPanel BTN_PARENT_PANEL = new JPanel();
-		BTN_PARENT_PANEL.setBorder(BorderFactory.createEmptyBorder(PADDING,PADDING,PADDING,PADDING));
+		BTN_PARENT_PANEL.setBorder(BorderFactory.createEmptyBorder(0,PADDING,PADDING/2,PADDING));
 		BTN_PARENT_PANEL.setOpaque(true);
 		BTN_PARENT_PANEL.setBackground(builder.buttonAreaBackgroundColor);
 		BTN_PARENT_PANEL.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -149,32 +162,33 @@ public class FlatDialog {
 	}
 
 	private void executeExit(int animDuration){
-		final int previousY = COMMON_FRAME.getY();
+		final int previousY = DIALOG_FRAME.getY();
 		new Animator()
 				.setDuration(animDuration)
 				.setTimeInterpolator(new AnticipateInterpolator())
 				.setAnimationListener(new AnimationAdapter(){
 					@Override
 					public void onAnimation(List<Double> resultList) {
-						COMMON_FRAME.setLocation(COMMON_FRAME.getX(), previousY - resultList.get(0).intValue());
+						DIALOG_FRAME.setLocation(DIALOG_FRAME.getX(), previousY - resultList.get(0).intValue());
 					}
 
 					@Override
 					public void onEnd() {
-						COMMON_FRAME.dispose();
+						TRANSLUCENT_BACKGROUND_FRAME.dispose();
+						DIALOG_FRAME.dispose();
 					}
 				})
-				.start(previousY  + COMMON_FRAME.getHeight());
+				.start(previousY  + DIALOG_FRAME.getHeight());
 	}
 
 
 	private Container getContainer(){
-		return COMMON_FRAME.getCustomizablePanel();
+		return DIALOG_FRAME.getContentPane();
 	}
 
 	private void addEnterKeyListener(KeyManager.KeyEventListener eventListener){
-		KeyManager.addEnterKeyListener(COMMON_FRAME, eventListener);
-		KeyManager.addEnterKeyListener(COMMON_FRAME.getCustomizablePanel(), eventListener);
+		KeyManager.addEnterKeyListener(DIALOG_FRAME, eventListener);
+		KeyManager.addEnterKeyListener(DIALOG_FRAME.getContentPane(), eventListener);
 	}
 
 	public String getTitle(){
@@ -206,12 +220,12 @@ public class FlatDialog {
 	}
 
 	public Point getLocation(){
-		return COMMON_FRAME.getLocation();
+		return DIALOG_FRAME.getLocation();
 	}
 
 	private Point getProperLocation(){
 
-		Dimension frameSize = COMMON_FRAME.getSize();
+		Dimension frameSize = DIALOG_FRAME.getSize();
 
 		switch(builder.frameLocation){
 			case NONE :
@@ -231,26 +245,30 @@ public class FlatDialog {
 
 			case RELATIVE_AT_COMPONENT:
 
-				COMMON_FRAME.setLocationRelativeTo(builder.locationComponent);
-				return COMMON_FRAME.getLocation();
+				DIALOG_FRAME.setLocationRelativeTo(builder.locationComponent);
+				return DIALOG_FRAME.getLocation();
 
 			default:
-				return null;
+				return new Point(0, 0);
 		}
 	}
 
 	public void show(){
-		COMMON_FRAME.pack();
-		COMMON_FRAME.setLocation(getProperLocation());
-		COMMON_FRAME.setVisible(true);
+		/* ready */
+		DIALOG_FRAME.pack();
+		DIALOG_FRAME.setLocation(getProperLocation());
+		TRANSLUCENT_BACKGROUND_FRAME.setBackground(new Color(0,0,0,builder.windowTranslucent));
 
+		/* show */
+		DIALOG_FRAME.setVisible(true);
+		TRANSLUCENT_BACKGROUND_FRAME.setVisible(true);
 		HIDDEN_DIALOG_FOR_MODALITY.setVisible(true);
 	}
 
 	public static class Builder{
-		private static Font DEFAULT_TITLE_FONT = FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(16));
+		private static Font DEFAULT_TITLE_FONT = FontManager.getNanumGothicBoldFont(SCREEN_MANAGER.dip2px(16));
 		private static Font DEFAULT_CONTENT_FONT = FontManager.getNanumGothicFont(Font.PLAIN, SCREEN_MANAGER.dip2px(10));
-		private static Font DEFAULT_BUTTON_FONT  = FontManager.getNanumGothicFont(Font.BOLD, SCREEN_MANAGER.dip2px(9));
+		private static Font DEFAULT_BUTTON_FONT  = FontManager.getNanumGothicBoldFont(SCREEN_MANAGER.dip2px(9));
 
 		private DialogComponentInfo titleInfo = new DialogComponentInfo();
 		private DialogComponentInfo contentInfo = new DialogComponentInfo();
@@ -265,6 +283,7 @@ public class FlatDialog {
 
 		private int dialogWidth = FLAT_DIALOG_WIDTH;
 		private float lineSpacing = 0.3f;
+		private float windowTranslucent = 0.0f;
 
 		private Component locationComponent;
 		private FrameLocation frameLocation = FrameLocation.NONE;
@@ -374,6 +393,11 @@ public class FlatDialog {
 
 		public Builder setLineSpacing(float lineSpacing){
 			this.lineSpacing = lineSpacing;
+			return this;
+		}
+
+		public Builder setWindowTranslucent(float windowTranslucent){
+			this.windowTranslucent = windowTranslucent;
 			return this;
 		}
 

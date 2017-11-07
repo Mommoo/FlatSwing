@@ -77,6 +77,11 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
 
     }
 
+    void addComponent2(T component){
+        add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT));
+        compIndexList.addComp(component);
+    }
+
     void addComponent(T component, int index){
         SwingUtilities.invokeLater(()->{
             add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT), index);
@@ -86,6 +91,13 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
             repaint();
         });
 
+    }
+
+    void clear(){
+        SELECTION_RANGE.inspectValidSelection(0);
+        removeAll();
+        compIndexList.removeAll();
+        paintSelection();
     }
 
     void removeComponent(int index){

@@ -63,7 +63,7 @@ public class FlatPopUpList {
     }
 
     private JPanel getContentPane(){
-        return FRAME.getCustomizablePanel();
+        return (JPanel)FRAME.getContentPane();
     }
 
     private FlatLabel createLabel(String text){

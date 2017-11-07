@@ -5,22 +5,22 @@ import com.sun.prism.j2d.paint.RadialGradientPaint;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 class ShadowPaintHandler {
     private static final float[] DIST = { 0.0f, 1.0f };
-    private static final Color[] COLORS = { new Color(75, 75, 75, 90), new Color(80, 80, 80, 10) };
-    private final Arc2D.Float SHADOW_CORNER_SHAPE = new Arc2D.Float();
-    private final Rectangle2D.Float SHADOW_SHAPE = new Rectangle2D.Float();
+//    private static final Color[] COLORS = { new Color(93, 93, 93), new Color(100, 100, 100,0) };
+    private static final Color[] COLORS = { new Color(152, 152, 152), new Color(100, 100, 100,0) };
     private int width, height, shadowDip;
-    private RadialGradientPaint topLeftShadowGradient;
-    private RadialGradientPaint topRightShadowGradient;
-    private RadialGradientPaint bottomLeftShadowGradient;
-    private RadialGradientPaint bottomRightShadowGradient;
-    private GradientPaint topShadowGradient;
-    private GradientPaint leftShadowGradient;
-    private GradientPaint rightShadowGradient;
-    private GradientPaint bottomShadowGradient;
+    private Drawer TOP_LEFT_DRAWER;
+    private Drawer TOP_RIGHT_DRAWER;
+    private Drawer BOTTOM_LEFT_DRAWER;
+    private Drawer BOTTOM_RIGHT_DRAWER;
+    private Drawer TOP_DRAWER;
+    private Drawer LEFT_DRAWER;
+    private Drawer RIGHT_DRAWER;
+    private Drawer BOTTOM_DRAWER;
 
     void changePaint(int width, int height, int shadowDip){
 
@@ -29,14 +29,14 @@ class ShadowPaintHandler {
         }
 
         setData(width, height, shadowDip);
-        topLeftShadowGradient = createTopLeftShadowGradient();
-        topRightShadowGradient = createTopRightShadowGradient();
-        bottomLeftShadowGradient = createBottomLeftShadowGradient();
-        bottomRightShadowGradient = createBottomRightShadowGradient();
-        topShadowGradient = createTopShadowGradient();
-        leftShadowGradient = createLeftShadowGradient();
-        rightShadowGradient = createRightShadowGradient();
-        bottomShadowGradient = createBottomShadowGradient();
+        TOP_LEFT_DRAWER = createTopLeftDrawer();
+        TOP_RIGHT_DRAWER = createTopRightDrawer();
+        BOTTOM_LEFT_DRAWER = createBottomLeftDrawer();
+        BOTTOM_RIGHT_DRAWER = createBottomRightDrawer();
+        TOP_DRAWER = createTopDrawer();
+        LEFT_DRAWER = createLeftDrawer();
+        RIGHT_DRAWER = createRightDrawer();
+        BOTTOM_DRAWER = createBottomDrawer();
     }
 
     private void setData(int width, int height, int shadowDip){
@@ -45,108 +45,101 @@ class ShadowPaintHandler {
         this.shadowDip = shadowDip;
     }
 
-
-    private RadialGradientPaint createTopLeftShadowGradient(){
-        return new RadialGradientPaint(shadowDip ,shadowDip ,shadowDip , DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+    private Drawer createTopLeftDrawer(){
+        Shape topLeftCornerShape = new Arc2D.Float(0,0, shadowDip * 2 , shadowDip * 2 ,90, 90, Arc2D.PIE);
+        Paint topLeftPaint = new RadialGradientPaint(shadowDip ,shadowDip ,shadowDip , DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+        return new Drawer(topLeftCornerShape, topLeftPaint);
     }
 
-    private RadialGradientPaint createTopRightShadowGradient(){
-        return new RadialGradientPaint(width - shadowDip, shadowDip, shadowDip, DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+    private Drawer createTopRightDrawer(){
+        Shape topRightCornerShape = new Arc2D.Float(width - (shadowDip * 2),0, shadowDip * 2 , shadowDip * 2 ,90, -90, Arc2D.PIE);
+        Paint topRightPaint = new RadialGradientPaint(width - shadowDip, shadowDip, shadowDip, DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+        return new Drawer(topRightCornerShape, topRightPaint);
     }
 
-    private RadialGradientPaint createBottomLeftShadowGradient(){
-        return new RadialGradientPaint(shadowDip ,height- shadowDip ,shadowDip , DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+    private Drawer createBottomLeftDrawer(){
+        Shape bottomLeftShape = new Arc2D.Float(0, height - (shadowDip * 2) , shadowDip * 2 , shadowDip * 2 , 180, 90, Arc2D.PIE);
+        Paint bottomLeftPaint = new RadialGradientPaint(shadowDip ,height- shadowDip, shadowDip  , DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+        return new Drawer(bottomLeftShape, bottomLeftPaint);
     }
 
-    private RadialGradientPaint createBottomRightShadowGradient(){
-        return new RadialGradientPaint(width - shadowDip, height - shadowDip, shadowDip, DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);
+    private Drawer createBottomRightDrawer(){
+        Shape bottomRightShape = new Arc2D.Float(width - (shadowDip * 2) , height - (shadowDip * 2), shadowDip * 2, shadowDip * 2, 270, 90, Arc2D.PIE);
+        Paint bottomRightPaint = new RadialGradientPaint(width - shadowDip, height - shadowDip, shadowDip, DIST, COLORS, MultipleGradientPaint.CycleMethod.NO_CYCLE);;
+        return new Drawer(bottomRightShape, bottomRightPaint);
     }
 
-    private GradientPaint createTopShadowGradient(){
-        return new GradientPaint(shadowDip, shadowDip, COLORS[0], shadowDip, 0, COLORS[1]);
+    private Drawer createTopDrawer(){
+        Shape topShape = new Rectangle2D.Float(shadowDip, 0, width - (shadowDip * 2), shadowDip);
+        Paint topPaint = new GradientPaint(shadowDip, shadowDip, COLORS[0], shadowDip, 0, COLORS[1]);
+        return new Drawer(topShape, topPaint);
     }
 
-    private GradientPaint createLeftShadowGradient(){
-        return new GradientPaint(shadowDip, shadowDip, COLORS[0], 0, shadowDip, COLORS[1]);
+    private Drawer createLeftDrawer(){
+        Shape leftShape = new Rectangle2D.Float(0, shadowDip, shadowDip, height - ( shadowDip * 2));
+        Paint leftPaint = new GradientPaint(shadowDip, shadowDip, COLORS[0], 0, shadowDip, COLORS[1]);
+        return new Drawer(leftShape, leftPaint);
     }
 
-    private GradientPaint createRightShadowGradient(){
-        return new GradientPaint(width - shadowDip, shadowDip, COLORS[0], width, shadowDip, COLORS[1]);
+    private Drawer createRightDrawer(){
+        Shape rightShape = new Rectangle2D.Float(width - shadowDip, shadowDip, shadowDip, height - ( shadowDip * 2));
+        Paint rightPaint = new GradientPaint(width - shadowDip, shadowDip, COLORS[0], width, shadowDip, COLORS[1]);
+        return new Drawer(rightShape, rightPaint);
     }
 
-    private GradientPaint createBottomShadowGradient(){
-        return new GradientPaint(shadowDip, height - shadowDip, COLORS[0], shadowDip, height, COLORS[1]);
+    private Drawer createBottomDrawer(){
+        Shape bottomShape = new Rectangle2D.Float(shadowDip, height - shadowDip, width - (shadowDip * 2), shadowDip);
+        Paint bottomPaint = new GradientPaint(shadowDip, height - shadowDip, COLORS[0], shadowDip, height, COLORS[1]);
+        return new Drawer(bottomShape, bottomPaint);
     }
 
-    RadialGradientPaint getTopLeftShadowGradient(){
-        return topLeftShadowGradient;
+    public Drawer getTopLeftDrawer(){
+        return TOP_LEFT_DRAWER;
     }
 
-    Shape getTopLeftShadowShape(){
-        SHADOW_CORNER_SHAPE.setArc(0,0, shadowDip * 2 , shadowDip * 2 ,90, 90, Arc2D.PIE);
-        return SHADOW_CORNER_SHAPE;
+    public Drawer getTopRightDrawer(){
+        return TOP_RIGHT_DRAWER;
     }
 
-    RadialGradientPaint getTopRightShadowGradient(){
-        return topRightShadowGradient;
+    public Drawer getBottomLeftDrawer(){
+        return BOTTOM_LEFT_DRAWER;
     }
 
-    Shape getTopRightShadowShape(){
-        SHADOW_CORNER_SHAPE.setArc(width - (shadowDip * 2),0, shadowDip * 2 , shadowDip * 2 ,90, -90, Arc2D.PIE);
-        return SHADOW_CORNER_SHAPE;
+    public Drawer getBottomRightDrawer(){
+        return BOTTOM_RIGHT_DRAWER;
     }
 
-    RadialGradientPaint getBottomLeftShadowGradient() {
-        return bottomLeftShadowGradient;
+    public Drawer getTopDrawer(){
+        return TOP_DRAWER;
     }
 
-    Shape getBottomLeftShadowShape(){
-        SHADOW_CORNER_SHAPE.setArc(0, height - (shadowDip * 2) , shadowDip * 2 , shadowDip * 2 , 180, 90, Arc2D.PIE);
-        return SHADOW_CORNER_SHAPE;
+    public Drawer getLeftDrawer(){
+        return LEFT_DRAWER;
     }
 
-    RadialGradientPaint getBottomRightShadowGradient() {
-        return bottomRightShadowGradient;
+    public Drawer getRightDrawer(){
+        return RIGHT_DRAWER;
     }
 
-    Shape getBottomRightShadowShape(){
-        SHADOW_CORNER_SHAPE.setArc(width - (shadowDip * 2) , height - (shadowDip * 2), shadowDip * 2, shadowDip * 2, 270, 90, Arc2D.PIE);
-        return SHADOW_CORNER_SHAPE;
+    public Drawer getBottomDrawer(){
+        return BOTTOM_DRAWER;
     }
 
-    GradientPaint getTopShadowGradient(){
-        return topShadowGradient;
-    }
+    public class Drawer{
+        private final Shape shape;
+        private final Paint paint;
 
-    Shape getTopShadowShape(){
-        SHADOW_SHAPE.setFrame(shadowDip, 0, width - (shadowDip * 2), shadowDip);
-        return SHADOW_SHAPE;
-    }
+        public Drawer(Shape shape, Paint paint){
+            this.shape = shape;
+            this.paint = paint;
+        }
 
-    GradientPaint getLeftShadowGradient() {
-        return leftShadowGradient;
-    }
+        public Shape getShape() {
+            return shape;
+        }
 
-    Shape getLeftShadowShape(){
-        SHADOW_SHAPE.setFrame(0, shadowDip, shadowDip, height - ( shadowDip * 2));
-        return SHADOW_SHAPE;
-    }
-
-    GradientPaint getRightShadowGradient() {
-        return rightShadowGradient;
-    }
-
-    Shape getRightShadowShape(){
-        SHADOW_SHAPE.setFrame(width - shadowDip, shadowDip, shadowDip, height - ( shadowDip * 2));
-        return SHADOW_SHAPE;
-    }
-
-    GradientPaint getBottomShadowGradient() {
-        return bottomShadowGradient;
-    }
-
-    Shape getBottomShadowShape(){
-        SHADOW_SHAPE.setFrame(shadowDip, height - shadowDip, width - (shadowDip * 2), shadowDip);
-        return SHADOW_SHAPE;
+        public Paint getPaint() {
+            return paint;
+        }
     }
 }

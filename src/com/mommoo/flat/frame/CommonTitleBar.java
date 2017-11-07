@@ -35,10 +35,18 @@ class CommonTitleBar extends FlatPanel {
 		add(controlPanel, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT));
 	}
 
-	private void init(){
-		setOpaque(true);
-		setLayout(new LinearLayout(15));
-		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
+	public static void main(String[] args){
+		SwingUtilities.invokeLater(()->{
+			FlatFrame f = new FlatFrame();
+			f.setSize(700,500);
+			f.setProcessIconImage(ImageManager.TEST);
+			f.setEnableSizeButton(true);
+			f.setResizable(true);
+//			f.setShadowWidth(10);
+			f.setTitle("A Beautiful Frame. You can customizing you want!");
+			f.setLocationOnScreenCenter();
+			f.show();
+		});
 	}
 
 	private void createMainIcon(){
@@ -55,17 +63,11 @@ class CommonTitleBar extends FlatPanel {
 		return TITLE_LABEL.getText();
 	}
 
-	public static void main(String[] args){
-		SwingUtilities.invokeLater(()->{
-			FlatFrame f = new FlatFrame();
-			f.setSize(700,500);
-			f.setProcessIconImage(ImageManager.TEST);
-			f.setEnableSizeButton(true);
-			f.setResizable(true);
-			f.setTitle("A Beautiful Frame. You can customizing you want!");
-			f.setLocationOnScreenCenter();
-			f.show();
-		});
+	private void init(){
+		setOpaque(true);
+		setLayout(new LinearLayout(15));
+		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
+		setBackground(Color.GRAY);
 	}
 
 	void removeIconImage(){

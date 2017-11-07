@@ -59,7 +59,7 @@ class NavigationButtonModel {
                     .setAnimationListener(new AnimationAdapter(){
                         @Override
                         public void onAnimation(List<Double> resultList) {
-                            alpha = resultList.get(0).floatValue();
+                            alpha = Math.max(resultList.get(0).floatValue(), 1.0f);
                             e.getComponent().repaint();
                         }
 
@@ -87,7 +87,7 @@ class NavigationButtonModel {
 
                         @Override
                         public void onAnimation(List<Double> resultList) {
-                            alpha = previousAlpha - resultList.get(0).floatValue();
+                            alpha = Math.max(0.0f,previousAlpha - resultList.get(0).floatValue());
                             e.getComponent().repaint();
                         }
 

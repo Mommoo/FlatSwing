@@ -264,7 +264,7 @@ public class FlatListView<T extends Component> {
     }
 
     public static void main(String[] args){
-        ExampleFactory.FlatListViewExample.example1();
+        ExampleFactory.FlatListViewExample.example2();
     }
 
 }

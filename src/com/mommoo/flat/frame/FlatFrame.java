@@ -1,5 +1,6 @@
 package com.mommoo.flat.frame;
 
+import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.listener.OnExitListener;
 import com.mommoo.flat.frame.listener.OnMinimizeListener;
 import com.mommoo.flat.frame.listener.OnSizeChangeListener;
@@ -14,37 +15,33 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public final class FlatFrame {
-	private static final Color DEFAULT_THEME_COLOR = Color.decode("#eeeeee");
 	private final CommonJFrame COMMON_FRAME = new CommonJFrame();
 	private final CommonTitleBar TITLE_BAR = new CommonTitleBar();
-	private final JPanel USER_CUSTOMIZABLE_PANEL = new JPanel();
+	private final JPanel CONTAINER = createContainer();
 
 	private boolean isCenterLocation, isWindowExit, isEnableSizeButton;
 	private ControlListener controlListener = new ControlListener();
 
 	public FlatFrame() {
-		initFrame();
-		initUserCustomizablePanel();
+		setLocation(0,0);
+		setIconImage(ImageManager.TEST);
 		addComponent();
 		setTitleBarDragEventListener();
 		setTitleBarControlListener();
 	}
 
-	private void initFrame(){
-		setThemeColor(DEFAULT_THEME_COLOR);
-		setLocation(0,0);
-		setIconImage(ImageManager.TEST);
-	}
-
-	private void initUserCustomizablePanel(){
-		USER_CUSTOMIZABLE_PANEL.setLayout(new BorderLayout());
+	private JPanel createContainer(){
+		JPanel container = new JPanel(new BorderLayout());
+		container.setOpaque(true);
+		container.setBackground(Color.WHITE);
+		return container;
 	}
 	
 	private void addComponent(){
-		JPanel customizablePanel = COMMON_FRAME.getCustomizablePanel();
-		customizablePanel.setLayout(new BorderLayout());
-		customizablePanel.add(TITLE_BAR, BorderLayout.NORTH);
-		customizablePanel.add(USER_CUSTOMIZABLE_PANEL, BorderLayout.CENTER);
+		JPanel contentPane = (JPanel)COMMON_FRAME.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+		contentPane.add(TITLE_BAR, BorderLayout.NORTH);
+		contentPane.add(CONTAINER, BorderLayout.CENTER);
 	}
 	
 	private void setTitleBarDragEventListener(){
@@ -57,13 +54,14 @@ public final class FlatFrame {
 		TITLE_BAR.setControlListener(controlListener);
 	}
 
+	@Deprecated
 	public void setThemeColor(Color color){
 		TITLE_BAR.setBackground(color);
-		USER_CUSTOMIZABLE_PANEL.setBackground(color.brighter());
+		CONTAINER.setBackground(color.brighter());
 	}
 
 	public JPanel getContainer() {
-		return USER_CUSTOMIZABLE_PANEL;
+		return CONTAINER;
 	}
 
 	public void setTitle(String title){
