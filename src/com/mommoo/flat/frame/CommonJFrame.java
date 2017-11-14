@@ -1,8 +1,6 @@
 package com.mommoo.flat.frame;
 
-import com.mommoo.flat.border.Elevation;
 import com.mommoo.flat.border.FlatShadowBorder;
-import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.helper.ComponentResizer;
 import com.mommoo.util.ColorManager;
 import com.mommoo.util.ScreenManager;
@@ -10,9 +8,9 @@ import com.mommoo.util.ScreenManager;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.beans.PropertyVetoException;
 
 final class CommonJFrame extends JFrame {
+    private static final int SHADOW_WIDTH = ScreenManager.getInstance().dip2px(20);
     private final ComponentResizer COMPONENT_RE_SIZER = createComponentResizer();
 
     CommonJFrame() {
@@ -39,8 +37,7 @@ final class CommonJFrame extends JFrame {
             jf.setLocation(300, 300);
             jf.setLayout(new BorderLayout());
             jf.setResizable(true);
-            jf.setShadowWidth(50);
-            jf.setShadowElevation(Elevation.NORMAL);
+            jf.setShadowWidth(10);
             jf.getContentPane().add(new JButton("BUTTON"));
             jf.setVisible(true);
         });
@@ -58,7 +55,7 @@ final class CommonJFrame extends JFrame {
         JPanel shadowPane = new JPanel(new BorderLayout());
         shadowPane.setOpaque(true);
         shadowPane.setBackground(Color.WHITE);
-        shadowPane.setBorder(new FlatShadowBorder());
+        shadowPane.setBorder(new FlatShadowBorder(SHADOW_WIDTH));
         super.setContentPane(shadowPane);
     }
 
@@ -173,11 +170,6 @@ final class CommonJFrame extends JFrame {
         JPanel borderPanel = (JPanel) getContentPane();
         LineBorder lineBorder = (LineBorder)borderPanel.getBorder();
         setBorderLine(lineBorder.getLineColor(), borderWidth);
-    }
-
-    void setShadowElevation(Elevation elevation){
-        FlatShadowBorder previousBorder = ((FlatShadowBorder)getShadowPane().getBorder());
-        getShadowPane().setBorder(new FlatShadowBorder(previousBorder.getShadowWidth(), elevation));
     }
 
     int getShadowWidth() {

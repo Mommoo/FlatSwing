@@ -180,7 +180,6 @@ public class Animator {
         takenTime = -1;
 
         animatorTimer = new Timer(INTER_ACTION_DURATION, e -> {
-//            takenTime += INTER_ACTION_DURATION;
 
             if (takenTime == -1){
                 animationListener.onStart();
@@ -210,59 +209,19 @@ public class Animator {
         animatorTimer.setInitialDelay(delay);
         animatorTimer.setCoalesce(true);
         animatorTimer.start();
-
-//        foo(elements);
     }
 
-    private void foo(double... elements){
-        new SwingWorker<Void, Double>(){
-            @Override
-            protected Void doInBackground() throws Exception {
-                while(true){
-                    try {
-                        Thread.sleep(INTER_ACTION_DURATION);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    takenTime += INTER_ACTION_DURATION;
-
-                    if (takenTime == INTER_ACTION_DURATION){
-                        animationListener.onStart();
-                    }
-
-                    double percent = Math.min(1.0, (double) takenTime / duration);
-
-                    double factor = timeInterpolator.getFactor(percent);
-
-                    ArrayList<Double> list = new ArrayList<>();
-                    for (double element : elements){
-                        list.add(factor * element);
-                    }
-                    animationListener.onAnimation(list);
-//                    publish(list.toArray(new Double[list.size()]));
-
-                    if (takenTime >= duration){
-                        animationListener.onEnd();
-                        break;
-                    }
-                }
-
-                return null;
-            }
-        }.execute();
-    }
 
     public Animator stop(){
-//        if (animatorTimer != null && animatorTimer.isRunning()){
-//            animationListener.onStop();
-//            animatorTimer.stop();
-//        }
+        if (animatorTimer != null && animatorTimer.isRunning()){
+            animationListener.onStop();
+            animatorTimer.stop();
+        }
 
         return this;
     }
 
     public boolean isRunning(){
-        return animatorTimer != null;// && animatorTimer.isRunning();
+        return animatorTimer != null && animatorTimer.isRunning();
     }
 }

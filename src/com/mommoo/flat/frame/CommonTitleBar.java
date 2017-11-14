@@ -67,7 +67,7 @@ class CommonTitleBar extends FlatPanel {
 		setOpaque(true);
 		setLayout(new LinearLayout(15));
 		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
-		setBackground(Color.GRAY);
+		setBackground(Color.LIGHT_GRAY);
 	}
 
 	void removeIconImage(){

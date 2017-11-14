@@ -6,98 +6,124 @@ import com.mommoo.util.ScreenManager;
 
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
 public class FlatShadowBorder implements Border {
-    private static final Map<Integer, Map<Position, Image>> SHADOW_FINDER = new HashMap<>();
-    private final int SHADOW_SIZE;
-    private final Elevation ELEVATION;
     public FlatShadowBorder(){
-        this(ScreenManager.getInstance().dip2px(4), Elevation.NORMAL);
+        this(ScreenManager.getInstance().dip2px(10));
     }
 
-    public FlatShadowBorder(int shadowWidth){
-        this(shadowWidth, Elevation.NORMAL);
-    }
+    private static final Map<Integer, Map<Position, Image>> SHADOW_FINDER = new HashMap<>();
 
-    public FlatShadowBorder(Elevation elevation){
-        this(ScreenManager.getInstance().dip2px(4), elevation);
-    }
+    private final int SHADOW_SIZE;
 
-    public FlatShadowBorder(int shadowWidth, Elevation elevation){
-        this.SHADOW_SIZE = shadowWidth;
-        this.ELEVATION = elevation;
-    }
+    private BufferedImage createShadowBlurImage(int size, int radius){
+        Shape shadowShape = new RoundRectangle2D.Float(radius, radius,size - radius*2  , size - radius*2, radius, radius);
 
-    private BufferedImage createShadowBlurImage(int width, int height, int gap){
-        Shape shadowShape = new Rectangle2D.Float(SHADOW_SIZE, SHADOW_SIZE,width - SHADOW_SIZE *2 , height - SHADOW_SIZE * 2);
-        BufferedImage shadowBlurImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage shadowBlurImage = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D graphics2D = (Graphics2D)shadowBlurImage.getGraphics();
+        graphics2D.setColor(new Color(0f,0f,0f, 0.5f));
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setPaint(Color.BLACK);
         graphics2D.fill(shadowShape);
         graphics2D.dispose();
-        FastGaussianBlur.blur(shadowBlurImage, SHADOW_SIZE /2d, gap);
+        FastGaussianBlur.blur(shadowBlurImage, radius/2,3);
         return shadowBlurImage;
     }
 
-    private BufferedImage createShadowImage(int width, int height){
-        BufferedImage shadowImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-
-        BufferedImage outShadowImage = createShadowBlurImage(width, height, 3);
-        BufferedImage innerShadowImage = createShadowBlurImage(width, height, 10);
-
-        shadowImage.getGraphics().drawImage(outShadowImage, 0, 0, null);
-        for (int i = 0 ; i < ELEVATION.getInnerShadowCount() ; i ++){
-            shadowImage.getGraphics().drawImage(innerShadowImage, 0, 0, null);
-        }
-        shadowImage.getGraphics().dispose();
-        return shadowImage;
+    public FlatShadowBorder(int shadowWidth){
+        this.SHADOW_SIZE = shadowWidth;
     }
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        if (SHADOW_SIZE == 0) return ;
-
         Map<Position, Image> shadowMap = SHADOW_FINDER.get(SHADOW_SIZE);
+
         if (shadowMap == null){
             shadowMap = new HashMap<>();
 
-            int size = ScreenManager.getInstance().dip2px(250);
-            BufferedImage shadowImage = createShadowImage(size, size);
+            int size = 200 + (SHADOW_SIZE * 2);
+            BufferedImage shadowImage = createShadowBlurImage(size, SHADOW_SIZE/2);
 
-            shadowMap.put(Position.TOP_LEFT, shadowImage.getSubimage(0,0, SHADOW_SIZE, SHADOW_SIZE));
-            shadowMap.put(Position.TOP, shadowImage.getSubimage(SHADOW_SIZE,0,1, SHADOW_SIZE));
-            shadowMap.put(Position.TOP_RIGHT, shadowImage.getSubimage(size - SHADOW_SIZE, 0, SHADOW_SIZE, SHADOW_SIZE));
+            int chuckSize = SHADOW_SIZE * 2 ;
 
-            shadowMap.put(Position.LEFT, shadowImage.getSubimage(0, SHADOW_SIZE, SHADOW_SIZE, 1));
-            shadowMap.put(Position.RIGHT, shadowImage.getSubimage(size - SHADOW_SIZE, SHADOW_SIZE, SHADOW_SIZE, 1));
+            shadowMap.put(Position.TOP_LEFT , shadowImage.getSubimage(0,0, chuckSize, chuckSize));
+            shadowMap.put(Position.TOP      , shadowImage.getSubimage(chuckSize, 0,1, chuckSize));
+            shadowMap.put(Position.TOP_RIGHT, shadowImage.getSubimage(size - chuckSize, 0, chuckSize, chuckSize));
 
-            shadowMap.put(Position.BOTTOM_LEFT, shadowImage.getSubimage(0,size - SHADOW_SIZE, SHADOW_SIZE, SHADOW_SIZE));
-            shadowMap.put(Position.BOTTOM, shadowImage.getSubimage(SHADOW_SIZE, size - SHADOW_SIZE, 1, SHADOW_SIZE));
-            shadowMap.put(Position.BOTTOM_RIGHT, shadowImage.getSubimage(size - SHADOW_SIZE, size - SHADOW_SIZE, SHADOW_SIZE, SHADOW_SIZE));
+            shadowMap.put(Position.LEFT     , shadowImage.getSubimage(0, chuckSize, chuckSize, 1));
+            shadowMap.put(Position.RIGHT    , shadowImage.getSubimage(size - chuckSize, chuckSize, chuckSize, 1));
+
+            shadowMap.put(Position.BOTTOM_LEFT, shadowImage.getSubimage(0,size - chuckSize, chuckSize, chuckSize));
+            shadowMap.put(Position.BOTTOM, shadowImage.getSubimage(chuckSize, size - chuckSize, 1, chuckSize));
+            shadowMap.put(Position.BOTTOM_RIGHT, shadowImage.getSubimage(size - chuckSize, size - chuckSize, chuckSize, chuckSize));
 
             SHADOW_FINDER.put(SHADOW_SIZE, shadowMap);
         }
 
-        g.drawImage(shadowMap.get(Position.TOP_LEFT), 0, 0, null);
-        g.drawImage(shadowMap.get(Position.TOP).getScaledInstance(width - SHADOW_SIZE *2, SHADOW_SIZE, Image.SCALE_FAST), SHADOW_SIZE,0 ,null);
-        g.drawImage(shadowMap.get(Position.TOP_RIGHT), width - SHADOW_SIZE, 0, null);
+        int topCornerHeight    = height >= 4 * SHADOW_SIZE / 3 ? 2 * SHADOW_SIZE / 3 : height / 2;
+        int leftCornerWidth    = width  >= 4 * SHADOW_SIZE / 3 ? 2 * SHADOW_SIZE / 3 : width / 2;
+        int bottomCornerHeight = height >= 4 * SHADOW_SIZE / 3 ? 2 * SHADOW_SIZE / 3 : height - (height / 2);
+        int rightCornerWidth   = width  >= 4 * SHADOW_SIZE / 3 ? 2 * SHADOW_SIZE / 3 : width - (width / 2);
 
-        g.drawImage(shadowMap.get(Position.LEFT).getScaledInstance(SHADOW_SIZE, height - SHADOW_SIZE * 2 , Image.SCALE_FAST), 0, SHADOW_SIZE, null);
-        g.drawImage(shadowMap.get(Position.RIGHT).getScaledInstance(SHADOW_SIZE, height - SHADOW_SIZE * 2, Image.SCALE_FAST), width - SHADOW_SIZE, SHADOW_SIZE, null);
+        int horizontalWidth = Math.max( width  - 4 * SHADOW_SIZE / 3 , 0);
+        int verticalHeight  = Math.max( height - 4 * SHADOW_SIZE / 3 , 0);
 
-        g.drawImage(shadowMap.get(Position.BOTTOM_LEFT), 0, height - SHADOW_SIZE, null);
-        g.drawImage(shadowMap.get(Position.BOTTOM).getScaledInstance(width - SHADOW_SIZE * 2 , SHADOW_SIZE, Image.SCALE_FAST), SHADOW_SIZE, height - SHADOW_SIZE, null);
-        g.drawImage(shadowMap.get(Position.BOTTOM_RIGHT), width - SHADOW_SIZE, height - SHADOW_SIZE, null);
+        g.setClip(0,0, leftCornerWidth, topCornerHeight);
+        g.drawImage(shadowMap.get(Position.TOP_LEFT).getScaledInstance(SHADOW_SIZE, SHADOW_SIZE, Image.SCALE_FAST), 0, 0, null);
+        g.setClip(null);
+
+        if ( horizontalWidth > 0 ){
+            g.setClip(leftCornerWidth,0,horizontalWidth, topCornerHeight);
+            g.drawImage(shadowMap.get(Position.TOP).getScaledInstance(horizontalWidth, SHADOW_SIZE, Image.SCALE_FAST),  leftCornerWidth, 0,null);
+            g.setClip(null);
+        }
+
+        g.setClip(leftCornerWidth + horizontalWidth ,0,rightCornerWidth, topCornerHeight);
+        g.drawImage(shadowMap.get(Position.TOP_RIGHT).getScaledInstance(SHADOW_SIZE, SHADOW_SIZE, Image.SCALE_FAST), width - SHADOW_SIZE, 0, null);
+        g.setClip(null);
+
+        if (verticalHeight > 0){
+
+            g.setClip(0, topCornerHeight, leftCornerWidth, verticalHeight);
+            g.drawImage(shadowMap.get(Position.LEFT).getScaledInstance(SHADOW_SIZE, verticalHeight , Image.SCALE_FAST), 0, topCornerHeight, null);
+            g.setClip(null);
+
+            g.setClip(leftCornerWidth + horizontalWidth, topCornerHeight, rightCornerWidth, verticalHeight);
+            g.drawImage(shadowMap.get(Position.RIGHT).getScaledInstance(SHADOW_SIZE, verticalHeight, Image.SCALE_FAST), width - SHADOW_SIZE, topCornerHeight, null);
+            g.setClip(null);
+        }
+
+        g.setClip(0,topCornerHeight + verticalHeight, leftCornerWidth, bottomCornerHeight);
+        g.drawImage(shadowMap.get(Position.BOTTOM_LEFT).getScaledInstance(SHADOW_SIZE, SHADOW_SIZE, Image.SCALE_FAST), 0, height - SHADOW_SIZE, null);
+        g.setClip(null);
+
+        if (horizontalWidth > 0){
+            g.setClip(leftCornerWidth,topCornerHeight + verticalHeight, horizontalWidth, bottomCornerHeight);
+            g.drawImage(shadowMap.get(Position.BOTTOM).getScaledInstance(horizontalWidth , SHADOW_SIZE, Image.SCALE_FAST),
+                    leftCornerWidth, height - SHADOW_SIZE, null);
+            g.setClip(null);
+        }
+
+        g.setClip(leftCornerWidth + horizontalWidth ,topCornerHeight + verticalHeight, rightCornerWidth, topCornerHeight);
+        g.drawImage(shadowMap.get(Position.BOTTOM_RIGHT).getScaledInstance(SHADOW_SIZE, SHADOW_SIZE, Image.SCALE_FAST), width - SHADOW_SIZE, height - SHADOW_SIZE, null);
+        g.setClip(null);
     }
 
     @Override
     public Insets getBorderInsets(Component c) {
-        return new Insets(SHADOW_SIZE, SHADOW_SIZE, SHADOW_SIZE, SHADOW_SIZE);
+        int top = SHADOW_SIZE/3;
+        int left = SHADOW_SIZE/3;
+        int bottom = SHADOW_SIZE/2;
+        int right = left;
+        return new Insets(top, left, bottom, right);
+    }
+
+    private enum Position{
+        TOP,BOTTOM,LEFT,RIGHT,
+        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
     }
 
     @Override
@@ -107,14 +133,5 @@ public class FlatShadowBorder implements Border {
 
     public int getShadowWidth(){
         return SHADOW_SIZE;
-    }
-
-    public Elevation getElevation() {
-        return ELEVATION;
-    }
-
-    private enum Position{
-        TOP,BOTTOM,LEFT,RIGHT,
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT;
     }
 }

@@ -10,8 +10,8 @@ import java.awt.geom.Rectangle2D;
 
 class ShadowPaintHandler {
     private static final float[] DIST = { 0.0f, 1.0f };
-//    private static final Color[] COLORS = { new Color(93, 93, 93), new Color(100, 100, 100,0) };
-    private static final Color[] COLORS = { new Color(152, 152, 152), new Color(100, 100, 100,0) };
+    private static final Color[] COLORS = { new Color(0f,0f,0f,0.8f), new Color(0f,0f,0f,0f) };
+//    private static final Color[] COLORS = { new Color(152, 152, 152), new Color(100, 100, 100,0) };
     private int width, height, shadowDip;
     private Drawer TOP_LEFT_DRAWER;
     private Drawer TOP_RIGHT_DRAWER;
@@ -70,8 +70,8 @@ class ShadowPaintHandler {
     }
 
     private Drawer createTopDrawer(){
-        Shape topShape = new Rectangle2D.Float(shadowDip, 0, width - (shadowDip * 2), shadowDip);
-        Paint topPaint = new GradientPaint(shadowDip, shadowDip, COLORS[0], shadowDip, 0, COLORS[1]);
+        Shape topShape = new Rectangle2D.Float(shadowDip, 0, width - (shadowDip * 2), shadowDip/2);
+        Paint topPaint = new GradientPaint(shadowDip, shadowDip/2, COLORS[0], shadowDip, 0, COLORS[1]);
         return new Drawer(topShape, topPaint);
     }
 

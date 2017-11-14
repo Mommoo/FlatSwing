@@ -1,9 +1,9 @@
 package com.mommoo.flat.button;
 
+import com.mommoo.flat.border.FlatShadowBorder;
 import com.mommoo.flat.button.ripple.RippleEffect;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
-import com.mommoo.util.ColorManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
@@ -11,12 +11,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FlatButton extends JButton implements ButtonViewModel{
 	private static final int BUTTON_TEXT_FONT_SIZE = ScreenManager.getInstance().dip2px(11);
@@ -29,12 +28,12 @@ public class FlatButton extends JButton implements ButtonViewModel{
 	private OnClickListener onClickListener = e -> {};
 	private int cornerRound = 0;
 	private boolean autoClick;
-	
+
 	public FlatButton(){
 		setAlignmentCentered();
 		setTextDecoration();
 		setOpaque(true);
-		setBackground(ColorManager.getColorAccent());
+		setBackground(Color.PINK);
 		setCursor(HAND_CURSOR);
 		addRippleAnimMouseListener();
 		removeBasicButtonGraphics();
@@ -50,13 +49,16 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		flatButton.setOnClickListener(comp-> System.out.println("onClick"));
 		flatButton.addActionListener(e -> System.out.println("onAction"));
 
-		flatButton.doClick();
+//		flatButton.doClick();
+
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setTitle("FlatButton test");
-		flatFrame.setSize(400,300);
+		flatFrame.setSize(500,500);
 		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
 		flatFrame.getContainer().add(flatButton);
+
 		flatFrame.setLocationOnScreenCenter();
+		flatFrame.setResizable(true);
 		flatFrame.show();
 	}
 
@@ -74,7 +76,8 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		setContentAreaFilled(false);
 		setFocusPainted(false);
 		setBorderPainted(false);
-		setBorder(BorderFactory.createEmptyBorder());
+		setBorder(new FlatShadowBorder());
+		getRippleEffect().setRippleDrawOverBorder(false);
 	}
 
 	private void addRippleAnimMouseListener(){
@@ -127,25 +130,19 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	@Override
 	public void paint(Graphics g){
-		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		getBorder().paintBorder(this, g,0,0, getWidth(), getHeight());
 		paintBackground(g);
-		paintPreBorder(g);
 		inspectAutoClick();
-		buttonViewModel.paintRippleEffect((Graphics2D)g);
 		super.paint(g);
-		paintPostBorder(g);
+		paintRipple(g);
 	}
-
 
 	private void paintBackground(Graphics g){
 		g.setColor(getBackground());
-		g.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRound, cornerRound);
-	}
-
-	private void paintPreBorder(Graphics g){
-		if (RIPPLE_EFFECT.isRippleDrawOverBorder()){
-			getBorder().paintBorder(this, g, 0,0,getWidth(), getHeight());
-		}
+		Insets borderInsets = getBorder().getBorderInsets(this);
+		g.fillRoundRect(borderInsets.left, borderInsets.top, getWidth() - borderInsets.left - borderInsets.right,
+				getHeight() - borderInsets.top - borderInsets.bottom
+				, cornerRound, cornerRound);
 	}
 
 	private void inspectAutoClick(){
@@ -155,10 +152,22 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		}
 	}
 
-	private void paintPostBorder(Graphics g){
-		if (!RIPPLE_EFFECT.isRippleDrawOverBorder()){
-			getBorder().paintBorder(this, g, 0,0,getWidth(), getHeight());
+	private void paintRipple(Graphics g){
+		Rectangle clipRect = new Rectangle();
+
+		if (getRippleEffect().isRippleDrawOverBorder()){
+			clipRect.setBounds(0,0,getWidth(),getHeight());
+		} else {
+			Insets borderInsets = getBorder().getBorderInsets(this);
+			clipRect.setBounds(borderInsets.left,
+					borderInsets.top,
+					getWidth() - borderInsets.left - borderInsets.right,
+					getHeight() - borderInsets.top - borderInsets.bottom);
 		}
+		g.setClip(clipRect);
+		buttonViewModel.paintRippleEffect((Graphics2D)g);
+
+		g.setClip(null);
 	}
 
 	public int getCornerRound(){
@@ -176,5 +185,52 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	public RippleEffect getRippleEffect(){
 		return RIPPLE_EFFECT;
+	}
+	public static class GaussianBlur {
+
+		static ConvolveOp[] createFilters(int radius) {
+			ConvolveOp[] filters = new ConvolveOp[2];
+
+			double sigma = radius / 3.0;
+			double sigmaSquareDivisor = 2.0 * Math.pow(sigma, 2);
+
+			double sqrtDivisor = Math.sqrt(sigmaSquareDivisor * Math.PI);
+
+			float total = 0f;
+			float [] matrix = new float[radius * 2];
+			for (int i = -radius; i < radius; i++) {
+
+				double distance = -(i * i);
+				double midpoint = Math.exp(distance / sigmaSquareDivisor) / sqrtDivisor;
+
+				matrix[i + radius] = (float) midpoint;
+
+				// keep this to normalise the matrix to avoid a darkening or
+				// brightening of the image
+				total += (float) midpoint;
+			}
+
+			// normalise the matrix now
+			for (int i = 0; i < matrix.length; i++) {
+				matrix[i] /= total;
+			}
+
+			Kernel horizontalKernel = new Kernel(matrix.length, 1, matrix);
+			Kernel verticalKernel = new Kernel(1, matrix.length, matrix);
+
+			filters[0] = new ConvolveOp(horizontalKernel, ConvolveOp.EDGE_NO_OP, null);
+			filters[1] = new ConvolveOp(verticalKernel, ConvolveOp.EDGE_NO_OP, null);
+
+			return filters;
+		}
+
+		public static BufferedImage applyFilter(int radius, BufferedImage src) {
+			ConvolveOp[] filters = GaussianBlur.createFilters(radius);
+
+			src = filters[0].filter(src, null);
+			src = filters[1].filter(src, null);
+
+			return src;
+		}
 	}
 }

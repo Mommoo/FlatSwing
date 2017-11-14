@@ -80,7 +80,7 @@ public class FlatDialog {
 	private static CommonJFrame createCommonJFrame(){
     	CommonJFrame COMMON_FRAME = new CommonJFrame();
 		COMMON_FRAME.setType(JFrame.Type.UTILITY);
-		COMMON_FRAME.setShadowWidth(SCREEN_MANAGER.dip2px(10));
+		COMMON_FRAME.setShadowWidth(SCREEN_MANAGER.dip2px(30));
 		COMMON_FRAME.setAlwaysOnTop(true);
 		COMMON_FRAME.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 		return COMMON_FRAME;
