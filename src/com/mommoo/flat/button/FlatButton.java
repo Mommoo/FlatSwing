@@ -5,6 +5,7 @@ import com.mommoo.flat.button.ripple.RippleEffect;
 import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.util.ScreenManager;
+import com.sun.xml.internal.bind.v2.TODO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,10 +45,14 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		setText(text);
 	}
 
+	//TODO 프리펄사이즈 일때 보더 적용..
 	public static void main(String[] args){
 		FlatButton flatButton = new FlatButton("TEST");
 		flatButton.setOnClickListener(comp-> System.out.println("onClick"));
 		flatButton.addActionListener(e -> System.out.println("onAction"));
+		flatButton.setPreferredSize(new Dimension(100,100));
+//		flatButton.getRippleEffect().setRippleDrawOverBorder(true);
+//		flatButton.setBorder(BorderFactory.createEmptyBorder(30,30,30,30));
 
 //		flatButton.doClick();
 
@@ -55,6 +60,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		flatFrame.setTitle("FlatButton test");
 		flatFrame.setSize(500,500);
 		flatFrame.getContainer().setBorder(BorderFactory.createEmptyBorder(50,50,50,50));
+		flatFrame.getContainer().setLayout(new FlowLayout());
 		flatFrame.getContainer().add(flatButton);
 
 		flatFrame.setLocationOnScreenCenter();
@@ -120,7 +126,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	@Override
 	public boolean isBorderPainted() {
-		return false;
+		return true;
 	}
 	
 	@Override
@@ -130,19 +136,29 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	@Override
 	public void paint(Graphics g){
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		getBorder().paintBorder(this, g,0,0, getWidth(), getHeight());
-		paintBackground(g);
 		inspectAutoClick();
+		paintBackground(g);
 		super.paint(g);
 		paintRipple(g);
 	}
 
+	@Override
+	protected void paintBorder(Graphics g) {
+
+	}
+
 	private void paintBackground(Graphics g){
 		g.setColor(getBackground());
-		Insets borderInsets = getBorder().getBorderInsets(this);
-		g.fillRoundRect(borderInsets.left, borderInsets.top, getWidth() - borderInsets.left - borderInsets.right,
-				getHeight() - borderInsets.top - borderInsets.bottom
-				, cornerRound, cornerRound);
+
+		if (getBorder() instanceof FlatShadowBorder){
+			Insets insets = getBorder().getBorderInsets(this);
+			g.setClip(insets.left, insets.top, getWidth() - insets.left - insets.right , getHeight() - insets.top - insets.bottom);
+		}
+
+		g.fillRoundRect(0,0,getWidth(),getHeight(), cornerRound, cornerRound);
+		g.setClip(null);
 	}
 
 	private void inspectAutoClick(){
