@@ -115,7 +115,7 @@ public class FlatScrollPane extends JScrollPane {
             }
 
             g2.setPaint(color);
-            g2.fillRoundRect(thumbBounds.x,thumbBounds.y,thumbBounds.width,thumbBounds.height,10,10);
+            g2.fillRoundRect(thumbBounds.x,thumbBounds.y,thumbBounds.width,thumbBounds.height,5,5);
             g2.dispose();
         }
 
