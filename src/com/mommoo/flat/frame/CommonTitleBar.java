@@ -42,7 +42,6 @@ class CommonTitleBar extends FlatPanel {
 			f.setProcessIconImage(ImageManager.TEST);
 			f.setEnableSizeButton(true);
 			f.setResizable(true);
-//			f.setShadowWidth(10);
 			f.setTitle("A Beautiful Frame. You can customizing you want!");
 			f.setLocationOnScreenCenter();
 			f.show();

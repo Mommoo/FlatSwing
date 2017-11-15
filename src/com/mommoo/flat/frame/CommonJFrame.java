@@ -3,6 +3,7 @@ package com.mommoo.flat.frame;
 import com.mommoo.flat.border.FlatShadowBorder;
 import com.mommoo.helper.ComponentResizer;
 import com.mommoo.util.ColorManager;
+import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
@@ -77,6 +78,7 @@ final class CommonJFrame extends JFrame {
         return (JPanel) super.getContentPane();
     }
 
+
 //    @Override
 //    public void setLocation(int x, int y) {
 //        super.setLocation(x - shadowDip, y - shadowDip);
@@ -146,6 +148,14 @@ final class CommonJFrame extends JFrame {
         super.setResizable(reSizable);
         if (reSizable) COMPONENT_RE_SIZER.registerComponent(this);
         else COMPONENT_RE_SIZER.deregisterComponent(this);
+    }
+
+    ComputableDimension getAvailableDimension(){
+        Insets insets = getShadowPane().getInsets();
+        return new ComputableDimension(getSize())
+                .setMinimumSize(0,0)
+                .subDimension(insets.left, insets.top)
+                .subDimension(insets.right, insets.bottom);
     }
 
     Color getBorderColor() {

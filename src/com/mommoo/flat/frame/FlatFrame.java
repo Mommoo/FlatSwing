@@ -64,6 +64,12 @@ public final class FlatFrame {
 		return CONTAINER;
 	}
 
+	public Dimension getAvailableDimension(){
+		return COMMON_FRAME
+				.getAvailableDimension()
+				.subDimension(0, getTitleBarHeight());
+	}
+
 	public void setTitle(String title){
 		TITLE_BAR.setTitle(title);
 	}
