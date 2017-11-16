@@ -21,6 +21,10 @@ public class ComputableDimension extends Dimension{
         super(width, height);
     }
 
+    public ComputableDimension(int size){
+        super(size, size);
+    }
+
     public static void main(String[] args){
         System.out.println(new ComputableDimension(100,100)
                 .setMinimumSize(110,110)
@@ -52,6 +56,11 @@ public class ComputableDimension extends Dimension{
         getValidDimension();
     }
 
+    public void setSize(int size){
+        super.setSize(size, size);
+        getValidDimension();
+    }
+
     public ComputableDimension setMinimumSize(int width, int height){
         minimumWidth = width;
         minimumHeight = height;
@@ -60,6 +69,10 @@ public class ComputableDimension extends Dimension{
 
     public ComputableDimension setMinimumSize(Dimension dimen){
         return setMinimumSize(dimen.width ,dimen.height);
+    }
+
+    public ComputableDimension setMinimumSize(int size){
+        return setMinimumSize(size, size);
     }
 
     public ComputableDimension setMaximumSize(int width, int height){
@@ -72,10 +85,8 @@ public class ComputableDimension extends Dimension{
         return setMaximumSize(dimen.width, dimen.height);
     }
 
-    public ComputableDimension addDimension(Dimension dimen){
-        this.width  += dimen.width;
-        this.height += dimen.height;
-        return getValidDimension();
+    public ComputableDimension setMaximumSize(int size){
+        return setMaximumSize(size, size);
     }
 
     public ComputableDimension addDimension(int width, int height){
@@ -84,10 +95,12 @@ public class ComputableDimension extends Dimension{
         return getValidDimension();
     }
 
-    public ComputableDimension subDimension(Dimension dimen){
-        this.width  -= dimen.width;
-        this.height -= dimen.height;
-        return getValidDimension();
+    public ComputableDimension addDimension(Dimension dimen){
+        return addDimension(dimen.width, dimen.height);
+    }
+
+    public ComputableDimension addDimension(int size){
+        return addDimension(size, size);
     }
 
     public ComputableDimension subDimension(int width, int height){
@@ -96,10 +109,12 @@ public class ComputableDimension extends Dimension{
         return getValidDimension();
     }
 
-    public ComputableDimension mulDimension(Dimension dimen){
-        this.width  *= dimen.width;
-        this.height *= dimen.height;
-        return getValidDimension();
+    public ComputableDimension subDimension(Dimension dimen){
+        return subDimension(dimen.width, dimen.height);
+    }
+
+    public ComputableDimension subDimension(int size){
+        return subDimension(size, size);
     }
 
     public ComputableDimension mulDimension(int width, int height){
@@ -108,16 +123,26 @@ public class ComputableDimension extends Dimension{
         return getValidDimension();
     }
 
-    public ComputableDimension divDimension(Dimension dimen){
-        this.width  /= dimen.width;
-        this.height /= dimen.height;
-        return getValidDimension();
+    public ComputableDimension mulDimension(Dimension dimen){
+        return mulDimension(dimen.width, dimen.height);
+    }
+
+    public ComputableDimension mulDimension(int size){
+        return mulDimension(size, size);
     }
 
     public ComputableDimension divDimension(int width, int height){
         this.width  /= width;
         this.height /= height;
         return getValidDimension();
+    }
+
+    public ComputableDimension divDimension(Dimension dimen){
+        return divDimension(dimen.width, dimen.height);
+    }
+
+    public ComputableDimension divDimension(int size){
+        return divDimension(size, size);
     }
 
     public ComputableDimension setZeroDimension(){

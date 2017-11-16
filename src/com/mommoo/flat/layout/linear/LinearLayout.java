@@ -147,10 +147,11 @@ public class LinearLayout implements LayoutManager2, Serializable {
             Dimension availableSize = ComponentUtils.getAvailableSize(parent);
 
             Rectangle[] boundsArray = SPACE_INSPECTOR.getProperCompBoundsArray();
-            int lastIndex = boundsArray.length - 1;
-            int occupiedWidth = boundsArray[lastIndex].x + boundsArray[lastIndex].width;
-            int occupiedHeight = boundsArray[lastIndex].y + boundsArray[lastIndex].height;
 
+            int lastIndex = boundsArray.length - 1;
+
+            int occupiedWidth  = lastIndex > 0 ? boundsArray[lastIndex].x + boundsArray[lastIndex].width : 0;
+            int occupiedHeight = lastIndex > 0 ? boundsArray[lastIndex].y + boundsArray[lastIndex].height : 0;
 
             switch(alignment){
                 case START: break;
