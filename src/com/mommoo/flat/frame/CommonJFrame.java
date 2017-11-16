@@ -190,4 +190,8 @@ final class CommonJFrame extends JFrame {
         if (shadowWidth < 0) shadowWidth = 0;
         getShadowPane().setBorder(new FlatShadowBorder(shadowWidth));
     }
+
+    Insets getShadowInsets(){
+        return getShadowPane().getBorder().getBorderInsets(getShadowPane());
+    }
 }

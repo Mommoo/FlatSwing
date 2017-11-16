@@ -146,6 +146,10 @@ public final class FlatFrame {
 	public int getShadowWidth(){
 		return COMMON_FRAME.getShadowWidth();
 	}
+
+	public Insets getShadowInsets(){
+		return COMMON_FRAME.getShadowInsets();
+	}
 	
 	public void setSize(int width,int height){
 		COMMON_FRAME.setSize(width,height);
