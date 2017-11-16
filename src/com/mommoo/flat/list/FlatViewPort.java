@@ -14,7 +14,7 @@ import com.mommoo.util.ColorManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -40,6 +40,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     private boolean trace;
 
     private int dividerThick;
+    private Color dividerColor;
 
     FlatViewPort(){
         getToolkit().addAWTEventListener(new ViewPortAWTEventListener(), eventMask);
@@ -55,9 +56,21 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
         return true;
     }
 
+    private void fillRectForDivider(Graphics g){
+        int beginY = getComponent(0).getY();
+        Component component = getComponent(getItemSize() - 1);
+        int height = component.getY() + component.getHeight() - beginY;
+        g.setColor(dividerColor);
+        g.fillRect(0,beginY, getWidth(), height);
+    }
+
     @Override
     public void paint(Graphics g) {
+        fillRectForDivider(g);
         super.paint(g);
+
+
+
         Graphics2D graphics2D = (Graphics2D)g;
         graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         graphics2D.setColor(selectionColor);
@@ -100,14 +113,14 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     }
 
     void setDivider(Color color, int thick){
-        setOpaque(true);
-        setBackground(color);
-        ((LinearLayout)getLayout()).setGap(thick);
+        this.dividerColor = color;
         this.dividerThick = thick;
+        ((LinearLayout)getLayout()).setGap(thick);
+
     }
 
     Color getDividerColor(){
-        return getBackground();
+        return this.dividerColor;
     }
 
     int getDividerThick(){

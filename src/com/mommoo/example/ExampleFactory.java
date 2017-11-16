@@ -135,12 +135,11 @@ public class ExampleFactory {
             panel.add(button3);
 
             FlatListView<Component> listView = new FlatListView<>();
+            listView.setDivider(Color.BLACK, 20);
+            listView.setBackgroundColor(Color.BLUE);
 
             button1.addActionListener(e->{
-                for (int i = 0 ; i < 20 ; i++){
-                    listView.addItem(new FlatLabel("아이템!! " + i));
-                }
-
+                listView.addItem(new FlatLabel("하나씩 아이템!! "));
             });
 
             button2.addActionListener(e->{
