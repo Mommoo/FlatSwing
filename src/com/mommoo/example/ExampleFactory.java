@@ -123,6 +123,43 @@ public class ExampleFactory {
             frame.show();
         }
 
+        public static void example3(){
+            FlatFrame frame = createCommonFrame();
+            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+            JPanel panel = new JPanel(new FlowLayout());
+            JButton button1 = new JButton("추가");
+            JButton button2 = new JButton("삭제");
+            JButton button3 = new JButton("삭제 & 추가");
+            panel.add(button1);
+            panel.add(button2);
+            panel.add(button3);
+
+            FlatListView<Component> listView = new FlatListView<>();
+
+            button1.addActionListener(e->{
+                for (int i = 0 ; i < 20 ; i++){
+                    listView.addItem(new FlatLabel("아이템!! " + i));
+                }
+
+            });
+
+            button2.addActionListener(e->{
+                listView.removeItem(listView.getItemSize() - 1);
+            });
+
+            button3.addActionListener(e->{
+                listView.clear();
+                for (int i = 0 ; i < 20 ; i ++){
+                    listView.addItem(new FlatLabel("아이템!!  " + i));
+                }
+            });
+
+            frame.getContainer().add(panel, new LinearConstraints(2,LinearSpace.MATCH_PARENT));
+            frame.getContainer().add(listView.getComponent(), new LinearConstraints(6, LinearSpace.MATCH_PARENT));
+
+            frame.show();
+        }
+
         private static FlatPanel createWrapPanel(String text,Font font){
             FlatPanel panel = new FlatPanel(new BorderLayout());
             panel.setAlpha(0.8f);

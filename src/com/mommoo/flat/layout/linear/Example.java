@@ -14,8 +14,10 @@ public class Example {
     public static void main(String[] args){
         FlatFrame frame = new FlatFrame();
         frame.setSize(500,500 + FlatFrame.getTitleBarHeight());
+        frame.setResizable(true);
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
+        frame.getContainer().add(new LinearLayoutPanel3());
         frame.show();
     }
 
@@ -76,5 +78,13 @@ public class Example {
         label.setBackground(color);
         label.setPreferredSize(new Dimension(100,100));
         return label;
+    }
+
+    private static class LinearLayoutPanel3 extends JPanel{
+        private LinearLayoutPanel3(){
+            setLayout(new LinearLayout(30,Alignment.CENTER));
+            add(createColorRect(Color.RED, "1"));
+            add(createColorRect(Color.BLUE, "2"));
+        }
     }
 }

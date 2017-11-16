@@ -58,7 +58,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-
         Graphics2D graphics2D = (Graphics2D)g;
         graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         graphics2D.setColor(selectionColor);
@@ -73,13 +72,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
             revalidate();
             repaint();
         });
-
-
-    }
-
-    void addComponent2(T component){
-        add(component, new LinearConstraints().setLinearSpace(LinearSpace.MATCH_PARENT));
-        compIndexList.addComp(component);
     }
 
     void addComponent(T component, int index){

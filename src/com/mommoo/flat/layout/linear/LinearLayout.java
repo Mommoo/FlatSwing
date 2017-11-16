@@ -3,34 +3,50 @@ package com.mommoo.flat.layout.linear;
 
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.text.textarea.FlatTextArea;
+import com.mommoo.util.ComponentUtils;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
-import java.util.List;
 
 public class LinearLayout implements LayoutManager2, Serializable {
-    private static final int GAP = 10;
     private Orientation orientation;
-    private LinearSpaceInspector spaceInspector = new LinearSpaceInspector();
+    private final LinearSpaceInspector SPACE_INSPECTOR = new LinearSpaceInspector();
+    private Alignment alignment;
 
     private int gap;
 
     public LinearLayout(){
-        this(Orientation.HORIZONTAL, GAP);
+        this(Orientation.HORIZONTAL, 10, Alignment.START);
     }
 
     public LinearLayout(Orientation orientation){
-        this(orientation, GAP);
+        this(orientation, 10, Alignment.START);
     }
 
     public LinearLayout(int gap){
-        this(Orientation.HORIZONTAL, gap);
+        this(Orientation.HORIZONTAL, gap, Alignment.START);
     }
 
     public LinearLayout(Orientation orientation, int gap){
+        this(orientation, gap, Alignment.START);
+    }
+
+    public LinearLayout(Orientation orientation, Alignment alignment){
+        this(orientation, 10, alignment);
+    }
+
+    public LinearLayout(int gap, Alignment alignment){
+        this(Orientation.HORIZONTAL, gap, alignment);
+    }
+
+    public LinearLayout(Alignment alignment){
+        this(Orientation.HORIZONTAL, 10, alignment);
+    }
+
+    public LinearLayout(Orientation orientation, int gap, Alignment alignment){
         this.orientation = orientation;
         this.gap = gap;
+        this.alignment = alignment;
     }
 
     @Override
@@ -105,7 +121,7 @@ public class LinearLayout implements LayoutManager2, Serializable {
     public void addLayoutComponent(Component comp, Object constraints) {
         synchronized (comp.getTreeLock()) {
             if (!(constraints instanceof LinearConstraints)) return;
-            spaceInspector.setLinearConstraints(comp, ((LinearConstraints) constraints).clone());
+            SPACE_INSPECTOR.setLinearConstraints(comp, ((LinearConstraints) constraints).clone());
         }
     }
 
@@ -117,20 +133,51 @@ public class LinearLayout implements LayoutManager2, Serializable {
     @Override
     public void removeLayoutComponent(Component comp) {
         synchronized (comp.getTreeLock()) {
-            spaceInspector.removeComponent(comp);
+            SPACE_INSPECTOR.removeComponent(comp);
         }
     }
 
     @Override
     public void layoutContainer(Container parent) {
         synchronized (parent.getTreeLock()) {
-            spaceInspector.setData(parent, orientation, gap);
+            SPACE_INSPECTOR.setData(parent, orientation, gap);
+
+            int moveX = 0, moveY = 0;
+
+            Dimension availableSize = ComponentUtils.getAvailableSize(parent);
+
+            Rectangle[] boundsArray = SPACE_INSPECTOR.getProperCompBoundsArray();
+            int lastIndex = boundsArray.length - 1;
+            int occupiedWidth = boundsArray[lastIndex].x + boundsArray[lastIndex].width;
+            int occupiedHeight = boundsArray[lastIndex].y + boundsArray[lastIndex].height;
+
+
+            switch(alignment){
+                case START: break;
+
+                case CENTER :
+                    if (orientation == Orientation.HORIZONTAL){
+                        moveX = (availableSize.width - occupiedWidth)/2;
+                    } else {
+                        moveY = (availableSize.height - occupiedHeight)/2;
+                    }
+                    break;
+
+                    case END :
+                    if (orientation == Orientation.HORIZONTAL){
+                        moveX = (availableSize.width - occupiedWidth);
+                    } else {
+                        moveY = (availableSize.height - occupiedHeight);
+                    }
+                    break;
+            }
 
             int index = 0;
-
             for (Component comp : parent.getComponents()){
-                comp.setBounds(spaceInspector.getProperCompBounds(index++));
-
+                Rectangle bound = boundsArray[index++];
+                bound.x += moveX;
+                bound.y += moveY;
+                comp.setBounds(bound);
                 validateCompIfFlatTextArea(comp);
             }
 
@@ -147,6 +194,10 @@ public class LinearLayout implements LayoutManager2, Serializable {
         this.orientation = orientation;
     }
 
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
     public void setGap(int gap){
         this.gap = gap;
     }
@@ -155,17 +206,25 @@ public class LinearLayout implements LayoutManager2, Serializable {
         return this.gap;
     }
 
+    public Alignment getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(Alignment alignment){
+        this.alignment = alignment;
+    }
+
+    public int getWeightSum(){
+        return SPACE_INSPECTOR.getWeightSum();
+    }
+
     public void setWeightSum(int weightSum){
         if (weightSum >= 0){
             throw new IllegalArgumentException("weightSum can not smaller than zero value");
         }
-        spaceInspector
+        SPACE_INSPECTOR
                 .setAutoWeightSum(false)
                 .setWeightSum(weightSum);
-    }
-
-    public int getWeightSum(){
-        return spaceInspector.getWeightSum();
     }
 }
 

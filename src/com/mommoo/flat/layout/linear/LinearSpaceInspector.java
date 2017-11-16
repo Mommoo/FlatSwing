@@ -131,4 +131,13 @@ class LinearSpaceInspector {
 
         return new Rectangle(x, y, width, height);
     }
+
+    Rectangle[] getProperCompBoundsArray(){
+        int size = container.getComponentCount();
+        Rectangle[] boundsArray = new Rectangle[size];
+        for (int index = 0 ; index < size ; index++){
+            boundsArray[index] = getProperCompBounds(index);
+        }
+        return boundsArray;
+    }
 }
