@@ -113,11 +113,11 @@ public class FlatListView<T extends Component> {
         return Collections.unmodifiableList(compList);
     }
 
-    public Color getBackgroundColor(){
+    public Color getBackground(){
         return this.SCROLL_PANE.getViewport().getBackground();
     }
 
-    public void setBackgroundColor(Color backgroundColor){
+    public void setBackground(Color backgroundColor){
         this.SCROLL_PANE.getViewport().setOpaque(true);
         this.SCROLL_PANE.getViewport().setBackground(backgroundColor);
     }

@@ -136,7 +136,6 @@ public class ExampleFactory {
 
             FlatListView<Component> listView = new FlatListView<>();
             listView.setDivider(Color.BLACK, 20);
-            listView.setBackgroundColor(Color.BLUE);
 
             button1.addActionListener(e->{
                 listView.addItem(new FlatLabel("하나씩 아이템!! "));
