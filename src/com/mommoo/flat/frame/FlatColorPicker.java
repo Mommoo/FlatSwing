@@ -77,7 +77,7 @@ public class FlatColorPicker {
 
     private void init(){
         PICKER_VIEW.setTitle("ColorPicker");
-        PICKER_VIEW.setThemeColor(THEME_COLOR);
+//        PICKER_VIEW.setThemeColor(THEME_COLOR);
         PICKER_VIEW.setSize(FLAT_COLOR_PICKER_WIDTH,FLAT_COLOR_PICKER_HEIGHT+FlatFrame.getTitleBarHeight());
     }
 

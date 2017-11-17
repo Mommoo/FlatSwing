@@ -4,6 +4,7 @@ import com.mommoo.animation.AnimationAdapter;
 import com.mommoo.animation.Animator;
 import com.mommoo.animation.timeInterpolator.AccelerateInterpolator;
 import com.mommoo.flat.component.FlatPanel;
+import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.titlebar.TitleLabel;
 import com.mommoo.flat.frame.titlebar.navigation.controller.NavigationControlPanel;
 import com.mommoo.flat.frame.titlebar.navigation.listener.NavigationControlListener;
@@ -38,9 +39,10 @@ class CommonTitleBar extends FlatPanel {
 	public static void main(String[] args){
 		SwingUtilities.invokeLater(()->{
 			FlatFrame f = new FlatFrame();
-			f.setSize(700,500);
+			f.setSize(300,300);
 			f.setProcessIconImage(ImageManager.TEST);
 			f.setEnableSizeButton(true);
+			f.setShadowWidth(20);
 			f.setResizable(true);
 			f.setTitle("A Beautiful Frame. You can customizing you want!");
 			f.setLocationOnScreenCenter();
@@ -132,5 +134,17 @@ class CommonTitleBar extends FlatPanel {
 		}else {
 			add(mainIcon, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT), 0);
 		}
+	}
+
+	void removeOnIconClickListener(){
+		mainIcon.removeOnClickListener();
+	}
+
+	OnClickListener getOnIconClickListener(){
+		return mainIcon.getOnClickListener();
+	}
+
+	void setOnIconClickListener(OnClickListener onIconClickListener){
+		mainIcon.setOnClickListener(onIconClickListener);
 	}
 }

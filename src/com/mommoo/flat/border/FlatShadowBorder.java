@@ -25,7 +25,7 @@ public class FlatShadowBorder implements Border {
 
         BufferedImage shadowBlurImage = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D graphics2D = (Graphics2D)shadowBlurImage.getGraphics();
-        graphics2D.setColor(new Color(0f,0f,0f, 0.5f));
+        graphics2D.setColor(new Color(0f,0f,0f, 0.3f));
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2D.fill(shadowShape);
         graphics2D.dispose();

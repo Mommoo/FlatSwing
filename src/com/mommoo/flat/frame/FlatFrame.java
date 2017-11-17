@@ -1,6 +1,6 @@
 package com.mommoo.flat.frame;
 
-import com.mommoo.flat.component.FlatPanel;
+import com.mommoo.flat.component.OnClickListener;
 import com.mommoo.flat.frame.listener.OnExitListener;
 import com.mommoo.flat.frame.listener.OnMinimizeListener;
 import com.mommoo.flat.frame.listener.OnSizeChangeListener;
@@ -17,8 +17,8 @@ import java.awt.event.MouseEvent;
 public final class FlatFrame {
 	private final CommonJFrame COMMON_FRAME = new CommonJFrame();
 	private final CommonTitleBar TITLE_BAR = new CommonTitleBar();
-	private final JPanel CONTAINER = createContainer();
 
+	private JPanel container = createContainer();
 	private boolean isCenterLocation, isWindowExit, isEnableSizeButton;
 	private ControlListener controlListener = new ControlListener();
 
@@ -41,7 +41,7 @@ public final class FlatFrame {
 		JPanel contentPane = (JPanel)COMMON_FRAME.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(TITLE_BAR, BorderLayout.NORTH);
-		contentPane.add(CONTAINER, BorderLayout.CENTER);
+		contentPane.add(container, BorderLayout.CENTER);
 	}
 	
 	private void setTitleBarDragEventListener(){
@@ -54,14 +54,14 @@ public final class FlatFrame {
 		TITLE_BAR.setControlListener(controlListener);
 	}
 
-	@Deprecated
-	public void setThemeColor(Color color){
-		TITLE_BAR.setBackground(color);
-		CONTAINER.setBackground(color.brighter());
+	public JPanel getContainer() {
+		return container;
 	}
 
-	public JPanel getContainer() {
-		return CONTAINER;
+	public void setContainer(JPanel container){
+		COMMON_FRAME.getContentPane().remove(1);
+		COMMON_FRAME.getContentPane().add(container, BorderLayout.CENTER);
+		this.container = container;
 	}
 
 	public Dimension getAvailableDimension(){
@@ -113,6 +113,18 @@ public final class FlatFrame {
 	public void setIconImage(Image image){
 		if (image == null) return;
 		this.TITLE_BAR.setIconImage(image);
+	}
+
+	public void removeOnIconClickListener(){
+		this.TITLE_BAR.removeOnIconClickListener();
+	}
+
+	public OnClickListener getOnIconClickListener(){
+		return this.TITLE_BAR.getOnIconClickListener();
+	}
+
+	public void setOnIconClickListener(OnClickListener onIconClickListener){
+		this.TITLE_BAR.setOnIconClickListener(onIconClickListener);
 	}
 
 	public void removeIconImage(){

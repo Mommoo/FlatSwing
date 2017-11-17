@@ -59,7 +59,7 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     private void fillRectForDivider(Graphics g){
         int beginY = getComponent(0).getY();
         Component component = getComponent(getItemSize() - 1);
-        int height = component.getY() + component.getHeight() - beginY;
+        int height = component.getY() + component.getHeight() + dividerThick - beginY ;
         g.setColor(dividerColor);
         g.fillRect(0,beginY, getWidth(), height);
     }
@@ -68,8 +68,6 @@ class FlatViewPort<T extends Component> extends FlatPanel implements Scrollable 
     public void paint(Graphics g) {
         fillRectForDivider(g);
         super.paint(g);
-
-
 
         Graphics2D graphics2D = (Graphics2D)g;
         graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
