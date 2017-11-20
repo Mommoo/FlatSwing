@@ -4,12 +4,12 @@ import com.mommoo.util.ColorManager;
 
 import java.awt.*;
 
-class FlatPageColor {
+public class FlatPageColor {
     private static final FlatPageColor DEFAULT_PAGER_COLOR = new FlatPageColor(ColorManager.getColorAccent(), Color.BLACK);
     private final Color focusInColor;
     private final Color focusOutColor;
 
-    FlatPageColor(Color focusInColor, Color focusOutColor){
+    public FlatPageColor(Color focusInColor, Color focusOutColor){
         this.focusInColor = focusInColor;
         this.focusOutColor = focusOutColor;
     }
@@ -18,11 +18,11 @@ class FlatPageColor {
         return DEFAULT_PAGER_COLOR;
     }
 
-    Color getFocusInColor() {
+    public Color getFocusInColor() {
         return focusInColor;
     }
 
-    Color getFocusOutColor() {
+    public Color getFocusOutColor() {
         return focusOutColor;
     }
 }
