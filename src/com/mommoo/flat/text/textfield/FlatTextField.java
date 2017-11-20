@@ -4,14 +4,17 @@ import com.mommoo.example.ExampleFactory;
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
+import com.mommoo.flat.layout.linear.Alignment;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.text.textfield.format.FlatTextFormat;
 import com.mommoo.util.ColorManager;
+import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -20,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FlatTextField extends FlatPanel {
+	private static final ScreenManager SCREEN = ScreenManager.getInstance();
 	private static final int DEFAULT_BORDER_WIDTH = 2;
 
 	private int borderWidth = DEFAULT_BORDER_WIDTH;
@@ -31,10 +35,10 @@ public class FlatTextField extends FlatPanel {
 		this.isPasswordMode = passwordMode;
 
 		setBackground(ColorManager.getFlatComponentDefaultColor());
-		setLayout(new LinearLayout(Orientation.VERTICAL, 0));
+		setLayout(new LinearLayout(Orientation.VERTICAL, 0, Alignment.CENTER));
 		setOpaque(true);
 
-		add(new ImageTextField(passwordMode), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+		add(new ImageTextField(passwordMode), new LinearConstraints(LinearSpace.MATCH_PARENT));
 		add(createUnderLine(),                new LinearConstraints(LinearSpace.MATCH_PARENT));
 
 		setTextFieldFocusListener();
@@ -257,6 +261,7 @@ public class FlatTextField extends FlatPanel {
 		private ImageTextField(boolean passwordMode){
 			textFieldProxy = createProperTextFieldProxy(passwordMode);
 			setLayout(new LinearLayout(0));
+			setBorder(new EmptyBorder(SCREEN.dip2px(3),0,SCREEN.dip2px(3),0));
 			add(createImagePanel(), new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT));
 			add(textFieldProxy.getTextField(), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 		}

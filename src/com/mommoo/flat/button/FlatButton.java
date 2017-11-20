@@ -8,6 +8,8 @@ import com.mommoo.util.ScreenManager;
 import com.sun.xml.internal.bind.v2.TODO;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -201,52 +203,5 @@ public class FlatButton extends JButton implements ButtonViewModel{
 
 	public RippleEffect getRippleEffect(){
 		return RIPPLE_EFFECT;
-	}
-	public static class GaussianBlur {
-
-		static ConvolveOp[] createFilters(int radius) {
-			ConvolveOp[] filters = new ConvolveOp[2];
-
-			double sigma = radius / 3.0;
-			double sigmaSquareDivisor = 2.0 * Math.pow(sigma, 2);
-
-			double sqrtDivisor = Math.sqrt(sigmaSquareDivisor * Math.PI);
-
-			float total = 0f;
-			float [] matrix = new float[radius * 2];
-			for (int i = -radius; i < radius; i++) {
-
-				double distance = -(i * i);
-				double midpoint = Math.exp(distance / sigmaSquareDivisor) / sqrtDivisor;
-
-				matrix[i + radius] = (float) midpoint;
-
-				// keep this to normalise the matrix to avoid a darkening or
-				// brightening of the image
-				total += (float) midpoint;
-			}
-
-			// normalise the matrix now
-			for (int i = 0; i < matrix.length; i++) {
-				matrix[i] /= total;
-			}
-
-			Kernel horizontalKernel = new Kernel(matrix.length, 1, matrix);
-			Kernel verticalKernel = new Kernel(1, matrix.length, matrix);
-
-			filters[0] = new ConvolveOp(horizontalKernel, ConvolveOp.EDGE_NO_OP, null);
-			filters[1] = new ConvolveOp(verticalKernel, ConvolveOp.EDGE_NO_OP, null);
-
-			return filters;
-		}
-
-		public static BufferedImage applyFilter(int radius, BufferedImage src) {
-			ConvolveOp[] filters = GaussianBlur.createFilters(radius);
-
-			src = filters[0].filter(src, null);
-			src = filters[1].filter(src, null);
-
-			return src;
-		}
 	}
 }

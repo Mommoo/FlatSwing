@@ -187,6 +187,10 @@ public final class FlatFrame {
 		return this.COMMON_FRAME.getLocation();
 	}
 
+	public void pack(){
+		COMMON_FRAME.pack();
+	}
+
 	public void setLocationOnScreenCenter(){
 		isCenterLocation = true;
 	}

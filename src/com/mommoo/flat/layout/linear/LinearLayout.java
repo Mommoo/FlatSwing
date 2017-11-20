@@ -186,7 +186,7 @@ public class LinearLayout implements LayoutManager2, Serializable {
     }
 
     private void validateCompIfFlatTextArea(Component comp){
-        if (comp instanceof FlatTextArea && orientation == Orientation.HORIZONTAL){
+        if (comp.getBounds().width > 0 && comp instanceof FlatTextArea && orientation == Orientation.HORIZONTAL){
             ((FlatTextArea) comp).fixWidth(comp.getBounds().width);
         }
     }

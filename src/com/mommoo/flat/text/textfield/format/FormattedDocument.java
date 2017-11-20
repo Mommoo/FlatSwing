@@ -49,14 +49,14 @@ public class FormattedDocument extends PlainDocument{
         for (FlatTextFormat format : formatSet){
             if (format == FlatTextFormat.NUMBER_DECIMAL){
 
-                if (StringUtils.isCharNumber(c)) {
+                if (StringUtils.isNumberChar(c)) {
                     stringBuilder.append(c);
                     return ;
                 }
 
             } else if (format == FlatTextFormat.TEXT){
 
-                if (!StringUtils.isCharNumber(c) && !StringUtils.isSpecialChar(c)) {
+                if (!StringUtils.isNumberChar(c) && !StringUtils.isSpecialChar(c)) {
                     stringBuilder.append(c);
                     return ;
                 }
@@ -68,7 +68,14 @@ public class FormattedDocument extends PlainDocument{
                     return ;
                 }
 
-            } else {
+            } else if (format == FlatTextFormat.HEX_COLOR){
+
+                if (StringUtils.isHexColorChar(c)){
+                    stringBuilder.append(c);
+                    return;
+                }
+
+            } else{
                 stringBuilder.append(c);
             }
         }

@@ -91,7 +91,7 @@ public class StringUtils {
      * ASCII Table 0 ~ 9
      *            48 ~ 57
      */
-    public static boolean isCharNumber(char c){
+    public static boolean isNumberChar(char c){
         int asciiCode = (int)c;
         return asciiCode <= 57 && asciiCode >= 48;
     }
@@ -112,6 +112,18 @@ public class StringUtils {
                 (58 <= asciiCode && asciiCode <= 64) ||
                 (91 <= asciiCode && asciiCode <= 96) ||
                 (123 <= asciiCode && asciiCode <= 126);
+    }
+
+    /**
+     * ASCII Table's hex color characters
+     * A ~ F                             range : 65 ~ 70
+     * a ~ f                             range : 97 ~ 102
+     */
+    public static boolean isHexColorChar(char c){
+        int asciiCode = (int)c;
+        return isNumberChar(c) ||
+                (65 <= asciiCode && asciiCode <= 70) ||
+                (97 <= asciiCode && asciiCode <= 102);
     }
 
     public static void main(String[] args) {

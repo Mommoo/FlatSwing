@@ -69,6 +69,7 @@ public class FlatTabPanel extends FlatPanel {
         private FlatTabView(String text){
             setText(text);
             setBorder(PADDING_BORDER);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
             focusIn();
             fixWidth(getPreferredSize().width);
             focusOut();

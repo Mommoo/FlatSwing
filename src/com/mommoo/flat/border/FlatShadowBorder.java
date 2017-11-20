@@ -1,9 +1,11 @@
 package com.mommoo.flat.border;
 
 
+import com.mommoo.flat.button.FlatButton;
 import com.mommoo.util.FastGaussianBlur;
 import com.mommoo.util.ScreenManager;
 
+import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -11,9 +13,9 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlatShadowBorder implements Border {
+public class FlatShadowBorder extends AbstractBorder {
     public FlatShadowBorder(){
-        this(ScreenManager.getInstance().dip2px(10));
+        this(ScreenManager.getInstance().dip2px(20));
     }
 
     private static final Map<Integer, Map<Position, Image>> SHADOW_FINDER = new HashMap<>();
