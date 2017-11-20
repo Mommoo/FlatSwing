@@ -15,16 +15,27 @@ import java.awt.*;
 public class FlatCheckBox extends FlatPanel {
 	private static final int GAP = ScreenManager.getInstance().dip2px(3);
 	private boolean isAnchor;
-	
-	public FlatCheckBox(String guideText){
+
+	public FlatCheckBox(){
 		super.setLayout(new LinearLayout(GAP));
 		setBackground(Color.WHITE);
 		add(new CheckBox(),   new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT), "checkBox");
-		add(createGuideTextLabel(guideText), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT), "guideLabel");
+		add(createGuideTextLabel(), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT), "guideLabel");
+	}
+	
+	public FlatCheckBox(String guideText){
+		this();
+		setGuideText(guideText);
 	}
 
-	private Component createGuideTextLabel(String guideText){
-		FlatLabel guideTextLabel = new FlatLabel(guideText);
+	public FlatCheckBox(String guideText, boolean isAnchor){
+		this();
+		setGuideText(guideText);
+		setAnchored(isAnchor);
+	}
+
+	private Component createGuideTextLabel(){
+		FlatLabel guideTextLabel = new FlatLabel();
 		guideTextLabel.setOpaque(false);
 		return guideTextLabel;
 	}
@@ -83,9 +94,7 @@ public class FlatCheckBox extends FlatPanel {
 	}
 
 	@Override
-	public void setLayout(LayoutManager layout){
-
-	}
+	public void setLayout(LayoutManager layout){ }
 
 	public int getGap(){
 		return ((LinearLayout)super.getLayout()).getGap();
@@ -101,6 +110,14 @@ public class FlatCheckBox extends FlatPanel {
 	
 	public void setTextColor(Color color){
 		getGuideTextLabel().setForeground(color);
+	}
+
+	public String getGuideText(){
+		return getGuideTextLabel().getText();
+	}
+
+	public void setGuideText(String guideText){
+		getGuideTextLabel().setText(guideText);
 	}
 
 	@Override

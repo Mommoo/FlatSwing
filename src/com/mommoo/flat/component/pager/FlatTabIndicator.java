@@ -18,11 +18,6 @@ class FlatTabIndicator extends JPanel {
         setPreferredSize(new Dimension(SCREEN.dip2px(1), SCREEN.dip2px(4)));
     }
 
-    void initBounds(Rectangle bounds){
-        BOUNDS.setBounds(bounds);
-        repaint();
-    }
-
     void setFlatPageColor(FlatPageColor flatPageColor){
         indicatorColor = flatPageColor.getFocusInColor();
     }
@@ -35,13 +30,23 @@ class FlatTabIndicator extends JPanel {
         graphics2D.fill(BOUNDS);
     }
 
-    void indicate(Rectangle bounds){
-        ANIMATOR
-                .stop()
-                .start(bounds.x - BOUNDS.x,  bounds.width - BOUNDS.width);
+    void indicate(Rectangle bounds, boolean animation){
+        if (animation){
+            ANIMATOR
+                    .stop()
+                    .start(bounds.x - BOUNDS.x,  bounds.width - BOUNDS.width);
+        } else{
+            BOUNDS.setBounds(bounds);
+            repaint();
+        }
+
     }
 
-    private class IndicatorAnimator extends AbstractAnimator{
+    FlatAnimator getAnimator(){
+        return ANIMATOR;
+    }
+
+    private class IndicatorAnimator extends FlatAnimator {
         private IndicatorAnimator(){
             setAnimationListener(new AnimationAdapter(){
                 private final Rectangle previousBounds = new Rectangle();

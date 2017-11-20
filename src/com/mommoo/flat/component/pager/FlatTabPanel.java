@@ -2,6 +2,7 @@ package com.mommoo.flat.component.pager;
 
 import com.mommoo.flat.border.FlatEmptyBorder;
 import com.mommoo.flat.component.FlatPanel;
+import com.mommoo.flat.layout.linear.Alignment;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
@@ -38,24 +39,60 @@ class FlatTabPanel extends FlatPanel {
         add(tabView, new LinearConstraints(LinearSpace.MATCH_PARENT));
 
         tabView.setOnClickListener(component -> {
-
-            for (Component comp : getComponents()){
-
-                FlatTabView flatTabView = (FlatTabView) comp;
-
-                if (flatTabView != tabView){
-                    flatTabView.focusOut();
-                }
-            }
-
+            focusOutAll();
             tabView.focusIn();
-
-            onTabClickListener.onTabClick(index, component);
+            onTabClickListener.onTabClick(index);
         });
     }
 
+    int getTabIndex(String tabText){
+        for (int i = 0, size = getComponentCount(); i < size ; i ++){
+            if (getTabText(i).equals(tabText)){
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    String getTabText(int index){
+        return ((FlatTabView) getComponent(index)).getText();
+    }
+
+    void removeTab(int index){
+        remove(index);
+    }
+
+    void setTabAlignment(FlatTabAlignment alignment){
+        LinearLayout linearLayout = (LinearLayout) getLayout();
+        switch(alignment){
+            case START :
+                linearLayout.setAlignment(Alignment.START);
+                break;
+            case CENTER :
+                linearLayout.setAlignment(Alignment.CENTER);
+                break;
+            case END :
+                linearLayout.setAlignment(Alignment.END);
+                break;
+        }
+
+        doLayout();
+    }
+
+    void focusIn(int index){
+        focusOutAll();
+        ((FlatTabView)getComponent(index)).focusIn();
+    }
+
+    private void focusOutAll(){
+        for (Component comp : getComponents()){
+            ((FlatTabView) comp).focusOut();
+        }
+    }
+
     interface OnTabClickListener{
-        public void onTabClick(int position, Component comp);
+        public void onTabClick(int position);
     }
 
     private static class FlatTabView extends FlatLabel {
