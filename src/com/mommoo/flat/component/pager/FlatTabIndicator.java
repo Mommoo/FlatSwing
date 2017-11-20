@@ -7,23 +7,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class FlatTabIndicator extends JPanel {
+class FlatTabIndicator extends JPanel {
     private static final ScreenManager SCREEN = ScreenManager.getInstance();
     private final Rectangle BOUNDS = new Rectangle();
     private IndicatorAnimator ANIMATOR = new IndicatorAnimator();
     private Color indicatorColor = FlatPageColor.getDefaultFlatPagerColor().getFocusInColor();
 
-    public FlatTabIndicator(){
+    FlatTabIndicator(){
         setOpaque(false);
         setPreferredSize(new Dimension(SCREEN.dip2px(1), SCREEN.dip2px(4)));
     }
 
-    public void initBounds(Rectangle bounds){
+    void initBounds(Rectangle bounds){
         BOUNDS.setBounds(bounds);
         repaint();
     }
 
-    public void setFlatPageColor(FlatPageColor flatPageColor){
+    void setFlatPageColor(FlatPageColor flatPageColor){
         indicatorColor = flatPageColor.getFocusInColor();
     }
 
@@ -35,14 +35,14 @@ public class FlatTabIndicator extends JPanel {
         graphics2D.fill(BOUNDS);
     }
 
-    public void indicate(Rectangle bounds){
+    void indicate(Rectangle bounds){
         ANIMATOR
                 .stop()
                 .start(bounds.x - BOUNDS.x,  bounds.width - BOUNDS.width);
     }
 
     private class IndicatorAnimator extends AbstractAnimator{
-        public IndicatorAnimator(){
+        private IndicatorAnimator(){
             setAnimationListener(new AnimationAdapter(){
                 private final Rectangle previousBounds = new Rectangle();
 

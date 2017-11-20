@@ -9,12 +9,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class FlatPageSlider extends FlatPanel {
+class FlatPageSlider extends FlatPanel {
     private final SlideAnimator SLIDE_ANIMATOR = new SlideAnimator();
     private int pageIndex = 0;
     private int boundsX = 0;
 
-    public FlatPageSlider(){
+    FlatPageSlider(){
         setLayout(null);
     }
 
@@ -24,7 +24,7 @@ public class FlatPageSlider extends FlatPanel {
         super.paint(g);
     }
 
-    public void addPage(JPanel pager){
+    void addPage(JPanel pager){
         final int index = getComponentCount();
         add(pager);
         SwingUtilities.invokeLater(()->{
@@ -36,7 +36,7 @@ public class FlatPageSlider extends FlatPanel {
         });
     }
 
-    public void slide(int pageIndex){
+    void slide(int pageIndex){
         SLIDE_ANIMATOR
                 .setPageIndex(this.pageIndex)
                 .stop()

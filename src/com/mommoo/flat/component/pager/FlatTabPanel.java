@@ -12,10 +12,10 @@ import com.mommoo.util.ScreenManager;
 import javax.swing.border.Border;
 import java.awt.*;
 
-public class FlatTabPanel extends FlatPanel {
+class FlatTabPanel extends FlatPanel {
     private static final ScreenManager SCREEN = ScreenManager.getInstance();
 
-    public FlatTabPanel(){
+    FlatTabPanel(){
         setLayout(new LinearLayout(SCREEN.dip2px(2)));
         setOnLayoutListener(((availableWidth, availableHeight) -> {
             if (getComponentCount() > 0){
@@ -25,13 +25,13 @@ public class FlatTabPanel extends FlatPanel {
         }));
     }
 
-    public void setFlatPageColor(FlatPageColor pagerColor){
+    void setFlatPageColor(FlatPageColor pagerColor){
         for (Component comp : getComponents()){
             ( (FlatTabView) comp ).setFlatPageColor(pagerColor);
         }
     }
 
-    public void addTab(String tabText, OnTabClickListener onTabClickListener){
+    void addTab(String tabText, OnTabClickListener onTabClickListener){
         final int index = getComponentCount();
 
         FlatTabView tabView = new FlatTabView(tabText);
