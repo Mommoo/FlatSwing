@@ -15,7 +15,7 @@ class FlatTabIndicator extends JPanel {
 
     FlatTabIndicator(){
         setOpaque(false);
-        setPreferredSize(new Dimension(SCREEN.dip2px(1), SCREEN.dip2px(4)));
+        setPreferredSize(new Dimension(SCREEN.dip2px(1), SCREEN.dip2px(3)));
     }
 
     void setFlatPageColor(FlatPageColor flatPageColor){

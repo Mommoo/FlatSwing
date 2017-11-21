@@ -7,13 +7,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.IntConsumer;
 
 class FlatPageSlider extends JPanel {
     private final SlideAnimator SLIDE_ANIMATOR = new SlideAnimator();
     private int pageIndex = 0;
-    private int boundsX = 0;
     private boolean needToArrange = true;
+    private final Set<Integer> screenOffLoadIndex = new TreeSet<>();
 
     private List<OnPageSelectedListener> onPageSelectedListenerList = new ArrayList<>();
 
@@ -22,24 +24,25 @@ class FlatPageSlider extends JPanel {
         setLayout(null);
     }
 
+    private void executeScreenOffLoad(int pageIndex, Graphics g){
+        if(screenOffLoadIndex.contains(pageIndex)) getComponent(pageIndex).paint(g);
+    }
+
     @Override
     public void paint(Graphics g) {
         if (needToArrange){
             for (int i = 0, size = getComponentCount(); i < size ; i ++){
                 int x = getWidth() * i;
-                int y = 0;
-                int width = getWidth();
-                int height = getHeight();
-                getComponent(i).setBounds(x, y, width, height);
+                getComponent(i).setBounds(x, 0, getWidth(), getHeight());
+                executeScreenOffLoad(i, g);
             }
             needToArrange = false;
+
         }
-        g.translate(-boundsX, 0);
         super.paint(g);
     }
 
     void addPage(Component pageView){
-        final int index = getComponentCount();
         add(pageView);
         needToArrange = true;
         repaint();
@@ -54,15 +57,20 @@ class FlatPageSlider extends JPanel {
     void slide(int pageIndex, boolean animation){
         if (animation){
             SLIDE_ANIMATOR
-                    .setPageIndex(this.pageIndex)
+                    .setOnFinishListener(()-> this.pageIndex = pageIndex)
                     .stop()
-                    .start((pageIndex * getWidth()) - (this.pageIndex * getWidth()));
+                    // have to moving distance of component0
+                    .start(- getWidth() * pageIndex + Math.abs(getComponent(0).getX()));
         } else {
-            boundsX = pageIndex * getWidth();
+            for (int i = 0, size = getComponentCount(); i < size ; i ++){
+                int x = getComponent(i).getX() - pageIndex * getWidth();
+                getComponent(i).setLocation(x,0);
+            }
             repaint();
+            this.pageIndex = pageIndex;
         }
 
-        this.pageIndex = pageIndex;
+
     }
 
     void addOnPageSelectedListener(OnPageSelectedListener onPageSelectedListener){
@@ -71,6 +79,10 @@ class FlatPageSlider extends JPanel {
 
     void setOnPageSelectedListener(int index, OnPageSelectedListener onPageSelectedListener){
         this.onPageSelectedListenerList.set(index, onPageSelectedListener);
+    }
+
+    void setScreenOffLoadIndex(int index){
+        screenOffLoadIndex.add(index);
     }
 
     OnPageSelectedListener getOnPageSelectedListener(int index){
@@ -82,7 +94,8 @@ class FlatPageSlider extends JPanel {
     }
 
     private class SlideAnimator extends FlatAnimator {
-        private int pageIndex;
+
+        private Runnable onFinishListener = () -> {};
 
         private SlideAnimator(){
             setAnimationListener(new AnimationAdapter(){
@@ -90,27 +103,36 @@ class FlatPageSlider extends JPanel {
 
                 @Override
                 public void onStart() {
-                    previousX = pageIndex * getWidth();
+                    if (getComponentCount() > 0){
+                        previousX = getComponent(0).getX();
+                    }
                 }
 
                 @Override
                 public void onAnimation(List<Double> resultList) {
                     int x = resultList.get(0).intValue();
-                    boundsX = previousX + x;
+
+                    Component firstComp = getComponent(0);
+                    firstComp.setLocation(previousX + x, 0);
+
+                    for (int i = 1, size = getComponentCount(); i < size ; i ++){
+                        getComponent(i).setLocation((firstComp.getX() + (getWidth() * i)),0);
+                    }
                     repaint();
                 }
 
                 @Override
                 public void onEnd() {
+                    onFinishListener.run();
                     for (OnPageSelectedListener onPageSelectedListener : onPageSelectedListenerList){
-                        onPageSelectedListener.onPageSelected(FlatPageSlider.this.pageIndex);
+                        onPageSelectedListener.onPageSelected(pageIndex);
                     }
                 }
             });
         }
 
-        private SlideAnimator setPageIndex(int pageIndex){
-            this.pageIndex = pageIndex;
+        public SlideAnimator setOnFinishListener(Runnable onFinishListener){
+            this.onFinishListener = onFinishListener;
             return this;
         }
     }

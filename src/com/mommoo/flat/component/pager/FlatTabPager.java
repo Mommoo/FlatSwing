@@ -3,6 +3,9 @@ package com.mommoo.flat.component.pager;
 import com.mommoo.flat.border.FlatEmptyBorder;
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.flat.image.FlatImagePanel;
+import com.mommoo.flat.image.ImageOption;
+import com.mommoo.flat.layout.linear.Alignment;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
@@ -12,6 +15,7 @@ import com.mommoo.flat.text.textarea.alignment.FlatHorizontalAlignment;
 import com.mommoo.flat.text.textarea.alignment.FlatVerticalAlignment;
 import com.mommoo.util.ColorManager;
 import com.mommoo.util.FontManager;
+import com.mommoo.util.ImageManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
@@ -58,16 +62,36 @@ public class FlatTabPager {
             frame.getContainer().setLayout(new BorderLayout());
             frame.getContainer().add(pager.getView());
 
+            JPanel firstContentView = new JPanel();
+            firstContentView.setBackground(Color.YELLOW);
+            firstContentView.add(new JButton("first page Button"));
+
+            JPanel secondContentView = new JPanel();
+            secondContentView.add(new JLabel("second page label"));
+
+            JPanel thirdContentView = new JPanel();
+            thirdContentView.setLayout(new LinearLayout(Orientation.VERTICAL, 0, Alignment.CENTER));
+            thirdContentView.add(new JButton("third page button"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+
+            JPanel forthContentView = new JPanel();
+            forthContentView.setLayout(new GridLayout(2,2, 20,20));
+            forthContentView.setBorder(BorderFactory.createEmptyBorder(20,50,20,50));
+            forthContentView.add(new FlatImagePanel(ImageManager.LION, ImageOption.MATCH_PARENT));
+            forthContentView.add(new FlatImagePanel(ImageManager.PIG, ImageOption.MATCH_PARENT));
+            forthContentView.add(new FlatImagePanel(ImageManager.SHEEP, ImageOption.MATCH_PARENT));
+            forthContentView.add(new FlatImagePanel(ImageManager.TIGER, ImageOption.MATCH_PARENT));
+
             pager
                     .setTitle("Pager Test")
                     .setAnimationOn(true)
                     .setAnimationDuration(300)
                     .setTabAlignment(FlatTabAlignment.CENTER)
                     .setOffset(2)
-                    .addPage("Image", createColorPage(Color.YELLOW))
-                    .addPage("MP3", createColorPage(Color.ORANGE))
-                    .addPage("Calendar", createColorPage(Color.GREEN))
-                    .addPage("Person Name", createColorPage(Color.MAGENTA));
+                    .setScreenOffPageLoad(3)
+                    .addPage("Image", new FlatPage(firstContentView))
+                    .addPage("MP3", new FlatPage(secondContentView))
+                    .addPage("Calendar", new FlatPage(thirdContentView))
+                    .addPage("Person Name", new FlatPage(forthContentView));
 
             pager.setOnPageSelectedListener(pageIndex -> {
                 System.out.println("selected pageIndex : " + pageIndex);
@@ -81,14 +105,6 @@ public class FlatTabPager {
 //            frame.pack();
             frame.show();
         });
-    }
-
-    private static FlatPage createColorPage(Color color) {
-        FlatPage page = new FlatPage();
-        JPanel panel = new JPanel();
-        panel.setOpaque(true);
-        panel.setBackground(color);
-        return page.setView(panel);
     }
 
     private Component createTitleLabel() {
@@ -200,6 +216,13 @@ public class FlatTabPager {
         return getPage(getTabPanel().getTabIndex(tabText));
     }
 
+    public FlatPage getPage(int index) {
+        if (pageList.size() < index || index < 0) {
+            return null;
+        }
+        return pageList.get(index);
+    }
+
     public int getOffset() {
         return this.offset;
     }
@@ -215,11 +238,9 @@ public class FlatTabPager {
         return this;
     }
 
-    public FlatPage getPage(int index) {
-        if (pageList.size() < index || index < 0) {
-            return null;
-        }
-        return pageList.get(index);
+    public FlatTabPager setScreenOffPageLoad(int pageIndex){
+        getPageSlider().setScreenOffLoadIndex(pageIndex);
+        return this;
     }
 
     public OnPageSelectedListener getOnPageSelectedListener() {

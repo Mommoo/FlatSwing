@@ -26,8 +26,8 @@ public class FlatColorPicker {
         FlatColorPicker flatColorPicker = new FlatColorPicker(Orientation.HORIZONTAL);
         flatColorPicker.setLocationOnScreenCenter();
         flatColorPicker.setTitle("FlatColorPicker");
-        flatColorPicker.setOnColorChangeListener(System.out::println);
-        flatColorPicker.setOnConfirmListener(System.out::println);
+//        flatColorPicker.setOnColorChangeListener(System.out::println);
+//        flatColorPicker.setOnConfirmListener(System.out::println);
         flatColorPicker.show();
     }
 

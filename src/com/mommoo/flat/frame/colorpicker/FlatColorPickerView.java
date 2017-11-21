@@ -54,10 +54,6 @@ public class FlatColorPickerView extends FlatPanel {
         getConfirmView()
                 .setOnConfirmListener(()-> onConfirmListener.accept(hsb.getColor()))
                 .setOnCancelListener(()-> onCancelListener.run());
-
-
-        setOnColorChangeListener(System.out::println);
-        setOnConfirmListener(System.out::println);
     }
 
     private HSB_View getHSB_View(){

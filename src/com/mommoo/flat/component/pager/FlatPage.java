@@ -21,8 +21,17 @@ public class FlatPage{
         return viewport.getView();
     }
 
-    public FlatPage setView(JPanel panel){
-        viewport.setView(panel);
+    public FlatPage(){
+
+    }
+
+    public FlatPage(JPanel view){
+        this();
+        setView(view);
+    }
+
+    public FlatPage setView(JPanel view){
+        viewport.setView(view);
         return this;
     }
 
