@@ -62,27 +62,27 @@ public class FlatMouseAdapter extends MouseAdapter{
         isMouseMoved = true;
     }
 
-    public boolean isMouseClicked() {
+    protected final boolean isMouseClicked() {
         return isMouseClicked;
     }
 
-    public boolean isMouseEntered() {
+    protected final boolean isMouseEntered() {
         return isMouseEntered;
     }
 
-    public boolean isMouseMoved() {
+    protected final boolean isMouseMoved() {
         return isMouseMoved;
     }
 
-    public boolean isMousePressed() {
+    protected final boolean isMousePressed() {
         return isMousePressed;
     }
 
-    public boolean isMouseDragging() {
+    protected final boolean isMouseDragging() {
         return isMouseDragging;
     }
 
-    public MouseEvent getMouseEvent() {
+    protected final MouseEvent getMouseEvent() {
         return mouseEvent;
     }
 }

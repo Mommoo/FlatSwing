@@ -15,15 +15,27 @@ import java.awt.*;
 
 class FlatTabPanel extends FlatPanel {
     private static final ScreenManager SCREEN = ScreenManager.getInstance();
+    private Runnable onPaintFinishListener = () -> {};
+    private int offset = 0;
 
     FlatTabPanel(){
         setLayout(new LinearLayout(SCREEN.dip2px(2)));
         setOnLayoutListener(((availableWidth, availableHeight) -> {
             if (getComponentCount() > 0){
-                ((FlatTabView)getComponent(0)).focusIn();
+                ((FlatTabView)getComponent(offset)).focusIn();
                 removeOnLayoutListener();
             }
         }));
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        onPaintFinishListener.run();
+    }
+
+    void setOnPaintFinishListener(Runnable onPaintFinishListener){
+        this.onPaintFinishListener = onPaintFinishListener;
     }
 
     void setFlatPageColor(FlatPageColor pagerColor){
@@ -83,6 +95,10 @@ class FlatTabPanel extends FlatPanel {
     void focusIn(int index){
         focusOutAll();
         ((FlatTabView)getComponent(index)).focusIn();
+    }
+
+    void setOffset(int offset){
+        this.offset = offset;
     }
 
     private void focusOutAll(){

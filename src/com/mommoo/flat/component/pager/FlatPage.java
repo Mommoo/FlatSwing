@@ -3,6 +3,7 @@ package com.mommoo.flat.component.pager;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.alignment.FlatHorizontalAlignment;
 import com.mommoo.flat.text.textarea.alignment.FlatVerticalAlignment;
+import com.mommoo.util.FastGaussianBlur;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +11,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +136,8 @@ public class FlatPage{
         }
 
         private static class ViewportGlassPane extends JPanel{
+            private static final Color GLASS_COLOR = new Color(255,255,255, 170);
+
             private ViewportGlassPane(){
                 setOpaque(false);
                 setLayout(new BorderLayout());
@@ -148,7 +155,7 @@ public class FlatPage{
 
             @Override
             public void paint(Graphics g) {
-                g.setColor(new Color(1f, 1f, 1f, 0.7f));
+                g.setColor(GLASS_COLOR);
                 g.fillRect(0,0,getWidth(), getHeight());
                 super.paint(g);
 

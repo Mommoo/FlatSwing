@@ -30,8 +30,13 @@ class FlatTabIndicator extends JPanel {
         graphics2D.fill(BOUNDS);
     }
 
-    void indicate(Rectangle bounds, boolean animation){
-        if (animation){
+    void setOffsetBounds(Rectangle bounds){
+        BOUNDS.setBounds(bounds);
+        repaint();
+    }
+
+    void indicate(Rectangle bounds, boolean isAnimation){
+        if (isAnimation){
             ANIMATOR
                     .stop()
                     .start(bounds.x - BOUNDS.x,  bounds.width - BOUNDS.width);

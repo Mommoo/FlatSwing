@@ -2,6 +2,7 @@ package com.mommoo.flat.component.pager;
 
 import com.mommoo.flat.border.FlatEmptyBorder;
 import com.mommoo.flat.component.FlatPanel;
+import com.mommoo.flat.component.OnPaintListener;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.image.FlatImagePanel;
 import com.mommoo.flat.image.ImageOption;
@@ -40,14 +41,7 @@ public class FlatTabPager {
         CONTENT_PANE.add(new FlatTabPanel(), new LinearConstraints(LinearSpace.MATCH_PARENT), "flatTabPanel");
         CONTENT_PANE.add(new FlatTabIndicator(), new LinearConstraints(LinearSpace.MATCH_PARENT), "indicator");
         CONTENT_PANE.add(new FlatPageSlider(), new LinearConstraints(1, LinearSpace.MATCH_PARENT), "pageSlider");
-
-        CONTENT_PANE.setOnLayoutListener((availableWidth, availableHeight) -> {
-            if (getTabPanel().getComponentCount() > 0) {
-                pageSlide(0, false);
-                CONTENT_PANE.removeOnLayoutListener();
-            }
-        });
-
+        setOffset(0);
         getPageSlider().addOnPageSelectedListener(pageIndex->{});
         getPageSlider().addOnPageSelectedListener(pageIndex-> pageList.forEach(page-> page.getPageEventList().forEach(OnPageEventListener::onSelected)));
     }
@@ -87,6 +81,7 @@ public class FlatTabPager {
                     .setAnimationDuration(300)
                     .setTabAlignment(FlatTabAlignment.CENTER)
                     .setOffset(2)
+                    .setAnimationOn(true)
                     .setScreenOffPageLoad(3)
                     .addPage("Image", new FlatPage(firstContentView))
                     .addPage("MP3", new FlatPage(secondContentView))
@@ -98,7 +93,7 @@ public class FlatTabPager {
                 System.out.println("selected Tab       : " + pager.getTabText(pageIndex));
             });
 
-            pager.getPage("MP3")
+            pager.getPage("Calendar")
                     .setDisableGuideText("NO ACTION")
                     .setEnable(false);
 
@@ -229,12 +224,12 @@ public class FlatTabPager {
 
     public FlatTabPager setOffset(int offset) {
         this.offset = offset;
-        SwingUtilities.invokeLater(() -> {
-            if (getTabPanel().getComponentCount() <= offset) {
-                return;
-            }
-            pageSlide(offset, false);
+        getTabPanel().setOffset(offset);
+        getTabPanel().setOnPaintListener(graphics2D -> {
+            getIndicator().setOffsetBounds(getTabPanel().getComponent(offset).getBounds());
+            getTabPanel().removeOnPaintListener();
         });
+        getPageSlider().setOffset(offset);
         return this;
     }
 

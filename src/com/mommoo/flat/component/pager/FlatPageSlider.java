@@ -1,19 +1,18 @@
 package com.mommoo.flat.component.pager;
 
 import com.mommoo.animation.AnimationAdapter;
-import com.mommoo.flat.component.FlatPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.IntConsumer;
 
 class FlatPageSlider extends JPanel {
     private final SlideAnimator SLIDE_ANIMATOR = new SlideAnimator();
-    private int pageIndex = 0;
+    private int offsets = 0;
     private boolean needToArrange = true;
     private final Set<Integer> screenOffLoadIndex = new TreeSet<>();
 
@@ -24,17 +23,22 @@ class FlatPageSlider extends JPanel {
         setLayout(null);
     }
 
-    private void executeScreenOffLoad(int pageIndex, Graphics g){
-        if(screenOffLoadIndex.contains(pageIndex)) getComponent(pageIndex).paint(g);
+    private void executeScreenOffLoad(int pageIndex){
+        if(screenOffLoadIndex.contains(pageIndex)) {
+            BufferedImage screenOffBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics graphics = screenOffBuffer.createGraphics();
+            getComponent(pageIndex).paintAll(graphics);
+            graphics.dispose();
+        }
     }
 
     @Override
     public void paint(Graphics g) {
         if (needToArrange){
             for (int i = 0, size = getComponentCount(); i < size ; i ++){
-                int x = getWidth() * i;
+                int x = getWidth() * (i - offsets);
                 getComponent(i).setBounds(x, 0, getWidth(), getHeight());
-                executeScreenOffLoad(i, g);
+                executeScreenOffLoad(i);
             }
             needToArrange = false;
 
@@ -54,23 +58,24 @@ class FlatPageSlider extends JPanel {
         repaint();
     }
 
-    void slide(int pageIndex, boolean animation){
-        if (animation){
+    void setOffset(int offsets){
+        this.offsets = offsets;
+    }
+
+    void slide(int pageIndex, boolean isAnimation){
+        if (isAnimation){
             SLIDE_ANIMATOR
-                    .setOnFinishListener(()-> this.pageIndex = pageIndex)
+                    .setOnFinishListener(()-> this.offsets = pageIndex)
                     .stop()
                     // have to moving distance of component0
                     .start(- getWidth() * pageIndex + Math.abs(getComponent(0).getX()));
         } else {
             for (int i = 0, size = getComponentCount(); i < size ; i ++){
-                int x = getComponent(i).getX() - pageIndex * getWidth();
-                getComponent(i).setLocation(x,0);
+                getComponent(i).setLocation((- pageIndex * getWidth()) + (getWidth() * i),0);
             }
             repaint();
-            this.pageIndex = pageIndex;
+            this.offsets = pageIndex;
         }
-
-
     }
 
     void addOnPageSelectedListener(OnPageSelectedListener onPageSelectedListener){
@@ -125,7 +130,7 @@ class FlatPageSlider extends JPanel {
                 public void onEnd() {
                     onFinishListener.run();
                     for (OnPageSelectedListener onPageSelectedListener : onPageSelectedListenerList){
-                        onPageSelectedListener.onPageSelected(pageIndex);
+                        onPageSelectedListener.onPageSelected(offsets);
                     }
                 }
             });
