@@ -207,7 +207,7 @@ public class FlatSeekBar extends Component {
     @Override
     public Dimension getPreferredSize() {
         Dimension dimension = super.getPreferredSize();
-        System.out.println(dimension);
+
         if (dimension.width == 1 || dimension.height == 1){
             dimension.setSize(handleSize * 10 , handleSize);
         }

@@ -1,20 +1,15 @@
 package com.mommoo.flat.text.label;
 
-import com.mommoo.flat.button.FlatButton;
-import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
-import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
-import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.text.textarea.FlatTextAlignment;
 import com.mommoo.flat.text.textarea.FlatTextArea;
-import com.mommoo.flat.text.textfield.FlatTextField;
+import com.mommoo.flat.text.textarea.alignment.FlatHorizontalAlignment;
+import com.mommoo.flat.text.textarea.alignment.FlatVerticalAlignment;
 import com.mommoo.util.FontManager;
-import com.mommoo.util.ScreenManager;
 
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 
 /**
@@ -51,8 +46,8 @@ public class FlatLabel extends FlatTextArea {
 
 //			FlatLabel flatLabel = new FlatLabel("A Beautiful Label!!\n This is automatically line jump if string width longer than label width. You just use it well!");
 		FlatLabel flatLabel = new FlatLabel("Test");
-		flatLabel.setTextAlignment(FlatTextAlignment.ALIGN_CENTER);
-		flatLabel.setVerticalCenteredTextAlignment();
+		flatLabel.setHorizontalAlignment(FlatHorizontalAlignment.CENTER);
+		flatLabel.setVerticalAlignment(FlatVerticalAlignment.CENTER);
 		flatLabel.setFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
 		flatLabel.setOnClickListener(component -> System.out.println(((FlatLabel) component).getText()));
 //		flatLabel.setLineSpacing(0.7f);

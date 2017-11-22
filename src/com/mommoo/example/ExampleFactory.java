@@ -11,7 +11,6 @@ import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.list.FlatListView;
 import com.mommoo.flat.text.label.FlatLabel;
-import com.mommoo.flat.text.textarea.FlatTextAlignment;
 import com.mommoo.flat.text.textfield.FlatTextField;
 import com.mommoo.flat.text.textfield.format.FlatTextFormat;
 import com.mommoo.util.FontManager;
