@@ -113,13 +113,13 @@ public class FlatTextArea extends JTextPane{
     public void paint(Graphics g) {
         if (isNeedToCalculate){
             isNeedToCalculate = false;
-            setPreferredDimension(getAvailableWidth());
+            setPreferredWidth(getAvailableWidth());
         }
 
         super.paint(g);
     }
 
-    private void setPreferredDimension(int width){
+    public void setPreferredWidth(int width){
         ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(width);
         preferredDimension = contentsBounds.getDimension();
         lineCount = contentsBounds.getLineCount();
@@ -172,7 +172,7 @@ public class FlatTextArea extends JTextPane{
         }
 
         if (preferredDimension == null){
-            setPreferredDimension(getAvailableWidth());
+            setPreferredWidth(getAvailableWidth());
         }
 
         if (preferredWidth != -1){
@@ -280,7 +280,7 @@ public class FlatTextArea extends JTextPane{
     @Override
     public void setPreferredSize(Dimension preferredSize) {
         userWantedDimension = preferredSize;
-        setPreferredDimension(getAvailableWidth());
+        setPreferredWidth(getAvailableWidth());
         super.setPreferredSize(preferredSize);
     }
 
@@ -318,7 +318,7 @@ public class FlatTextArea extends JTextPane{
     public void fixWidth(int preferredWidth) {
         this.preferredWidth = preferredWidth ;
         Insets insets = getInsets();
-        setPreferredDimension(preferredWidth - insets.left - insets.right);
+        setPreferredWidth(preferredWidth - insets.left - insets.right);
     }
 
     private class EditorProperty implements EditorListener{

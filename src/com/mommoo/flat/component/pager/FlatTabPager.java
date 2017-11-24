@@ -218,6 +218,14 @@ public class FlatTabPager {
         return pageList.get(index);
     }
 
+    public FlatPage[] getPages(){
+        return new FlatPage[pageList.size()];
+    }
+
+    public List<FlatPage> getPageList(){
+        return new ArrayList<>(pageList);
+    }
+
     public int getOffset() {
         return this.offset;
     }
