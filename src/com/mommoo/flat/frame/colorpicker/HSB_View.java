@@ -28,7 +28,7 @@ public class HSB_View extends JPanel {
 
     private Consumer<HSB> onHSBChangeListener = hsb -> { };
 
-    HSB_View() {
+    public HSB_View() {
         setBorder(new LineBorder(Color.BLACK, 1));
         setOpaque(false);
         setCursor(HAND_CURSOR);
@@ -67,8 +67,7 @@ public class HSB_View extends JPanel {
         G_2D.setColor(hsb.getBrightness() <= 40 ? Color.WHITE : Color.BLACK);
 
         /* Draw mouse area and Draw mouse point using circle*/
-        G_2D.setClip(0, 0, SIZE, SIZE);
-        G_2D.drawOval((int) Math.round(mouseX - RADIUS), (int) Math.round(mouseY - RADIUS), RADIUS * 2, RADIUS * 2);
+        G_2D.drawOval(Math.round(mouseX - RADIUS), Math.round(mouseY - RADIUS), RADIUS * 2, RADIUS * 2);
 
 
         /* Data changed by user manipulation are setting*/
@@ -83,7 +82,7 @@ public class HSB_View extends JPanel {
         }
     }
 
-    void setOnHSBChangeListener(Consumer<HSB> onHSBChangeListener) {
+    public void setOnHSBChangeListener(Consumer<HSB> onHSBChangeListener) {
         this.onHSBChangeListener = onHSBChangeListener;
     }
 
@@ -110,7 +109,7 @@ public class HSB_View extends JPanel {
         graphics2D.drawImage(cacheImage, 0, 0, null);
     }
 
-    void setHue(int hue) {
+    public void setHue(int hue) {
         if (hsb.getHue() != hue){
             this.hsb = this.hsb.changeHue(hue);
             needToDraw = true;
@@ -119,7 +118,7 @@ public class HSB_View extends JPanel {
 
     }
 
-    void setHSB(HSB hsb){
+    public void setHSB(HSB hsb){
         this.hsb = hsb;
         needToDraw = true;
         isAutoPoint = true;

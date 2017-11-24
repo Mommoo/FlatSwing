@@ -42,12 +42,19 @@ public class FlatSeekBar extends Component {
 
         FlatSeekBar seekBar = new FlatSeekBar();
         seekBar.setOffset(10)
+                .setMinValue(10)
+                .setMaxValue(50)
                 .setOnValueChangeListener(System.out::println);
 //                .setPreferredSize(new Dimension(400,50));
 
         frame.getContentPane().add(seekBar);
         frame.setVisible(true);
 
+    }
+
+    @Override
+    public boolean isOpaque() {
+        return false;
     }
 
     @Override
@@ -89,7 +96,7 @@ public class FlatSeekBar extends Component {
 
         if (!once){
             double targetW = getWidth() - handleSize;
-            dragX = targetW * offset / (maxValue - minValue);
+            dragX = targetW * (offset - minValue ) / (maxValue - minValue);
             seekBarHandleCenter.x += dragX;
             once = true;
         }
@@ -168,6 +175,9 @@ public class FlatSeekBar extends Component {
 
     public FlatSeekBar setMinValue(int minValue){
         this.minValue = minValue;
+        if(this.offset < minValue){
+            this.offset = minValue;
+        }
         return this;
     }
 
@@ -176,14 +186,14 @@ public class FlatSeekBar extends Component {
     }
 
     public FlatSeekBar setOffset(int offset){
-        this.offset = Math.max(0, offset);
+        this.offset = Math.max(minValue, offset);
         return this;
     }
 
     public int getCurrentValue(){
         double targetW = getWidth() - handleSize;
         double percent = Math.max(0, Math.min(100, dragX * 100d / targetW));
-        return (int)((maxValue - minValue) * percent / 100d);
+        return minValue + (int)((maxValue - minValue) * percent / 100d);
     }
 
     public int getHandleSize(){
@@ -232,7 +242,7 @@ public class FlatSeekBar extends Component {
         public void mouseReleased(MouseEvent e) {
             super.mouseReleased(e);
             if (isDragReady){
-                seekBarHandleCenter.setLocation(dragX + 50/2d, 50/2d);
+                seekBarHandleCenter.setLocation(dragX + handleSize/2d, handleSize/2d);
                 SEEK_BAR_HANDLE.unGrab();
                 e.getComponent().repaint();
             }
@@ -243,7 +253,7 @@ public class FlatSeekBar extends Component {
             super.mouseMoved(e);
             float userX = e.getX();
             float userY = e.getY();
-            isDragReady = Math.pow(userX - seekBarHandleCenter.x, 2) + Math.pow(userY - seekBarHandleCenter.y, 2) <= Math.pow(handleSize/4d, 2);
+            isDragReady = Math.pow(userX - seekBarHandleCenter.x, 2) + Math.pow(userY - getHeight()/2d, 2) <= Math.pow(handleSize/4d, 2);
 
             if (isDragReady) {
                 setCursor(CursorType.HAND.getCursor());

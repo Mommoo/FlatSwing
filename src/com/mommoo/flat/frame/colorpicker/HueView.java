@@ -25,7 +25,7 @@ public class HueView extends JPanel {
     private IntConsumer onHSBChangeListener = hue -> {};
     private boolean once;
 
-    HueView(){
+    public HueView(){
         setOpaque(false);
         setLayout(new LinearLayout(SCREEN.dip2px(3)));
         add(new HueViewArrowView(false),  new LinearConstraints(LinearSpace.MATCH_PARENT));
@@ -33,11 +33,11 @@ public class HueView extends JPanel {
         add(new HueViewArrowView(true), new LinearConstraints(LinearSpace.MATCH_PARENT));
     }
 
-    void setOnHSBChangeListener(IntConsumer onHSBChangeListener){
+    public void setOnHSBChangeListener(IntConsumer onHSBChangeListener){
         this.onHSBChangeListener = onHSBChangeListener;
     }
 
-    void setHue(int hue){
+    public void setHue(int hue){
         mouseY  = (ARROW_SIZE/2) + ((360 - hue) * (getHeight() - ARROW_SIZE))/360;
         repaint();
     }

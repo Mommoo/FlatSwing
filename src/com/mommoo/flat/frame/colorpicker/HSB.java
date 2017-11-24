@@ -4,41 +4,41 @@ import com.mommoo.flat.utils.FlatColor;
 
 import java.awt.*;
 
-class HSB {
+public class HSB {
     private final int hue;
     private final int saturation;
     private final int brightness;
 
-    HSB(int hue, int saturation, int brightness){
+    public HSB(int hue, int saturation, int brightness){
         this.hue = hue;
         this.saturation = saturation;
         this.brightness = brightness;
     }
 
-    HSB(Color color){
+    public HSB(Color color){
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         this.hue = (int)(hsb[0] * 360f);
         this.saturation = (int)(hsb[1] * 100f);
         this.brightness = (int)(hsb[2] * 100f);
     }
 
-    int getHue() {
+    public int getHue() {
         return hue;
     }
 
-    int getSaturation() {
+    public int getSaturation() {
         return saturation;
     }
 
-    int getBrightness() {
+    public int getBrightness() {
         return brightness;
     }
 
-    HSB changeHue(int hue){
+    public HSB changeHue(int hue){
         return new HSB(hue, getSaturation(), getBrightness());
     }
 
-    Color getColor(){
+    public Color getColor(){
         return FlatColor.convertHSBtoRGB(getHue(), getSaturation(), getBrightness());
     }
 

@@ -16,18 +16,18 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-class ColorInfoView extends FlatPanel {
+public class ColorInfoView extends FlatPanel {
     private static final ScreenManager SCREEN = ScreenManager.getInstance();
     private static final Font GUIDE_FONT = FontManager.getNanumGothicBoldFont(SCREEN.dip2px(10));
 
-    ColorInfoView() {
+    public ColorInfoView() {
         setLayout(new LinearLayout(Orientation.VERTICAL, 0));
         add(new GuideView("information"), new LinearConstraints(LinearSpace.MATCH_PARENT));
         add(new HSB_InfoView(), new LinearConstraints(1, LinearSpace.MATCH_PARENT), "hsbView");
     }
 
 
-    void setHSB(HSB hsb){
+    public void setHSB(HSB hsb){
         ((HSB_InfoView)getComponent("hsbView")).setHSB(hsb);
     }
 

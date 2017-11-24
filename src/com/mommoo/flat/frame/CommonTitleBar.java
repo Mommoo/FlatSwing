@@ -13,6 +13,7 @@ import com.mommoo.flat.image.ImageOption;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+import com.mommoo.util.CursorType;
 import com.mommoo.util.ImageManager;
 
 import javax.swing.*;
@@ -137,6 +138,7 @@ class CommonTitleBar extends FlatPanel {
 	}
 
 	void removeOnIconClickListener(){
+		mainIcon.setCursor(CursorType.DEFAULT.getCursor());
 		mainIcon.removeOnClickListener();
 	}
 
@@ -145,6 +147,7 @@ class CommonTitleBar extends FlatPanel {
 	}
 
 	void setOnIconClickListener(OnClickListener onIconClickListener){
+		mainIcon.setCursor(CursorType.HAND.getCursor());
 		mainIcon.setOnClickListener(onIconClickListener);
 	}
 }

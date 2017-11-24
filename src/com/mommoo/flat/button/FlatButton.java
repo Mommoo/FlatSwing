@@ -47,7 +47,6 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		setText(text);
 	}
 
-	//TODO 프리펄사이즈 일때 보더 적용..
 	public static void main(String[] args){
 		FlatButton flatButton = new FlatButton("TEST");
 		flatButton.setOnClickListener(comp-> System.out.println("onClick"));
@@ -84,7 +83,7 @@ public class FlatButton extends JButton implements ButtonViewModel{
 		setContentAreaFilled(false);
 		setFocusPainted(false);
 		setBorderPainted(false);
-		setBorder(new FlatShadowBorder());
+		setBorder(BorderFactory.createEmptyBorder());
 		getRippleEffect().setRippleDrawOverBorder(false);
 	}
 
