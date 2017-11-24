@@ -80,6 +80,7 @@ public class FlatTabPager {
                     .setAnimationOn(true)
                     .setAnimationDuration(300)
                     .setTabAlignment(FlatTabAlignment.CENTER)
+                    .setFlatPageColor(Color.PINK, Color.BLACK)
                     .setOffset(2)
                     .setAnimationOn(true)
                     .setScreenOffPageLoad(3)
@@ -91,6 +92,10 @@ public class FlatTabPager {
             pager.setOnPageSelectedListener(pageIndex -> {
                 System.out.println("selected pageIndex : " + pageIndex);
                 System.out.println("selected Tab       : " + pager.getTabText(pageIndex));
+
+                if (pageIndex == 3){
+                    pager.setFlatPageColor(Color.RED, Color.BLACK);
+                }
             });
 
             pager.getPage("Calendar")
@@ -167,8 +172,8 @@ public class FlatTabPager {
         return flatPageColor;
     }
 
-    public FlatTabPager setFlatPageColor(FlatPageColor flatPageColor) {
-        this.flatPageColor = flatPageColor;
+    public FlatTabPager setFlatPageColor(Color focusInColor, Color focusOutColor) {
+        this.flatPageColor = new FlatPageColor(focusInColor, focusOutColor);
         getTabPanel().setFlatPageColor(flatPageColor);
         getIndicator().setFlatPageColor(flatPageColor);
         return this;

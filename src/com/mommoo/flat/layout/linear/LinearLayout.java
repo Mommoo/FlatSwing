@@ -150,8 +150,10 @@ public class LinearLayout implements LayoutManager2, Serializable {
 
             int lastIndex = boundsArray.length - 1;
 
-            int occupiedWidth  = lastIndex > 0 ? boundsArray[lastIndex].x + boundsArray[lastIndex].width : 0;
-            int occupiedHeight = lastIndex > 0 ? boundsArray[lastIndex].y + boundsArray[lastIndex].height : 0;
+            if (lastIndex < 0) return;
+
+            int occupiedWidth  = lastIndex > 0 ? boundsArray[lastIndex].x + boundsArray[lastIndex].width : boundsArray[0].width;
+            int occupiedHeight = lastIndex > 0 ? boundsArray[lastIndex].y + boundsArray[lastIndex].height : boundsArray[0].height;
 
             switch(alignment){
                 case START: break;
@@ -220,7 +222,7 @@ public class LinearLayout implements LayoutManager2, Serializable {
     }
 
     public void setWeightSum(int weightSum){
-        if (weightSum >= 0){
+        if (weightSum <= 0){
             throw new IllegalArgumentException("weightSum can not smaller than zero value");
         }
         SPACE_INSPECTOR

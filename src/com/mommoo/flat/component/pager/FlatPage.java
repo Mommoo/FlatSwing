@@ -49,7 +49,7 @@ public class FlatPage{
     }
 
     public boolean isEnable(){
-        return viewport.isGlassPaneVisible();
+        return !viewport.isGlassPaneVisible();
     }
 
     public FlatPage setEnable(boolean enable){

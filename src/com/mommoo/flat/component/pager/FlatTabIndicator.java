@@ -20,6 +20,7 @@ class FlatTabIndicator extends JPanel {
 
     void setFlatPageColor(FlatPageColor flatPageColor){
         indicatorColor = flatPageColor.getFocusInColor();
+        repaint();
     }
 
     @Override

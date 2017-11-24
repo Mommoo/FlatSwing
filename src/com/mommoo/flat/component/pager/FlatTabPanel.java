@@ -15,7 +15,7 @@ import java.awt.*;
 
 class FlatTabPanel extends FlatPanel {
     private static final ScreenManager SCREEN = ScreenManager.getInstance();
-    private Runnable onPaintFinishListener = () -> {};
+    private FlatPageColor flatPageColor = FlatPageColor.getDefaultFlatPagerColor();
     private int offset = 0;
 
     FlatTabPanel(){
@@ -28,33 +28,31 @@ class FlatTabPanel extends FlatPanel {
         }));
     }
 
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        onPaintFinishListener.run();
-    }
-
-    void setOnPaintFinishListener(Runnable onPaintFinishListener){
-        this.onPaintFinishListener = onPaintFinishListener;
-    }
-
     void setFlatPageColor(FlatPageColor pagerColor){
+        this.flatPageColor = pagerColor;
         for (Component comp : getComponents()){
-            ( (FlatTabView) comp ).setFlatPageColor(pagerColor);
+            FlatTabView tabView = (FlatTabView)comp;
+            tabView.setFlatPageColor(pagerColor);
+            tabView.validateFocus();
         }
     }
 
     void addTab(String tabText, OnTabClickListener onTabClickListener){
+        add(createTabView(tabText, onTabClickListener), new LinearConstraints(LinearSpace.MATCH_PARENT));
+    }
+
+    private FlatTabView createTabView(String tabText, OnTabClickListener onTabClickListener){
         final int index = getComponentCount();
 
         FlatTabView tabView = new FlatTabView(tabText);
-        add(tabView, new LinearConstraints(LinearSpace.MATCH_PARENT));
-
+        tabView.setFlatPageColor(flatPageColor);
         tabView.setOnClickListener(component -> {
             focusOutAll();
             tabView.focusIn();
             onTabClickListener.onTabClick(index);
         });
+
+        return tabView;
     }
 
     int getTabIndex(String tabText){
@@ -117,6 +115,7 @@ class FlatTabPanel extends FlatPanel {
         private static final Font TAB_LABEL_BOLD_FONT = FontManager.getNanumGothicFont(Font.BOLD, FONT_SIZE);
         private static final Border PADDING_BORDER = new FlatEmptyBorder(SCREEN.dip2px(6));
 
+        private boolean isFocus;
         private FlatPageColor flatPageColor = FlatPageColor.getDefaultFlatPagerColor();
 
         private FlatTabView(String text){
@@ -134,13 +133,27 @@ class FlatTabPanel extends FlatPanel {
         }
 
         private void focusIn(){
+            this.isFocus = true;
             setFont(TAB_LABEL_BOLD_FONT);
             setForeground(flatPageColor.getFocusInColor());
         }
 
         private void focusOut(){
+            this.isFocus = false;
             setFont(TAB_LABEL_PLAIN_FONT);
             setForeground(flatPageColor.getFocusOutColor());
+        }
+
+        private boolean isFocusing(){
+            return isFocus;
+        }
+
+        private void validateFocus(){
+            if (isFocusing()) {
+                focusIn();
+            } else {
+                focusOut();
+            }
         }
     }
 }

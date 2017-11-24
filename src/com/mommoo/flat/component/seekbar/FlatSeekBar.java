@@ -157,6 +157,7 @@ public class FlatSeekBar extends Component {
 
     public FlatSeekBar setSeekBarHandleColor(Color seekBarHandleColor){
         SEEK_BAR_COLOR.setSeekBarHandleColor(seekBarHandleColor);
+        SEEK_BAR_HANDLE.setSeekBarHandleColor(seekBarHandleColor);
         return this;
     }
 
