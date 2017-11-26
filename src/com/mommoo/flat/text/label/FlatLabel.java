@@ -3,7 +3,6 @@ package com.mommoo.flat.text.label;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
-import com.mommoo.flat.text.textarea.FlatTextAlignment;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 import com.mommoo.flat.text.textarea.alignment.FlatHorizontalAlignment;
 import com.mommoo.flat.text.textarea.alignment.FlatVerticalAlignment;
@@ -34,11 +33,6 @@ public class FlatLabel extends FlatTextArea {
 	}
 
 	public static void main(String[] args){
-//		SwingUtilities.invokeLater(()-> {
-//
-//
-//		});
-
 		FlatFrame flatFrame = new FlatFrame();
 		flatFrame.setWindowExit(true);
 		flatFrame.setTitle("FlatLabel Test");
@@ -59,10 +53,12 @@ public class FlatLabel extends FlatTextArea {
 		flatLabel.setOpaque(true);
 		flatLabel.setBackground(Color.RED);
 		flatFrame.show();
+		flatLabel.select(0,2);
+		flatLabel.replaceSelection("가나다라");
 	}
 
 	private void init(){
-		setEnableDragging(false);
+		setEnableSelection(false);
 	}
 
 	@Override
@@ -70,11 +66,11 @@ public class FlatLabel extends FlatTextArea {
 		return false;
 	}
 
-	public boolean isEnableDragging(){
+	public boolean isEnableSelection(){
 		return isFocusable();
 	}
 
-	public void setEnableDragging(boolean enableDragging){
-		setFocusable(enableDragging);
+	public void setEnableSelection(boolean enableSelection){
+		setFocusable(enableSelection);
 	}
 }
