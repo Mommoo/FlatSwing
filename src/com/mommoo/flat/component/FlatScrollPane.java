@@ -53,7 +53,7 @@ public class FlatScrollPane extends JScrollPane {
 //        FlatTextArea flatLabel = new FlatTextArea();
         JTextArea flatLabel = new JTextArea("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest");
 //        flatLabel.setLineWrap(false);
-//        flatLabel.setText("1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n2\n3\n4\n5\n6\n7\n8\n9\n");
+        flatLabel.setText("1\n2\n3\n4\n5\n6\n7\n8\n9\n1\n2\n3\n4\n5\n6\n7\n8\n9\n");
         flatLabel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         flatScrollPane.setViewportView(flatLabel);
 
@@ -63,6 +63,7 @@ public class FlatScrollPane extends JScrollPane {
         flatFrame.setLocationOnScreenCenter();
         flatFrame.getContainer().add(flatScrollPane);
         flatFrame.show();
+        flatScrollPane.setThemeColor(Color.YELLOW);
     }
 
     public Color getThemeColor() {
@@ -71,6 +72,7 @@ public class FlatScrollPane extends JScrollPane {
 
     public void setThemeColor(Color themeColor) {
         this.themeColor = themeColor;
+        repaint();
     }
 
     public Color getVerticalScrollTrackColor() {
@@ -80,6 +82,7 @@ public class FlatScrollPane extends JScrollPane {
     public void setVerticalScrollTrackColor(Color trackColor) {
         getVerticalScrollBar().setOpaque(true);
         getVerticalScrollBar().setBackground(trackColor);
+        repaint();
     }
 
     public Color getHorizontalScrollTrackColor() {
@@ -89,6 +92,7 @@ public class FlatScrollPane extends JScrollPane {
     public void setHorizontalScrollTrackColor(Color trackColor) {
         getHorizontalScrollBar().setOpaque(true);
         getHorizontalScrollBar().setBackground(trackColor);
+        repaint();
     }
 
     private void init() {
