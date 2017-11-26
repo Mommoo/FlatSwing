@@ -20,7 +20,8 @@ public class Example {
 //        frame.getContainer().add(new LinearLayoutPanel3());
         JPanel panel = new JPanel(new LinearLayout(Orientation.VERTICAL, Alignment.CENTER));
         panel.setBackground(Color.RED);
-        panel.add(new JButton("1"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+        JButton button = new JButton("1");
+        panel.add(button, new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
         frame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL, Alignment.CENTER));
         frame.getContainer().add(panel, new LinearConstraints(1, LinearSpace.MATCH_PARENT));
         frame.show();

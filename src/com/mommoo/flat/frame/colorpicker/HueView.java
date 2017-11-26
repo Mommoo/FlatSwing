@@ -1,6 +1,7 @@
 package com.mommoo.flat.frame.colorpicker;
 
 import com.mommoo.flat.component.FlatMouseAdapter;
+import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
@@ -22,8 +23,12 @@ public class HueView extends JPanel {
     private static final int ARROW_SIZE = SCREEN.dip2px(7);
     private int mouseY = ARROW_SIZE/2;
     private int previousHue = -1;
+
     private IntConsumer onHSBChangeListener = hue -> {};
     private boolean once;
+
+    private int hue;
+    private boolean isAutoMouseY;
 
     public HueView(){
         setOpaque(false);
@@ -33,20 +38,35 @@ public class HueView extends JPanel {
         add(new HueViewArrowView(true), new LinearConstraints(LinearSpace.MATCH_PARENT));
     }
 
+    public static void main(String[] args){
+        FlatFrame frame = new FlatFrame();
+        frame.setSize(500,500);
+        frame.setLocationOnScreenCenter();
+        frame.getContainer().setLayout(new FlowLayout());
+        HueView hueView = new HueView();
+        hueView.setHue(100);
+        frame.getContainer().add(hueView).setPreferredSize(new Dimension(100,400));
+        frame.show();
+    }
+
     public void setOnHSBChangeListener(IntConsumer onHSBChangeListener){
         this.onHSBChangeListener = onHSBChangeListener;
     }
 
     public void setHue(int hue){
-        mouseY  = (ARROW_SIZE/2) + ((360 - hue) * (getHeight() - ARROW_SIZE))/360;
+        this.hue = hue;
+        this.isAutoMouseY = true;
         repaint();
     }
 
     @Override
     public void paint(Graphics g) {
+        if (isAutoMouseY) {
+            isAutoMouseY = false;
+            mouseY  = (((360 - hue) * (getHeight() - ARROW_SIZE))/360) + ARROW_SIZE/2;
+        }
         super.paint(g);
-
-        int hue = 360 - (360 * (mouseY - (ARROW_SIZE/2)) / (getHeight() - ARROW_SIZE));
+        int hue = 360 - 360 * ((mouseY - (ARROW_SIZE/2)) / (getHeight() - ARROW_SIZE));
         if (hue >= 360 ) hue = 0;
         hue = Math.max(0, hue);
         if (previousHue != hue){

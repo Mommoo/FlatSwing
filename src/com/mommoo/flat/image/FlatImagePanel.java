@@ -54,8 +54,6 @@ public class FlatImagePanel extends FlatPanel {
         repaint();
     }
 
-
-
     @Override
     protected boolean isPaintingOrigin() {
         return true;
