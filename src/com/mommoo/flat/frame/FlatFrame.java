@@ -127,6 +127,14 @@ public final class FlatFrame {
 		this.TITLE_BAR.setOnIconClickListener(onIconClickListener);
 	}
 
+	public Color getIconBackgroundColor(){
+		return this.TITLE_BAR.getIconBackgroundColor();
+	}
+
+	public void setIconBackgroundColor(Color backgroundColor){
+		this.TITLE_BAR.setIconBackgroundColor(backgroundColor);
+	}
+
 	public void removeIconImage(){
 		this.TITLE_BAR.removeIconImage();
 	}

@@ -150,4 +150,12 @@ class CommonTitleBar extends FlatPanel {
 		mainIcon.setCursor(CursorType.HAND.getCursor());
 		mainIcon.setOnClickListener(onIconClickListener);
 	}
+
+	Color getIconBackgroundColor(){
+		return mainIcon.getBackground();
+	}
+
+	void setIconBackgroundColor(Color backgroundColor){
+		mainIcon.setBackground(backgroundColor);
+	}
 }
