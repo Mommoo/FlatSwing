@@ -156,6 +156,7 @@ class CommonTitleBar extends FlatPanel {
 	}
 
 	void setIconBackgroundColor(Color backgroundColor){
+		mainIcon.setOpaque(true);
 		mainIcon.setBackground(backgroundColor);
 	}
 }
