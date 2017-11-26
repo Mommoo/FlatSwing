@@ -21,7 +21,7 @@ import java.util.function.IntConsumer;
 public class HueView extends JPanel {
     private static final ScreenManager SCREEN = ScreenManager.getInstance();
     private static final int ARROW_SIZE = SCREEN.dip2px(7);
-    private int mouseY = ARROW_SIZE/2;
+    private double mouseY = ARROW_SIZE/2;
     private int previousHue = -1;
 
     private IntConsumer onHSBChangeListener = hue -> {};
@@ -66,7 +66,8 @@ public class HueView extends JPanel {
             mouseY  = (((360 - hue) * (getHeight() - ARROW_SIZE))/360) + ARROW_SIZE/2;
         }
         super.paint(g);
-        int hue = 360 - 360 * ((mouseY - (ARROW_SIZE/2)) / (getHeight() - ARROW_SIZE));
+        int hue = (int)(360 - 360 * (((mouseY - (ARROW_SIZE/2)) / (getHeight() - ARROW_SIZE))));
+
         if (hue >= 360 ) hue = 0;
         hue = Math.max(0, hue);
         if (previousHue != hue){
@@ -77,11 +78,6 @@ public class HueView extends JPanel {
             }
         }
         previousHue = hue;
-    }
-
-    @Override
-    public String toString(){
-        return "VerticalHueView";
     }
 
     private class HueEventView extends JPanel{
