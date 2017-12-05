@@ -410,7 +410,7 @@ public class FlatTextArea extends JTextPane{
 
         public ContentsBounds getBounds2(int width) {
 
-            Dimension viewDimension = new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width))
+            Dimension viewDimension = new ComputableDimension(width)
                     .setMinimumSize(10, 10);
 
             Component graphicBuffer = getGraphicBuffer(viewDimension);

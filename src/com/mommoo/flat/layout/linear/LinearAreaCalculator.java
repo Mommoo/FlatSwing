@@ -8,6 +8,7 @@ import com.mommoo.util.ComputableDimension;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.List;
 
 class LinearAreaCalculator {
     LinearAreaCalculator() { }
@@ -31,16 +32,21 @@ class LinearAreaCalculator {
         double weightW = weightEnableArea.getWidth() / (double) property.getWeightSum();
         double weightH = weightEnableArea.getHeight() / (double) property.getWeightSum();
 
+        List<Component> weightList = Arrays.stream(container.getComponents())
+                .filter(comp -> finder.find(comp).getWeight() > 0)
+                .collect(Collectors.toList());
+
         /*
          *  Swing component put component using by pixel( int value ) so, error value may be exist
          *  We solve this problem by adding error value to last component had weight
          */
-        Dimension errorDimension = getErrorDimen(container, finder, weightW, weightH, weightEnableArea);
+        Dimension errorDimension = getErrorDimension(weightList, finder, weightEnableArea, weightW, weightH);
+        Component lastWeightComp = weightList.size() > 0 ? weightList.get(weightList.size() - 1) : null;
 
         int index = 0;
 
         for (Component comp : container.getComponents()) {
-            boolean lastIndex = index == size -1;
+            boolean isLastWeightComp = lastWeightComp == comp;
 
             LinearConstraints constraints = finder.find(comp);
 
@@ -63,7 +69,7 @@ class LinearAreaCalculator {
                     compY = (availableContainerDimen.height - compH);
                 }
 
-                if (lastIndex) {
+                if (isLastWeightComp) {
                     compW += errorDimension.width;
                 }
 
@@ -81,7 +87,7 @@ class LinearAreaCalculator {
 
                 compY = index == 0 ? container.getInsets().top : bounds[index - 1].getY() + bounds[index - 1].getHeight() + property.getGap();
 
-                if (lastIndex) {
+                if (isLastWeightComp) {
                     compH += errorDimension.height;
                 }
             }
@@ -105,18 +111,15 @@ class LinearAreaCalculator {
         return occupiedArea;
     }
 
-    private Dimension getErrorDimen(Container container, ConstraintsFinder finder, double weightW, double weightH, Dimension weightEnableArea) {
+    private Dimension getErrorDimension(List<Component> weightList, ConstraintsFinder finder, Dimension weightEnableArea, double weightW, double weightH){
         ComputableDimension errorDimension = new ComputableDimension()
                 .setDimension(weightEnableArea)
                 .setMinimumSize(0, 0);
 
-        Arrays.stream(container.getComponents())
-                .filter(comp -> finder.find(comp).getWeight() > 0)
-                .collect(Collectors.toList())
-                .forEach(comp -> {
-                    int weight = finder.find(comp).getWeight();
-                    errorDimension.subDimension((int) (weightW * weight), (int) (weightH * weight));
-                });
+        weightList.forEach(comp -> {
+            int weight = finder.find(comp).getWeight();
+            errorDimension.subDimension((int) (weightW * weight), (int) (weightH * weight));
+        });
 
         return errorDimension;
     }

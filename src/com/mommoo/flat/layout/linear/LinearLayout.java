@@ -6,7 +6,6 @@ import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Serializable {
@@ -145,13 +144,14 @@ public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Seria
     @Override
     public void layoutContainer(Container container) {
         synchronized (container.getTreeLock()) {
-            VALIDATOR.validate();
-            Rectangle[] bounds = CALCULATOR.getBounds(this, container, FINDER);
+            if (VALIDATOR.isValidate(container)){
+                Rectangle[] bounds = CALCULATOR.getBounds(this, container, FINDER);
 
-            int index = 0;
-            for (Component comp : container.getComponents()){
-                comp.setBounds(bounds[index++]);
-                validateCompIfFlatTextArea(comp);
+                int index = 0;
+                for (Component comp : container.getComponents()){
+                    comp.setBounds(bounds[index++]);
+                    validateCompIfFlatTextArea(comp);
+                }
             }
         }
     }
@@ -208,9 +208,11 @@ public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Seria
     private class Validator {
         private boolean isAutoWeightSum = true;
 
-        private void validate(){
+        private boolean isValidate(Container container){
             validateWeightSumIfNotAuto();
             sumWeightsIfAutoMode();
+
+            return container.getComponentCount() > 0;
         }
 
         private void validateWeightSumIfNotAuto(){

@@ -142,8 +142,6 @@ class FlatAutoResizeHandler {
 
             contentsWidth = Math.min(basicWidth, maxStringLineWidth);
 
-            if (contentsWidth <= basicWidth) contentsWidth = basicWidth;
-
             return new ContentsBounds(contentsWidth, getContentsLineHeight(lineCount), lineCount);
         }
 

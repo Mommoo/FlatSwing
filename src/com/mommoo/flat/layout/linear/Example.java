@@ -20,7 +20,7 @@ public class Example {
         frame.setResizable(true);
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
-        frame.getContainer().add(new LinearLayoutPanel());
+        frame.getContainer().add(new LinearLayoutPanel3());
         frame.show();
     }
 
