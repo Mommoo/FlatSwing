@@ -146,11 +146,11 @@ public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Seria
     public void layoutContainer(Container container) {
         synchronized (container.getTreeLock()) {
             VALIDATOR.validate();
-            Rectangle2D.Double[] bounds = CALCULATOR.getBounds(this, container, FINDER);
+            Rectangle[] bounds = CALCULATOR.getBounds(this, container, FINDER);
 
             int index = 0;
             for (Component comp : container.getComponents()){
-                comp.setBounds(bounds[index++].getBounds());
+                comp.setBounds(bounds[index++]);
                 validateCompIfFlatTextArea(comp);
             }
         }
@@ -158,7 +158,12 @@ public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Seria
 
     private void validateCompIfFlatTextArea(Component comp){
         if (comp.getBounds().width > 0 && comp instanceof FlatTextArea && orientation == Orientation.HORIZONTAL){
-            ((FlatTextArea) comp).setPreferredWidth(comp.getBounds().width);
+
+            Rectangle rectangle = comp.getBounds();
+            Dimension preferredSize = ((FlatTextArea) comp).getContentsBounds(rectangle.width);
+            rectangle.width = preferredSize.width;
+            rectangle.height = preferredSize.height;
+            comp.setBounds(rectangle);
         }
     }
 

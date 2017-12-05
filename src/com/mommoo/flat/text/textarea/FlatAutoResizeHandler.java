@@ -28,7 +28,7 @@ class FlatAutoResizeHandler {
      * @Case_2 If string length bigger than available width , we need to width of line calculated available string width.
      * After get line count, through it, we have to calculate proper height
      */
-    Dimension getContentsFitSize(int availableWidth, boolean wrapStyleWord) {
+    Dimension getContentsFitSize(int availableWidth) {
         contentsBounds = BOUNDS_CALCULATOR.getContentsDimensionFitToWidth(availableWidth, resizeModel.getText());
 
         return new Dimension(contentsBounds.getContentsWidth(), contentsBounds.getContentsHeight());
@@ -101,7 +101,7 @@ class FlatAutoResizeHandler {
          */
         private ContentsBounds getContentsDimensionFitToWidth(int basicWidth, String originString) {
             String convertedToLinuxFormatString = convertNewLineFormatToLinuxFormat(originString);
-//            List<String> listSplitByNewLine = getListSplitByNewLine(convertedToLinuxFormatString, wrapStyleWord);
+
             List<String> listSplitByNewLine = Arrays.asList(convertedToLinuxFormatString.split("\n"));
 
             int contentsWidth = basicWidth;
@@ -142,7 +142,8 @@ class FlatAutoResizeHandler {
 
             contentsWidth = Math.min(basicWidth, maxStringLineWidth);
 
-//            System.out.println(contentsWidth+","+lineCount);
+            if (contentsWidth <= basicWidth) contentsWidth = basicWidth;
+
             return new ContentsBounds(contentsWidth, getContentsLineHeight(lineCount), lineCount);
         }
 

@@ -126,6 +126,10 @@ public class FlatTextArea extends JTextPane{
         super.setPreferredSize(preferredDimension);
     }
 
+    public Dimension getContentsBounds(int width){
+        return contentsSizeCalculator.getBounds2(width).getDimension();
+    }
+
     private int getAvailableWidth() {
         Container parent = getParent();
         Insets childInsets = getInsets();
@@ -387,17 +391,32 @@ public class FlatTextArea extends JTextPane{
             return new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_RGB).getGraphics();
         }
 
-        public ContentsBounds getBounds(int width){
+        public ContentsBounds getBounds(int width) {
 
             Insets insets = getInsets();
-            Dimension viewDimension = new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width, wrapStyleWord))
+
+            Dimension viewDimension = new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width))
                     .setMinimumSize(10, 10)
                     .addDimension(insets.left + insets.right, insets.top + insets.bottom);
 
             Component graphicBuffer = getGraphicBuffer(viewDimension);
             graphicBuffer.paint(createGraphics(viewDimension));
 
-            int lineCount = RXTextUtilities.getWrappedLines((JTextArea)graphicBuffer);
+            int lineCount = RXTextUtilities.getWrappedLines((JTextArea) graphicBuffer);
+            int height = getContentsLineHeight(lineCount) + getInsets().top + getInsets().bottom;
+
+            return new ContentsBounds(viewDimension.width, height, lineCount);
+        }
+
+        public ContentsBounds getBounds2(int width) {
+
+            Dimension viewDimension = new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width))
+                    .setMinimumSize(10, 10);
+
+            Component graphicBuffer = getGraphicBuffer(viewDimension);
+            graphicBuffer.paint(createGraphics(viewDimension));
+
+            int lineCount = RXTextUtilities.getWrappedLines((JTextArea) graphicBuffer);
             int height = getContentsLineHeight(lineCount) + getInsets().top + getInsets().bottom;
 
             return new ContentsBounds(viewDimension.width, height, lineCount);
