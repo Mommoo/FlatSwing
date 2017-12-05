@@ -125,8 +125,8 @@ public class FlatColorPickerView extends FlatPanel {
             getColorApplyView().setBounds(colorInfoViewX, insets.top + colorInfoViewHeight + padding, AVAILABLE_WIDTH - colorInfoViewX, colorApplyViewHeight);
             getColorApplyView().doLayout();
 
-            int confirmViewY = insets.top + colorApplyViewHeight + padding + colorApplyViewHeight + padding;
-            getConfirmView().setBounds(colorInfoViewX, confirmViewY, AVAILABLE_WIDTH - colorInfoViewX, insets.top + AVAILABLE_HEIGHT - confirmViewY);
+            int confirmViewHeight = 50;
+            getConfirmView().setBounds(colorInfoViewX, getHeight() - insets.bottom - confirmViewHeight, AVAILABLE_WIDTH - colorInfoViewX, confirmViewHeight);
         } else {
             int hueViewWidth = 70;
             int hsbViewSize = size - hueViewWidth - padding * 2;

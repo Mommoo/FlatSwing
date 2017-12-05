@@ -3,6 +3,7 @@ package com.mommoo.flat.layout.linear;
 
 import com.mommoo.flat.layout.exception.MismatchException;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.FlatTextArea;
 
 import java.awt.*;
@@ -146,24 +147,11 @@ public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Seria
         synchronized (container.getTreeLock()) {
             if (VALIDATOR.isValidate(container)){
                 Rectangle[] bounds = CALCULATOR.getBounds(this, container, FINDER);
-
                 int index = 0;
                 for (Component comp : container.getComponents()){
                     comp.setBounds(bounds[index++]);
-                    validateCompIfFlatTextArea(comp);
                 }
             }
-        }
-    }
-
-    private void validateCompIfFlatTextArea(Component comp){
-        if (comp.getBounds().width > 0 && comp instanceof FlatTextArea && orientation == Orientation.HORIZONTAL){
-
-            Rectangle rectangle = comp.getBounds();
-            Dimension preferredSize = ((FlatTextArea) comp).getContentsBounds(rectangle.width);
-            rectangle.width = preferredSize.width;
-            rectangle.height = preferredSize.height;
-            comp.setBounds(rectangle);
         }
     }
 

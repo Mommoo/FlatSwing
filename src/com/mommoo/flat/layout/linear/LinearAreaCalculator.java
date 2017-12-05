@@ -50,14 +50,17 @@ class LinearAreaCalculator {
 
             LinearConstraints constraints = finder.find(comp);
 
-            double compX = container.getInsets().left;
-            double compY = container.getInsets().top;
-            double compW = constraints.getWeight() == 0 ? comp.getPreferredSize().width : weightW * (double) constraints.getWeight();
-            double compH = constraints.getWeight() == 0 ? comp.getPreferredSize().height : weightH * (double) constraints.getWeight();
+            double compX;
+            double compY;
+            double compW;
+            double compH;
 
             if (property.getOrientation() == Orientation.HORIZONTAL) {
 
                 compX = index == 0 ? container.getInsets().left : bounds[index - 1].getX() + bounds[index - 1].getWidth() + property.getGap();
+                compY = container.getInsets().top;
+                compW = constraints.getWeight() == 0 ? comp.getPreferredSize().width : weightW * (double) constraints.getWeight();
+                compH = comp.getPreferredSize().height;
 
                 if (constraints.getLinearSpace() == LinearSpace.MATCH_PARENT) {
                     compH = availableContainerDimen.height;
@@ -75,6 +78,11 @@ class LinearAreaCalculator {
 
             } else {
 
+                compX = container.getInsets().left;
+                compY = index == 0 ? container.getInsets().top : bounds[index - 1].getY() + bounds[index - 1].getHeight() + property.getGap();
+                compW = comp.getPreferredSize().width;
+                compH = constraints.getWeight() == 0 ? comp.getPreferredSize().height : weightH * (double) constraints.getWeight();
+
                 if (constraints.getLinearSpace() == LinearSpace.MATCH_PARENT) {
                     compW = availableContainerDimen.width;
                 } else if (constraints.getLinearSpace() == LinearSpace.WRAP_CONTENT) {
@@ -84,8 +92,6 @@ class LinearAreaCalculator {
                 } else {
                     compX += (availableContainerDimen.width - compW);
                 }
-
-                compY = index == 0 ? container.getInsets().top : bounds[index - 1].getY() + bounds[index - 1].getHeight() + property.getGap();
 
                 if (isLastWeightComp) {
                     compH += errorDimension.height;

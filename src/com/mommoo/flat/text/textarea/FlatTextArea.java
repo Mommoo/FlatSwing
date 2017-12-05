@@ -119,11 +119,13 @@ public class FlatTextArea extends JTextPane{
         super.paint(g);
     }
 
-    public void setPreferredWidth(int width){
+    public Dimension setPreferredWidth(int width){
         ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(width);
         preferredDimension = contentsBounds.getDimension();
         lineCount = contentsBounds.getLineCount();
         super.setPreferredSize(preferredDimension);
+
+        return preferredDimension;
     }
 
     public Dimension getContentsBounds(int width){

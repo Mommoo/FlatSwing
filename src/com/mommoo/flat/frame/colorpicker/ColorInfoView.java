@@ -39,13 +39,6 @@ public class ColorInfoView extends FlatPanel {
             add(createInfoView(), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
         }
 
-        private Component createInfoView(){
-            FlatPanel infoView = new FlatPanel(new LinearLayout(Orientation.VERTICAL, 0));
-            infoView.add(new LineView("H","S","B"), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
-            infoView.add(new LineView("R","G","B"), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
-            return infoView;
-        }
-
         private Component createColorView(){
             JPanel colorView = new JPanel();
             colorView.setBorder(new LineBorder(Color.BLACK, 1));
@@ -60,6 +53,13 @@ public class ColorInfoView extends FlatPanel {
             });
 
             return colorView;
+        }
+
+        private Component createInfoView(){
+            FlatPanel infoView = new FlatPanel(new LinearLayout(Orientation.VERTICAL, 0));
+            infoView.add(new LineView("H","S","B"), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+            infoView.add(new LineView("R","G","B"), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+            return infoView;
         }
 
         private void setHSB(HSB hsb){
