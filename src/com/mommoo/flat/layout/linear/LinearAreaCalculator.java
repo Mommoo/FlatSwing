@@ -64,9 +64,9 @@ class LinearAreaCalculator {
                 } else if (constraints.getLinearSpace() == LinearSpace.WRAP_CONTENT) {
                     compY = container.getInsets().top;
                 } else if (constraints.getLinearSpace() == LinearSpace.WRAP_CENTER_CONTENT) {
-                    compY = (availableContainerDimen.height - compH) / 2.0d;
+                    compY += (availableContainerDimen.height - compH) / 2.0d;
                 } else {
-                    compY = (availableContainerDimen.height - compH);
+                    compY += (availableContainerDimen.height - compH);
                 }
 
                 if (isLastWeightComp) {
@@ -80,9 +80,9 @@ class LinearAreaCalculator {
                 } else if (constraints.getLinearSpace() == LinearSpace.WRAP_CONTENT) {
                     compX = container.getInsets().left;
                 } else if (constraints.getLinearSpace() == LinearSpace.WRAP_CENTER_CONTENT) {
-                    compX = (availableContainerDimen.width - compW) / 2.0d;
+                    compX += (availableContainerDimen.width - compW) / 2.0d;
                 } else {
-                    compX = (availableContainerDimen.width - compW);
+                    compX += (availableContainerDimen.width - compW);
                 }
 
                 compY = index == 0 ? container.getInsets().top : bounds[index - 1].getY() + bounds[index - 1].getHeight() + property.getGap();

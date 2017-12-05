@@ -2,14 +2,18 @@ package com.mommoo.flat.layout.linear;
 
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.flat.image.FlatImagePanel;
+import com.mommoo.flat.image.ImageOption;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 import com.mommoo.flat.text.label.FlatLabel;
 import com.mommoo.flat.text.textarea.alignment.FlatHorizontalAlignment;
 import com.mommoo.util.FontManager;
+import com.mommoo.util.ImageManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class Example {
@@ -83,9 +87,13 @@ public class Example {
 
     private static class LinearLayoutPanel3 extends JPanel{
         private LinearLayoutPanel3(){
+            Component comp = new FlatImagePanel(ImageManager.LION, ImageOption.MATCH_PARENT);
+            comp.setPreferredSize(new Dimension(100,100));
             setLayout(new LinearLayout(Orientation.VERTICAL, 30, Alignment.CENTER));
+            setBorder(new EmptyBorder(30,30,30,30));
             add(createColorRect(Color.RED, "1"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
-            add(createColorRect(Color.BLUE, "2"), new LinearConstraints(LinearSpace.WRAP_END_CONTENT));
+            add(comp, new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+            add(createColorRect(Color.BLUE, "2"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
         }
     }
 }
