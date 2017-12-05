@@ -1,19 +1,22 @@
 package com.mommoo.flat.layout.linear;
 
 
+import com.mommoo.flat.layout.exception.MismatchException;
 import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.text.textarea.FlatTextArea;
-import com.mommoo.util.ComponentUtils;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
-public class LinearLayout implements LayoutManager2, Serializable {
+public class LinearLayout implements LinearLayoutProperty, LayoutManager2, Serializable {
     private Orientation orientation;
-    private final LinearSpaceInspector SPACE_INSPECTOR = new LinearSpaceInspector();
     private Alignment alignment;
-
     private int gap;
+    private final Validator VALIDATOR = new Validator();
+    private final ConstraintsFinder FINDER = new ConstraintsFinder();
+    private final LinearAreaCalculator CALCULATOR = new LinearAreaCalculator();
+    private int weightSum;
 
     public LinearLayout(){
         this(Orientation.HORIZONTAL, 10, Alignment.START);
@@ -120,8 +123,10 @@ public class LinearLayout implements LayoutManager2, Serializable {
     @Override
     public void addLayoutComponent(Component comp, Object constraints) {
         synchronized (comp.getTreeLock()) {
-            if (!(constraints instanceof LinearConstraints)) return;
-            SPACE_INSPECTOR.setLinearConstraints(comp, ((LinearConstraints) constraints).clone());
+            if (constraints instanceof LinearConstraints) {
+                LinearConstraints linearConstraints = ((LinearConstraints) constraints).clone();
+                FINDER.put(comp, linearConstraints);
+            }
         }
     }
 
@@ -133,57 +138,21 @@ public class LinearLayout implements LayoutManager2, Serializable {
     @Override
     public void removeLayoutComponent(Component comp) {
         synchronized (comp.getTreeLock()) {
-            SPACE_INSPECTOR.removeComponent(comp);
+            FINDER.remove(comp);
         }
     }
 
     @Override
-    public void layoutContainer(Container parent) {
-        synchronized (parent.getTreeLock()) {
-            SPACE_INSPECTOR.setData(parent, orientation, gap);
-
-            int moveX = 0, moveY = 0;
-
-            Dimension availableSize = ComponentUtils.getAvailableSize(parent);
-
-            Rectangle[] boundsArray = SPACE_INSPECTOR.getProperCompBoundsArray();
-
-            int lastIndex = boundsArray.length - 1;
-
-            if (lastIndex < 0) return;
-
-            int occupiedWidth  = lastIndex > 0 ? boundsArray[lastIndex].x + boundsArray[lastIndex].width : boundsArray[0].width;
-            int occupiedHeight = lastIndex > 0 ? boundsArray[lastIndex].y + boundsArray[lastIndex].height : boundsArray[0].height;
-
-            switch(alignment){
-                case START: break;
-
-                case CENTER :
-                    if (orientation == Orientation.HORIZONTAL){
-                        moveX = (availableSize.width - occupiedWidth)/2;
-                    } else {
-                        moveY = (availableSize.height - occupiedHeight)/2;
-                    }
-                    break;
-
-                    case END :
-                    if (orientation == Orientation.HORIZONTAL){
-                        moveX = (availableSize.width - occupiedWidth);
-                    } else {
-                        moveY = (availableSize.height - occupiedHeight);
-                    }
-                    break;
-            }
+    public void layoutContainer(Container container) {
+        synchronized (container.getTreeLock()) {
+            VALIDATOR.validate();
+            Rectangle2D.Double[] bounds = CALCULATOR.getBounds(this, container, FINDER);
 
             int index = 0;
-            for (Component comp : parent.getComponents()){
-                Rectangle bound = boundsArray[index++];
-                bound.x += moveX;
-                bound.y += moveY;
-                comp.setBounds(bound);
+            for (Component comp : container.getComponents()){
+                comp.setBounds(bounds[index++].getBounds());
                 validateCompIfFlatTextArea(comp);
             }
-
         }
     }
 
@@ -218,16 +187,46 @@ public class LinearLayout implements LayoutManager2, Serializable {
     }
 
     public int getWeightSum(){
-        return SPACE_INSPECTOR.getWeightSum();
+        return weightSum;
     }
 
     public void setWeightSum(int weightSum){
         if (weightSum <= 0){
             throw new IllegalArgumentException("weightSum can not smaller than zero value");
         }
-        SPACE_INSPECTOR
-                .setAutoWeightSum(false)
-                .setWeightSum(weightSum);
+
+        this.weightSum = weightSum;
+        this.VALIDATOR.setAutoWeightSum(false);
+    }
+
+
+    private class Validator {
+        private boolean isAutoWeightSum = true;
+
+        private void validate(){
+            validateWeightSumIfNotAuto();
+            sumWeightsIfAutoMode();
+        }
+
+        private void validateWeightSumIfNotAuto(){
+            if (! isAutoWeightSum &&  FINDER.getWeightSum() > weightSum) {
+                try {
+                    throw new MismatchException();
+                } catch (MismatchException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void sumWeightsIfAutoMode(){
+            if (isAutoWeightSum) {
+                weightSum = FINDER.getWeightSum();
+            }
+        }
+
+        private void setAutoWeightSum(boolean autoWeightSum){
+            this.isAutoWeightSum = autoWeightSum;
+        }
     }
 }
 

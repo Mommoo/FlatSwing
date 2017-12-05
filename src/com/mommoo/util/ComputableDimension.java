@@ -26,6 +26,17 @@ public class ComputableDimension extends Dimension{
     }
 
     public static void main(String[] args){
+        double weightW = 340d/300d;
+        double weightH = 340d/300d;
+
+        int one = (int)(weightW * 70);
+        int two = (int)(weightW * 130);
+        int three = (int) (weightW * 100);
+
+        System.out.println(one+","+two+","+three);
+        System.out.println(one+two+three);
+        System.out.println(weightW * 300d);
+
         System.out.println(new ComputableDimension(100,100)
                 .setMinimumSize(110,110)
                 .setMaximumSize(150,150)
@@ -61,6 +72,8 @@ public class ComputableDimension extends Dimension{
         getValidDimension();
     }
 
+
+
     public ComputableDimension setMinimumSize(int width, int height){
         minimumWidth = width;
         minimumHeight = height;
@@ -87,6 +100,36 @@ public class ComputableDimension extends Dimension{
 
     public ComputableDimension setMaximumSize(int size){
         return setMaximumSize(size, size);
+    }
+
+    public ComputableDimension setDimension(double width, double height) {
+        super.setSize(width, height);
+        getValidDimension();
+        return this;
+    }
+
+    public ComputableDimension setDimension(Dimension d) {
+        super.setSize(d);
+        getValidDimension();
+        return this;
+    }
+
+    public ComputableDimension setDimension(int width, int height) {
+        super.setSize(width, height);
+        getValidDimension();
+        return this;
+    }
+
+    public ComputableDimension setDimension(Dimension2D d) {
+        super.setSize(d);
+        getValidDimension();
+        return this;
+    }
+
+    public ComputableDimension setDimension(int size){
+        super.setSize(size, size);
+        getValidDimension();
+        return this;
     }
 
     public ComputableDimension addDimension(int width, int height){
@@ -136,6 +179,8 @@ public class ComputableDimension extends Dimension{
         this.height /= height;
         return getValidDimension();
     }
+
+//    public ComputableDimension divDimesion
 
     public ComputableDimension divDimension(Dimension dimen){
         return divDimension(dimen.width, dimen.height);

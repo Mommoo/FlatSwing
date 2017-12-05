@@ -5,9 +5,7 @@ import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
 import com.mommoo.flat.layout.linear.constraints.LinearSpace;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.io.*;
 
 public class Example {
 
@@ -17,13 +15,7 @@ public class Example {
         frame.setResizable(true);
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
-//        frame.getContainer().add(new LinearLayoutPanel3());
-        JPanel panel = new JPanel(new LinearLayout(Orientation.VERTICAL, Alignment.CENTER));
-        panel.setBackground(Color.RED);
-        JButton button = new JButton("1");
-        panel.add(button, new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
-        frame.getContainer().setLayout(new LinearLayout(Orientation.HORIZONTAL, Alignment.CENTER));
-        frame.getContainer().add(panel, new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+        frame.getContainer().add(new LinearLayoutPanel2());
         frame.show();
     }
 
@@ -43,9 +35,9 @@ public class Example {
         }
 
         private void addComponent(){
-            add(createColorRect(Color.RED, "FIRST"), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
-            add(createColorRect(Color.GREEN, "SECOND"), new LinearConstraints().setWeight(3).setLinearSpace(LinearSpace.MATCH_PARENT));
-            add(createColorRect(Color.YELLOW, "THIRD"), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
+            add(createColorRect(Color.RED, "FIRST"), new LinearConstraints().setWeight(349).setLinearSpace(LinearSpace.MATCH_PARENT));
+            add(createColorRect(Color.GREEN, "SECOND"), new LinearConstraints().setWeight(316).setLinearSpace(LinearSpace.MATCH_PARENT));
+            add(createColorRect(Color.YELLOW, "THIRD"), new LinearConstraints().setWeight(441).setLinearSpace(LinearSpace.MATCH_PARENT));
         }
     }
 
@@ -88,9 +80,9 @@ public class Example {
 
     private static class LinearLayoutPanel3 extends JPanel{
         private LinearLayoutPanel3(){
-            setLayout(new LinearLayout(30,Alignment.CENTER));
-            add(createColorRect(Color.RED, "1"));
-            add(createColorRect(Color.BLUE, "2"));
+            setLayout(new LinearLayout(Orientation.VERTICAL, 30, Alignment.CENTER));
+            add(createColorRect(Color.RED, "1"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+            add(createColorRect(Color.BLUE, "2"), new LinearConstraints(LinearSpace.WRAP_END_CONTENT));
         }
     }
 }
