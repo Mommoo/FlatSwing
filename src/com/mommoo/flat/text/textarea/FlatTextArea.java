@@ -10,8 +10,6 @@ import com.mommoo.util.FontManager;
 import com.mommoo.util.RXTextUtilities;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -31,7 +29,6 @@ public class FlatTextArea extends JTextPane{
     private int lineCount = 1;
     private int preferredWidth = - 1;
 
-    private boolean isNeedToCalculate = true;
     private boolean lineWrap;
     private boolean wrapStyleWord;
 
@@ -60,22 +57,24 @@ public class FlatTextArea extends JTextPane{
             frame.setLocationOnScreenCenter();
 
             FlatTextArea area = new FlatTextArea();
-            area.setHorizontalAlignment(FlatHorizontalAlignment.CENTER);
-            area.setVerticalAlignment(FlatVerticalAlignment.BOTTOM);
+//            area.setHorizontalAlignment(FlatHorizontalAlignment.CENTER);
+//            area.setVerticalAlignment(FlatVerticalAlignment.BOTTOM);
             area.setOpaque(true);
             area.setBackground(Color.RED);
             area.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
             area.setCaretWidth(4);
             area.setSelectionColor(Color.BLUE);
             area.setText("This is a Flexiable TextArea!!\n\n when no have space to print text, jump next line automatically");
-            area.setCaretColor(Color.PINK);
-            area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+            area.setCaretColor(Color.BLUE);
+//            area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
             area.setLineWrap(true);
-            area.setWrapStyleWord(true);
+            area.setWrapStyleWord(false);
 //            FlatScrollPane pane = new FlatScrollPane(area);
             JScrollPane pane = new JScrollPane(area);
-            frame.getContainer().add(pane);
-//            frame.getContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+
+            frame.getContainer().add(area);
+            frame.getContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
             frame.show();
 
         });
@@ -86,50 +85,13 @@ public class FlatTextArea extends JTextPane{
         setCaret(new FlatCaret());
         setLineWrap(true);
         setWrapStyleWord(true);
-        getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-
-            private void update(){
-                isNeedToCalculate = true;
-                repaint();
-            }
-        });
     }
 
-    @Override
-    public void paint(Graphics g) {
-        if (isNeedToCalculate){
-            isNeedToCalculate = false;
-            setPreferredWidth(getAvailableWidth());
-        }
-
-        super.paint(g);
-    }
-
-    public Dimension setPreferredWidth(int width){
+    public void setPreferredWidth(int width){
         ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(width);
         preferredDimension = contentsBounds.getDimension();
         lineCount = contentsBounds.getLineCount();
         super.setPreferredSize(preferredDimension);
-
-        return preferredDimension;
-    }
-
-    public Dimension getContentsBounds(int width){
-        return contentsSizeCalculator.getBounds2(width).getDimension();
     }
 
     private int getAvailableWidth() {
@@ -177,10 +139,6 @@ public class FlatTextArea extends JTextPane{
             return userWantedDimension;
         }
 
-        if (preferredDimension == null){
-            setPreferredWidth(getAvailableWidth());
-        }
-
         if (preferredWidth != -1){
             Insets insets = getInsets();
             ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(preferredWidth - insets.left - insets.right);
@@ -188,8 +146,10 @@ public class FlatTextArea extends JTextPane{
             /* fix col width */
             preferredDimension.width = preferredWidth;
             lineCount = contentsBounds.getLineCount();
-        }
 
+            return preferredDimension;
+        }
+        setPreferredWidth(getAvailableWidth());
         return preferredDimension;
     }
 
@@ -242,12 +202,6 @@ public class FlatTextArea extends JTextPane{
 
         StyleConstants.setLineSpacing(ATTRIBUTE_SET, lineSpacing);
         getStyledDocument().setParagraphAttributes(0, Integer.MAX_VALUE, ATTRIBUTE_SET, true);
-    }
-
-    @Deprecated
-    public void setTextAlignment(FlatTextAlignment alignment) {
-        StyleConstants.setAlignment(ATTRIBUTE_SET, alignment.ordinal());
-        setParagraphAttributes(ATTRIBUTE_SET, true);
     }
 
     @Deprecated
@@ -400,20 +354,6 @@ public class FlatTextArea extends JTextPane{
             Dimension viewDimension = new ComputableDimension(width <= 0 ? autoResizeHandler.getContentsFitSize() : autoResizeHandler.getContentsFitSize(width))
                     .setMinimumSize(10, 10)
                     .addDimension(insets.left + insets.right, insets.top + insets.bottom);
-
-            Component graphicBuffer = getGraphicBuffer(viewDimension);
-            graphicBuffer.paint(createGraphics(viewDimension));
-
-            int lineCount = RXTextUtilities.getWrappedLines((JTextArea) graphicBuffer);
-            int height = getContentsLineHeight(lineCount) + getInsets().top + getInsets().bottom;
-
-            return new ContentsBounds(viewDimension.width, height, lineCount);
-        }
-
-        public ContentsBounds getBounds2(int width) {
-
-            Dimension viewDimension = new ComputableDimension(width)
-                    .setMinimumSize(10, 10);
 
             Component graphicBuffer = getGraphicBuffer(viewDimension);
             graphicBuffer.paint(createGraphics(viewDimension));

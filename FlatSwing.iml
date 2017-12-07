@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="filters-1.0" level="project" />
     <orderEntry type="library" name="src" level="project" />
+    <orderEntry type="library" name="javassist" level="project" />
   </component>
 </module>
