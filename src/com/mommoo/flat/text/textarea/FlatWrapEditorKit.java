@@ -121,8 +121,8 @@ class FlatWrapEditorKit extends StyledEditorKit {
                     return;
 
                 case CENTER:
-                    //여기를 컨텐츠의 프리펄 사이즈를 가져오면 안되구... 글자의 크기를 가져와야 한다...ㅇㅋ?
                     offset = (editorListener.getViewHeight() - editorListener.getContentsHeight()) / 2;
+                    System.out.println(editorListener.getViewHeight() +"," + editorListener.getContentsHeight());
                     break;
 
                 case BOTTOM:

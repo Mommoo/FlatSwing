@@ -10,6 +10,8 @@ import com.mommoo.util.FontManager;
 import com.mommoo.util.RXTextUtilities;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -31,6 +33,8 @@ public class FlatTextArea extends JTextPane{
 
     private boolean lineWrap;
     private boolean wrapStyleWord;
+
+    private boolean isNeedToVerticalCalculate;
 
     private FlatVerticalAlignment flatVerticalAlignment = FlatVerticalAlignment.TOP;
 
@@ -57,8 +61,9 @@ public class FlatTextArea extends JTextPane{
             frame.setLocationOnScreenCenter();
 
             FlatTextArea area = new FlatTextArea();
-//            area.setHorizontalAlignment(FlatHorizontalAlignment.CENTER);
-//            area.setVerticalAlignment(FlatVerticalAlignment.BOTTOM);
+            area.setHorizontalAlignment(FlatHorizontalAlignment.CENTER);
+            area.setVerticalAlignment(FlatVerticalAlignment.CENTER);
+            area.setPreferredSize(new Dimension(300,300));
             area.setOpaque(true);
             area.setBackground(Color.RED);
             area.setFont(FontManager.getNanumGothicFont(Font.BOLD, 20));
@@ -68,13 +73,13 @@ public class FlatTextArea extends JTextPane{
             area.setCaretColor(Color.BLUE);
 //            area.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
             area.setLineWrap(true);
-            area.setWrapStyleWord(false);
+            area.setWrapStyleWord(true);
 //            FlatScrollPane pane = new FlatScrollPane(area);
             JScrollPane pane = new JScrollPane(area);
 
-
+            frame.getContainer().setLayout(new FlowLayout());
             frame.getContainer().add(area);
-            frame.getContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
             frame.show();
 
         });
@@ -85,7 +90,30 @@ public class FlatTextArea extends JTextPane{
         setCaret(new FlatCaret());
         setLineWrap(true);
         setWrapStyleWord(true);
+        getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            private void update(){
+                isNeedToVerticalCalculate = true;
+                repaint();
+            }
+        });
     }
+
+
 
     public void setPreferredWidth(int width){
         ContentsBounds contentsBounds = contentsSizeCalculator.getBounds(width);
@@ -131,6 +159,16 @@ public class FlatTextArea extends JTextPane{
         StyleConstants.setForeground(ATTRIBUTE_SET, fg);
 
         setParagraphAttributes(ATTRIBUTE_SET, true);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        /* need to calculate vertical alignment data setting */
+        if(isNeedToVerticalCalculate) {
+            isNeedToVerticalCalculate = false;
+            setPreferredWidth(getAvailableWidth());
+        }
+        super.paint(g);
     }
 
     @Override

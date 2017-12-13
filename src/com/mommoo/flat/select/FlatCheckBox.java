@@ -48,7 +48,7 @@ public class FlatCheckBox extends FlatPanel {
 		return (FlatLabel) getComponent("guideLabel");
 	}
 
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args){
 		FlatCheckBox flatCheckBox = new FlatCheckBox("Beautiful Check Box1");
 		flatCheckBox.setAnchored(true);
 		flatCheckBox.setChecked(true);

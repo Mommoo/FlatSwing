@@ -1,7 +1,14 @@
 package com.mommoo.flat.component;
 
+import com.mommoo.flat.frame.FlatFrame;
+import com.mommoo.flat.layout.linear.LinearLayout;
+import com.mommoo.flat.layout.linear.constraints.LinearConstraints;
+import com.mommoo.flat.layout.linear.constraints.LinearSpace;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -210,5 +217,23 @@ public class FlatPanel extends JPanel {
     public void removeAll() {
         COMPONENT_MAP.clear();
         super.removeAll();
+    }
+    private static JPanel createColorPanel(Color color) {
+        JPanel colorPanel = new JPanel();
+        colorPanel.setOpaque(true);
+        colorPanel.setBackground(color);
+        return colorPanel;
+    }
+    public static void main(String[] args){
+        FlatFrame frame = new FlatFrame();
+        frame.setSize(500,500);
+        frame.setLocationOnScreenCenter();
+        frame.getContainer().setLayout(new BorderLayout());
+        JPanel panel = new JPanel(new LinearLayout(0));
+        panel.add(new JButton("버튼"), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+        panel.add(createColorPanel(Color.GREEN), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+        frame.getContainer().add(panel);
+        panel.addMouseListener(new MouseClickAdapter(comp->System.out.println("onClick!!")));
+        frame.show();
     }
 }

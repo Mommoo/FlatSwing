@@ -52,6 +52,7 @@ public class FlatTabPager {
             frame.setTitle("Tab Pager");
             frame.setLocationOnScreenCenter();
             frame.setSize(500,500);
+            frame.setResizable(true);
             FlatTabPager pager = new FlatTabPager();
             frame.getContainer().setLayout(new BorderLayout());
             frame.getContainer().add(pager.getView());
