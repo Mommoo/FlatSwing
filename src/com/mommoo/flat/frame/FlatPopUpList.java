@@ -150,4 +150,12 @@ public class FlatPopUpList {
     public void deSelect(){
         listView.deSelect();
     }
+
+    public Color getSelectionColor(){
+        return this.listView.getSelectionColor();
+    }
+
+    public void setSelectionColor(Color color) {
+        this.listView.setSelectionColor(color);
+    }
 }
