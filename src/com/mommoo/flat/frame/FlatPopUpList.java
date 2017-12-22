@@ -158,4 +158,12 @@ public class FlatPopUpList {
     public void setSelectionColor(Color color) {
         this.listView.setSelectionColor(color);
     }
+
+    public void setMenuText(int index, String menuTxt){
+        this.listView.getItem(index).setText(menuTxt);
+    }
+
+    public String getMenuText(int index) {
+        return this.listView.getItem(index).getText();
+    }
 }
