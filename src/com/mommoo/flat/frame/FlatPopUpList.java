@@ -3,6 +3,7 @@ package com.mommoo.flat.frame;
 import com.mommoo.flat.frame.popup.OnItemClickListener;
 import com.mommoo.flat.list.FlatListView;
 import com.mommoo.flat.text.label.FlatLabel;
+import com.mommoo.util.FontManager;
 import com.mommoo.util.ScreenManager;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class FlatPopUpList {
-    private static final ScreenManager screenManager =ScreenManager.getInstance();
+    private static final ScreenManager screenManager = ScreenManager.getInstance();
     private static final int PADDING = screenManager.dip2px(10);
 
     private final CommonJFrame FRAME = new CommonJFrame();
@@ -19,6 +20,8 @@ public class FlatPopUpList {
     private FlatListView<FlatLabel> listView = new FlatListView<>();
 
     private boolean isDisposeAfterSelection;
+
+    private Font menuFont = FontManager.getNanumGothicFont(Font.PLAIN, screenManager.dip2px(10));
 
     public FlatPopUpList(){
         initFrame();
@@ -68,6 +71,7 @@ public class FlatPopUpList {
 
     private FlatLabel createLabel(String text){
         FlatLabel flatLabel = new FlatLabel(text);
+        flatLabel.setFont(menuFont);
         flatLabel.setBorder(BorderFactory.createEmptyBorder(PADDING/2,PADDING,PADDING/2,PADDING));
         return flatLabel;
     }
@@ -165,5 +169,14 @@ public class FlatPopUpList {
 
     public String getMenuText(int index) {
         return this.listView.getItem(index).getText();
+    }
+
+    public Font getMenuFont() {
+        return this.menuFont;
+    }
+
+    public void setMenuFont(Font font) {
+        this.menuFont = font;
+        this.listView.getItems().forEach(item -> item.setFont(font));
     }
 }
