@@ -28,11 +28,13 @@ class CommonTitleBar extends FlatPanel {
 	private final TitleLabel TITLE_LABEL = new TitleLabel(TITLE_TEXT_FONT_SIZE);
 	private final NavigationControlPanel controlPanel = new NavigationControlPanel(3*TITLE_BAR_HEIGHT/5);
 
-	private FlatImagePanel mainIcon;
+	private FlatImagePanel mainIcon = createMainIcon();
 
 	CommonTitleBar() {
-		init();
-		createMainIcon();
+		setLayout(new LinearLayout(15));
+		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
+		setOpaque(true);
+		setBackground(Color.LIGHT_GRAY);
 		add(TITLE_LABEL, new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 		add(controlPanel, new LinearConstraints().setLinearSpace(LinearSpace.WRAP_CENTER_CONTENT));
 	}
@@ -51,10 +53,11 @@ class CommonTitleBar extends FlatPanel {
 		});
 	}
 
-	private void createMainIcon(){
+	private FlatImagePanel createMainIcon(){
 		Dimension mainIconDimen = new Dimension(3*TITLE_BAR_HEIGHT/5, 3*TITLE_BAR_HEIGHT/5);
-		mainIcon = new FlatImagePanel();
+		FlatImagePanel mainIcon = new FlatImagePanel();
 		mainIcon.setPreferredSize(mainIconDimen);
+		return mainIcon;
 	}
 
 	void setTitle(String title){
@@ -63,13 +66,6 @@ class CommonTitleBar extends FlatPanel {
 	
 	String getTitle(){
 		return TITLE_LABEL.getText();
-	}
-
-	private void init(){
-		setOpaque(true);
-		setLayout(new LinearLayout(15));
-		setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_SIDE_PADDING,0,TITLE_BAR_SIDE_PADDING));
-		setBackground(Color.LIGHT_GRAY);
 	}
 
 	void removeIconImage(){

@@ -47,65 +47,63 @@ public class FlatTabPager {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            FlatFrame frame = new FlatFrame();
-            frame.setTitle("Tab Pager");
-            frame.setLocationOnScreenCenter();
-            frame.setSize(500,500);
-            frame.setResizable(true);
-            FlatTabPager pager = new FlatTabPager();
-            frame.getContainer().setLayout(new BorderLayout());
-            frame.getContainer().add(pager.getView());
+        FlatFrame frame = new FlatFrame();
+        frame.setTitle("Tab Pager");
+        frame.setLocationOnScreenCenter();
+        frame.setSize(500,500);
+        frame.setResizable(true);
+        FlatTabPager pager = new FlatTabPager();
+        frame.getContainer().setLayout(new LinearLayout());
+        frame.getContainer().add(pager.getView(), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
 
-            JPanel firstContentView = new JPanel();
-            firstContentView.setBackground(Color.YELLOW);
-            firstContentView.add(new JButton("first page Button"));
+        JPanel firstContentView = new JPanel();
+        firstContentView.setBackground(Color.YELLOW);
+        firstContentView.add(new JButton("first page Button"));
 
-            JPanel secondContentView = new JPanel();
-            secondContentView.add(new JLabel("second page label"));
+        JPanel secondContentView = new JPanel();
+        secondContentView.add(new JLabel("second page label"));
 
-            JPanel thirdContentView = new JPanel();
-            thirdContentView.setLayout(new LinearLayout(Orientation.VERTICAL, 0, Alignment.CENTER));
-            thirdContentView.add(new JButton("third page button"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
+        JPanel thirdContentView = new JPanel();
+        thirdContentView.setLayout(new LinearLayout(Orientation.VERTICAL, 0, Alignment.CENTER));
+        thirdContentView.add(new JButton("third page button"), new LinearConstraints(LinearSpace.WRAP_CENTER_CONTENT));
 
-            JPanel forthContentView = new JPanel();
-            forthContentView.setLayout(new GridLayout(2,2, 20,20));
-            forthContentView.setBorder(BorderFactory.createEmptyBorder(20,50,20,50));
-            forthContentView.add(new FlatImagePanel(ImageManager.LION, ImageOption.MATCH_PARENT));
-            forthContentView.add(new FlatImagePanel(ImageManager.PIG, ImageOption.MATCH_PARENT));
-            forthContentView.add(new FlatImagePanel(ImageManager.SHEEP, ImageOption.MATCH_PARENT));
-            forthContentView.add(new FlatImagePanel(ImageManager.TIGER, ImageOption.MATCH_PARENT));
+        JPanel forthContentView = new JPanel();
+        forthContentView.setLayout(new GridLayout(2,2, 20,20));
+        forthContentView.setBorder(BorderFactory.createEmptyBorder(20,50,20,50));
+        forthContentView.add(new FlatImagePanel(ImageManager.LION, ImageOption.MATCH_PARENT));
+        forthContentView.add(new FlatImagePanel(ImageManager.PIG, ImageOption.MATCH_PARENT));
+        forthContentView.add(new FlatImagePanel(ImageManager.SHEEP, ImageOption.MATCH_PARENT));
+        forthContentView.add(new FlatImagePanel(ImageManager.TIGER, ImageOption.MATCH_PARENT));
 
-            pager
-                    .setTitle("Pager Test")
-                    .setAnimationOn(true)
-                    .setAnimationDuration(300)
-                    .setTabAlignment(FlatTabAlignment.CENTER)
-                    .setFlatPageColor(Color.PINK, Color.BLACK)
-                    .setOffset(2)
-                    .setAnimationOn(true)
-                    .setScreenOffPageLoad(3)
-                    .addPage("Image", new FlatPage(firstContentView))
-                    .addPage("MP3", new FlatPage(secondContentView))
-                    .addPage("Calendar", new FlatPage(thirdContentView))
-                    .addPage("Person Name", new FlatPage(forthContentView));
+        pager
+                .setTitle("Pager Test")
+                .setAnimationOn(true)
+                .setAnimationDuration(300)
+                .setTabAlignment(FlatTabAlignment.CENTER)
+                .setFlatPageColor(Color.PINK, Color.BLACK)
+                .setOffset(2)
+                .setAnimationOn(true)
+                .setScreenOffPageLoad(3)
+                .addPage("Image", new FlatPage(firstContentView))
+                .addPage("MP3", new FlatPage(secondContentView))
+                .addPage("Calendar", new FlatPage(thirdContentView))
+                .addPage("Person Name", new FlatPage(forthContentView));
 
-            pager.setOnPageSelectedListener(pageIndex -> {
-                System.out.println("selected pageIndex : " + pageIndex);
-                System.out.println("selected Tab       : " + pager.getTabText(pageIndex));
+        pager.setOnPageSelectedListener(pageIndex -> {
+            System.out.println("selected pageIndex : " + pageIndex);
+            System.out.println("selected Tab       : " + pager.getTabText(pageIndex));
 
-                if (pageIndex == 3){
-                    pager.setFlatPageColor(Color.RED, Color.BLACK);
-                }
-            });
+            if (pageIndex == 3){
+                pager.setFlatPageColor(Color.RED, Color.BLACK);
+            }
+        });
 
-            pager.getPage("Calendar")
-                    .setDisableGuideText("NO ACTION")
-                    .setEnable(false);
+        pager.getPage("Calendar")
+                .setDisableGuideText("NO ACTION")
+                .setEnable(false);
 
 //            frame.pack();
-            frame.show();
-        });
+        frame.show();
     }
 
     private Component createTitleLabel() {

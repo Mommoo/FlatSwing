@@ -122,7 +122,6 @@ class FlatWrapEditorKit extends StyledEditorKit {
 
                 case CENTER:
                     offset = (editorListener.getViewHeight() - editorListener.getContentsHeight()) / 2;
-                    System.out.println(editorListener.getViewHeight() +"," + editorListener.getContentsHeight());
                     break;
 
                 case BOTTOM:

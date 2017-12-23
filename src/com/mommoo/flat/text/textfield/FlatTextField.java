@@ -42,6 +42,7 @@ public class FlatTextField extends FlatPanel {
 		add(createUnderLine(),                new LinearConstraints(LinearSpace.MATCH_PARENT));
 
 		setTextFieldFocusListener();
+
 	}
 
 	public FlatTextField(String text, boolean passwordMode){
@@ -216,6 +217,22 @@ public class FlatTextField extends FlatPanel {
 
 	public void setText(String text){
 		getTextFieldProxy().setText(text);
+	}
+
+	public Color getSelectionColor(){
+		return getTextField().getSelectionColor();
+	}
+
+	public void setSelectionColor(Color color) {
+		getTextField().setSelectionColor(color);
+	}
+
+	public void setSelectedTextColor(Color color) {
+		getTextField().setSelectedTextColor(color);
+	}
+
+	public Color getSelectedTextColor(Color color) {
+		return getTextField().getSelectedTextColor();
 	}
 
 	public void setTextFieldPadding(int top, int left, int bottom, int right){
