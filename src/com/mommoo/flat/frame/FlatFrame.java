@@ -85,6 +85,14 @@ public final class FlatFrame {
 	public Color getTitleColor(){
 		return TITLE_BAR.getTitleColor();
 	}
+
+	public Font getTitleFont(){
+		return TITLE_BAR.getTitleFont();
+	}
+
+	public void setTitleFont(Font font) {
+		TITLE_BAR.setTitleFont(font);
+	}
 	
 	public static int getTitleBarHeight(){
 		return CommonTitleBar.getTitleBarHeight();

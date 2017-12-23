@@ -99,6 +99,14 @@ class CommonTitleBar extends FlatPanel {
 		return TITLE_LABEL.getForeground();
 	}
 
+	Font getTitleFont(){
+		return TITLE_LABEL.getFont();
+	}
+
+	void setTitleFont(Font font) {
+		TITLE_LABEL.setFont(font);
+	}
+
 	void removeControlPanel(){
 		remove(controlPanel);
 	}

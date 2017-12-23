@@ -21,7 +21,7 @@ public class FlatPopUpList {
 
     private boolean isDisposeAfterSelection;
 
-    private Font menuFont = FontManager.getNanumGothicFont(Font.PLAIN, screenManager.dip2px(10));
+    private Font menuFont = FontManager.getNanumGothicFont(Font.PLAIN, screenManager.dip2px(8));
 
     public FlatPopUpList(){
         initFrame();
