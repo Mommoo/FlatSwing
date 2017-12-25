@@ -19,7 +19,6 @@ final class CommonJFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setShadowPane();
         setContentPane(createContentPane());
-        setTransparentBackground();
         setBorderLine(Color.GRAY, 1);
     }
 
@@ -77,71 +76,6 @@ final class CommonJFrame extends JFrame {
     private JPanel getShadowPane() {
         return (JPanel) super.getContentPane();
     }
-
-
-//    @Override
-//    public void setLocation(int x, int y) {
-//        super.setLocation(x - shadowDip, y - shadowDip);
-//    }
-//
-//    @Override
-//    public void setLocation(Point p) {
-//        this.setLocation(p.x, p.y);
-//    }
-
-//    @Override
-//    public Point getLocation() {
-//        return new Point(super.getLocation().x + shadowDip, super.getLocation().y + shadowDip);
-//    }
-//
-//    @Override
-//    public int getX() {
-//        return super.getX() + shadowDip;
-//    }
-//
-//    @Override
-//    public int getY() {
-//        return super.getY() + shadowDip;
-//    }
-//
-//    @Override
-//    public Point getLocationOnScreen() {
-//        Point locationOnScreen = super.getLocationOnScreen();
-//        locationOnScreen.x += shadowDip;
-//        locationOnScreen.y += shadowDip;
-//        return locationOnScreen;
-//    }
-
-//    @Override
-//    public Dimension getSize() {
-//        final Dimension PARENT_DIMENSION = super.getSize();
-//        return new Dimension(PARENT_DIMENSION.width - shadowDip * 2,
-//                PARENT_DIMENSION.height - shadowDip * 2);
-//    }
-
-//    @Override
-//    public int getWidth() {
-//        return super.getSize().width;
-//    }
-//
-//    @Override
-//    public int getHeight() {
-//        return super.getSize().height;
-//    }
-
-    private void setTransparentBackground() {
-        setBackground(ColorManager.getTransParentColor());
-    }
-
-//    @Override
-//    public void setSize(int width, int height) {
-//        super.setSize(width + shadowDip * 2, height + shadowDip * 2);
-//    }
-//
-//    @Override
-//    public void setSize(Dimension d) {
-//        super.setSize(d.width + shadowDip * 2, d.height + shadowDip * 2);
-//    }
 
     @Override
     public void setResizable(boolean reSizable) {

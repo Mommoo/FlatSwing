@@ -2,8 +2,6 @@
   <library name="src">
     <CLASSES />
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$PROJECT_DIR$/lib/swingx.jar!/swingx/src" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
