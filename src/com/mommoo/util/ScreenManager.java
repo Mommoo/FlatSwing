@@ -18,6 +18,9 @@ public class ScreenManager {
 
 	/* To synchronize screen resolution */
 	private static void readyToGetAccurateResolution(){
+		/* At several graphics environments , sometimes JFrame graphics shutdown because of transparent background color
+		 * This vm options prevent shutdown graphics  */
+		System.setProperty("sun.java2d.opengl","true");
 		Toolkit.getDefaultToolkit().getScreenResolution();
 	}
 

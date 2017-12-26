@@ -12,12 +12,6 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 final class CommonJFrame extends JFrame {
-    /* At several graphics environments , sometimes JFrame graphics shutdown because of transparent background color
-     * This vm options prevent shutdown graphics  */
-    static{
-        System.setProperty("sun.java2d.opengl","True");
-    }
-
     private static final int SHADOW_WIDTH = ScreenManager.getInstance().dip2px(20);
     private final ComponentResizer COMPONENT_RE_SIZER = createComponentResizer();
 
@@ -27,6 +21,7 @@ final class CommonJFrame extends JFrame {
         setBackground(ColorManager.getTransParentColor());
         setShadowPane();
         setContentPane(createContentPane());
+        setBorderLine(Color.GRAY, 1);
     }
 
     private static JPanel createContentPane() {
