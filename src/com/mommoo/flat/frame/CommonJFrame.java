@@ -5,21 +5,28 @@ import com.mommoo.helper.ComponentResizer;
 import com.mommoo.util.ColorManager;
 import com.mommoo.util.ComputableDimension;
 import com.mommoo.util.ScreenManager;
+import sun.awt.SunToolkit;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
 final class CommonJFrame extends JFrame {
+    /* At several graphics environments , sometimes JFrame graphics shutdown because of transparent background color
+     * This vm options prevent shutdown graphics  */
+    static{
+        System.setProperty("sun.java2d.opengl","True");
+    }
+
     private static final int SHADOW_WIDTH = ScreenManager.getInstance().dip2px(20);
     private final ComponentResizer COMPONENT_RE_SIZER = createComponentResizer();
 
     CommonJFrame() {
         setUndecorated(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setBackground(ColorManager.getTransParentColor());
         setShadowPane();
         setContentPane(createContentPane());
-        setBorderLine(Color.GRAY, 1);
     }
 
     private static JPanel createContentPane() {
@@ -35,7 +42,7 @@ final class CommonJFrame extends JFrame {
             jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             jf.setSize(500, 500);
             jf.setLocation(300, 300);
-            jf.setLayout(new BorderLayout());
+            jf.setLayout(new FlowLayout());
             jf.setResizable(true);
             jf.setShadowWidth(10);
             jf.getContentPane().add(new JButton("BUTTON"));
@@ -53,7 +60,7 @@ final class CommonJFrame extends JFrame {
 
     private void setShadowPane() {
         JPanel shadowPane = new JPanel(new BorderLayout());
-        shadowPane.setOpaque(true);
+        shadowPane.setOpaque(false);
         shadowPane.setBackground(Color.WHITE);
         shadowPane.setBorder(new FlatShadowBorder(SHADOW_WIDTH));
         super.setContentPane(shadowPane);

@@ -42,7 +42,6 @@ public class FlatShadowBorder extends AbstractBorder {
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         Map<Position, Image> shadowMap = SHADOW_FINDER.get(SHADOW_SIZE);
-
         if (shadowMap == null){
             shadowMap = new HashMap<>();
 

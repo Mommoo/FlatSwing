@@ -73,6 +73,14 @@ public final class FlatFrame {
 	public void setTitle(String title){
 		TITLE_BAR.setTitle(title);
 	}
+
+	public String getProcessTitle(){
+		return COMMON_FRAME.getTitle();
+	}
+
+	public void setProcessTitle(String title) {
+		COMMON_FRAME.setTitle(title);
+	}
 	
 	public String getTitle(){
 		return TITLE_BAR.getTitle();
