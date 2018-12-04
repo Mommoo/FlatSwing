@@ -7,6 +7,9 @@ A beautiful Java Swing-Library made of flat design
   <img src='./Component.PNG' />
 </div>
 
+# Example Project
+<iframe width="893" height="642" src="https://www.youtube.com/embed/TxoaR8zoADw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 # License
 
 MIT License
