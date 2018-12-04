@@ -8,6 +8,7 @@ A beautiful Java Swing-Library made of flat design
 </div>
 
 # Example Project
+[see scheduler app](https://www.youtube.com/watch?v=TxoaR8zoADw&t=15s)
 
 # License
 
