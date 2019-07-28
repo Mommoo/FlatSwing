@@ -24,8 +24,17 @@ public class Example {
         frame.setResizable(true);
         frame.setTitle("Flat layout test example");
         frame.setLocationOnScreenCenter();
-        frame.getContainer().add(new LinearLayoutPanel3());
+        frame.getContainer().add(new LinearLayoutPanel4());
         frame.show();
+    }
+
+    private static class LinearLayoutPanel4 extends JPanel {
+        private LinearLayoutPanel4() {
+            setLayout(new LinearLayout(Orientation.VERTICAL, Alignment.CENTER));
+            add(new JButton("버튼"));
+            add(new JButton("버튼"));
+            add(new JButton("버튼"));
+        }
     }
 
     private static class LinearLayoutPanel extends JPanel {

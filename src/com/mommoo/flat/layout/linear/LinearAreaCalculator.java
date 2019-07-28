@@ -160,13 +160,15 @@ class LinearAreaCalculator {
             double moveY = 0d;
 
             if (remainH >= 0) {
-                moveY = remainH / 2d;
-            } else if (property.getAlignment() == Alignment.END) {
-                moveY = remainH;
-            }
+                if (property.getAlignment() == Alignment.CENTER) {
+                    moveY = remainH / 2d;
+                } else if (property.getAlignment() == Alignment.END) {
+                    moveY = remainH;
+                }
 
-            for (int i = 0; i < bounds.length; i++) {
-                bounds[i].y += moveY;
+                for (int i = 0; i < bounds.length; i++) {
+                    bounds[i].y += moveY;
+                }
             }
         }
 

@@ -9,10 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by mommoo on 2017-07-14.
@@ -230,7 +227,7 @@ public class FlatPanel extends JPanel {
         frame.setLocationOnScreenCenter();
         frame.getContainer().setLayout(new BorderLayout());
         JPanel panel = new JPanel(new LinearLayout(0));
-        panel.add(new JButton("버튼"), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+        panel.add(new FlatPanel(), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
         panel.add(createColorPanel(Color.GREEN), new LinearConstraints(1, LinearSpace.MATCH_PARENT));
         frame.getContainer().add(panel);
         panel.addMouseListener(new MouseClickAdapter(comp->System.out.println("onClick!!")));
