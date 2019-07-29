@@ -117,7 +117,7 @@ public class FlatImagePanel extends FlatPanel {
             image = resizedImage;
         }
 
-        g2d.clipRect(imageX, imageY, availableWidth, availableHeight);
+        g2d.clipRect(insets.left, insets.top, availableWidth, availableHeight);
         g2d.drawImage(image, imageX, imageY, null);
     }
 
