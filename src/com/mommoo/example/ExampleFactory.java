@@ -4,6 +4,7 @@ import com.mommoo.flat.button.FlatButton;
 import com.mommoo.flat.component.FlatPanel;
 import com.mommoo.flat.frame.FlatFrame;
 import com.mommoo.flat.image.FlatImagePanel;
+import com.mommoo.flat.image.ImageAlignment;
 import com.mommoo.flat.image.ImageOption;
 import com.mommoo.flat.layout.linear.LinearLayout;
 import com.mommoo.flat.layout.linear.Orientation;
@@ -61,6 +62,22 @@ public class ExampleFactory {
             panel.add(createPanelOfImages(ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
             panel.add(createPanelOfImages(ImageManager.CAT, ImageManager.DOG, ImageManager.FROG, ImageManager.TIGER, ImageManager.PANDA, ImageManager.SHEEP, ImageManager.LION, ImageManager.GIRIN, ImageManager.PIG), new LinearConstraints().setWeight(1).setLinearSpace(LinearSpace.MATCH_PARENT));
 
+            frame.show();
+        }
+
+        public static void example3() {
+            FlatFrame frame = createCommonFrame();
+            frame.setTitle("Example3 : Big Image Test");
+
+            JPanel panel = new JPanel(new LinearLayout(Orientation.VERTICAL));
+            FlatImagePanel imagePanel = new FlatImagePanel(ImageManager.BIG_IMAGE, ImageOption.MATCH_HEIGHT_KEEP_RATIO);
+            imagePanel.setHorizontalAlignment(ImageAlignment.CENTER);
+//            imagePanel.setVerticalAlignment(ImageAlignment.CENTER);
+            panel.add(imagePanel, new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+
+            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL));
+            frame.getContainer().add(panel, new LinearConstraints(1, LinearSpace.MATCH_PARENT));
+            frame.setSize(1000,200);
             frame.show();
         }
 

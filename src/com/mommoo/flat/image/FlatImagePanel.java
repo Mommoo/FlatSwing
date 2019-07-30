@@ -13,6 +13,8 @@ public class FlatImagePanel extends FlatPanel {
     private Image image;
     private Image resizedImage;
     private ImageOption option = ImageOption.BASIC_IMAGE_SIZE;
+    private ImageAlignment horizontalAlignment = ImageAlignment.START;
+    private ImageAlignment verticalAlignment = ImageAlignment.START;
 
     private MediaTracker mediaTracker = new MediaTracker(this);
 
@@ -29,7 +31,7 @@ public class FlatImagePanel extends FlatPanel {
     }
 
     public static void main(String[] args) {
-        ExampleFactory.FlatImagePanelExample.example2();
+        ExampleFactory.FlatImagePanelExample.example3();
     }
 
     public FlatImagePanel setImage(Image image, ImageOption option) {
@@ -54,6 +56,16 @@ public class FlatImagePanel extends FlatPanel {
         repaint();
     }
 
+    public void setHorizontalAlignment(ImageAlignment horizontalAlignment) {
+        this.horizontalAlignment = horizontalAlignment;
+        repaint();
+    }
+
+    public void setVerticalAlignment(ImageAlignment verticalAlignment) {
+        this.verticalAlignment = verticalAlignment;
+        repaint();
+    }
+
     @Override
     protected boolean isPaintingOrigin() {
         return true;
@@ -73,19 +85,10 @@ public class FlatImagePanel extends FlatPanel {
 
         Image image = this.image;
 
-        int imageX = insets.left;
-        int imageY = insets.top;
-
         int availableWidth = getWidth() - insets.left - insets.right;
         int availableHeight = getHeight() - insets.top - insets.bottom;
 
         if (option == ImageOption.BASIC_IMAGE_SIZE) {
-
-        } else if (option == ImageOption.BASIC_IMAGE_SIZE_CENTER) {
-
-            Dimension imageDimension = getImageDimension();
-            imageX += (availableWidth - imageDimension.width) / 2;
-            imageY += (availableHeight - imageDimension.height) / 2;
 
         } else {
 
@@ -117,6 +120,30 @@ public class FlatImagePanel extends FlatPanel {
             image = resizedImage;
         }
 
+        int imageX = insets.left;
+        int imageY = insets.top;
+
+        Dimension imageDimension = getImageDimension(image);
+
+        switch(horizontalAlignment) {
+            case CENTER:
+                imageX += ( availableWidth - imageDimension.width) / 2;
+                break;
+
+            case END:
+                imageX += availableWidth - imageDimension.width;
+                break;
+        }
+
+        switch(verticalAlignment) {
+            case CENTER:
+                imageY += ( availableHeight - imageDimension.height ) / 2;
+                break;
+
+            case END:
+                imageY += availableHeight - imageDimension.height;
+        }
+
         g2d.clipRect(insets.left, insets.top, availableWidth, availableHeight);
         g2d.drawImage(image, imageX, imageY, null);
     }
@@ -135,7 +162,7 @@ public class FlatImagePanel extends FlatPanel {
         return resizedImage;
     }
 
-    private Dimension getImageDimension() {
+    private Dimension getImageDimension(Image image) {
         ImageIcon imageIcon = new ImageIcon(image);
         return new Dimension(imageIcon.getIconWidth(), imageIcon.getIconHeight());
     }

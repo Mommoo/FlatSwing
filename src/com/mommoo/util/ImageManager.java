@@ -18,5 +18,5 @@ public class ImageManager {
     public static final Image SHEEP = Toolkit.getDefaultToolkit().getImage(ImageManager.class.getResource("/com/mommoo/resource/img/sheep.png"));
     public static final Image CAT = Toolkit.getDefaultToolkit().getImage(ImageManager.class.getResource("/com/mommoo/resource/img/cat.png"));
     public static final Image PIG = Toolkit.getDefaultToolkit().getImage(ImageManager.class.getResource("/com/mommoo/resource/img/pig.png"));
-
+    public static final Image BIG_IMAGE = Toolkit.getDefaultToolkit().getImage(ImageManager.class.getResource("/com/mommoo/resource/img/big_image.jpg"));
 }
