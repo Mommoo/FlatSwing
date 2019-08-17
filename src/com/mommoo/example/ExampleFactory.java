@@ -205,8 +205,6 @@ public class ExampleFactory {
         }
 
         public static void example2() {
-//            FlatFrame frame = createCommonFrame();
-//            frame.getContainer().setLayout(new FlowLayout());
             FlatFrame frame = new FlatFrame();
             frame.setTitle("Example2 : Basic Textfield");
             frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL, 1));
@@ -224,14 +222,35 @@ public class ExampleFactory {
 
         }
 
+        public static void example3() {
+            FlatFrame frame = new FlatFrame();
+            frame.setTitle("Example3 : Basic Textfield ( limit text length )");
+            frame.getContainer().setLayout(new LinearLayout(Orientation.VERTICAL, 1));
+
+            frame.getContainer().add(createTextField(10), new LinearConstraints(LinearSpace.MATCH_PARENT));
+            JPanel panel = new JPanel();
+            JButton button = new JButton("가나다");
+            panel.add(button);
+            button.setFont(FontManager.getNanumGothicFont(Font.BOLD, 50));
+            frame.getContainer().add(panel);
+            frame.getJFrame().pack();
+            frame.setLocationOnScreenCenter();
+            frame.show();
+
+        }
+
         private static Component createTextField(){
+            return createTextField(FlatTextField.NONE_LIMIT_TEXT_LENGTH);
+        }
+
+        private static Component createTextField(int limitTextLength){
 
             FlatTextField textField = new FlatTextField(false);
             textField.setIconImage(ImageManager.DOG);
             textField.setFont(FontManager.getNanumGothicFont(Font.BOLD, 16));
             textField.setTextFieldPadding(20,0,20,0);
             textField.setImagePadding(10);
-//            textField.setColumns(40);
+            textField.setLimitTextLength(limitTextLength);
             textField.setHint("I'm a Dog");
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(textField);

@@ -25,6 +25,7 @@ import java.util.List;
 public class FlatTextField extends FlatPanel {
 	private static final ScreenManager SCREEN = ScreenManager.getInstance();
 	private static final int DEFAULT_BORDER_WIDTH = 2;
+	public static final int NONE_LIMIT_TEXT_LENGTH = -1;
 
 	private int borderWidth = DEFAULT_BORDER_WIDTH;
 	private Color focusGainedColor = Color.PINK, focusLostColor = Color.LIGHT_GRAY;
@@ -43,6 +44,7 @@ public class FlatTextField extends FlatPanel {
 
 		setTextFieldFocusListener();
 
+		setHintForeground(Color.decode("#999999"));
 	}
 
 	public FlatTextField(String text, boolean passwordMode){
@@ -51,7 +53,7 @@ public class FlatTextField extends FlatPanel {
 	}
 
 	public static void main(String[] args){
-		ExampleFactory.FlatTextFieldExample.example2();
+		ExampleFactory.FlatTextFieldExample.example3();
 	}
 
 	private Component createUnderLine(){
@@ -88,6 +90,15 @@ public class FlatTextField extends FlatPanel {
 						if (getTextFieldProxy().getText().equals("")) getTextFieldProxy().setHint(getHint());
 					}
 				});
+	}
+
+	public void setLimitTextLength(int limitTextLength) {
+		limitTextLength = Math.max(NONE_LIMIT_TEXT_LENGTH, limitTextLength);
+		getTextFieldProxy().setLimitTextLength(limitTextLength);
+	}
+
+	public int getLimitTextLength() {
+		return getTextFieldProxy().getLimitTextLength();
 	}
 
 	public String getHint(){

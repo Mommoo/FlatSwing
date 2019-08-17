@@ -1,5 +1,6 @@
 package com.mommoo.flat.text.textfield.format;
 
+import com.mommoo.flat.text.textfield.FlatTextField;
 import com.mommoo.util.StringUtils;
 
 import javax.swing.text.AttributeSet;
@@ -11,6 +12,7 @@ public class FormattedDocument extends PlainDocument{
     private Set<FlatTextFormat> formatSet = new HashSet<>();
     private boolean isHintStatus;
     private StringBuilder stringBuilder = new StringBuilder();
+    private int limitTextLength = FlatTextField.NONE_LIMIT_TEXT_LENGTH;
 
     public List<FlatTextFormat> getFormatList() {
         return new ArrayList<>(formatSet);
@@ -26,6 +28,10 @@ public class FormattedDocument extends PlainDocument{
 
     @Override
     public void insertString(int offs, String string, AttributeSet a) throws BadLocationException {
+        if (limitTextLength > FlatTextField.NONE_LIMIT_TEXT_LENGTH && getLength() + string.length() > limitTextLength) {
+            string = string.substring(0, limitTextLength - getLength());
+        }
+
         if (isHintStatus) {
             super.insertString(offs, string, a);
             return;
@@ -38,6 +44,14 @@ public class FormattedDocument extends PlainDocument{
         }
 
         super.insertString(offs, stringBuilder.toString(), a);
+    }
+
+    public void setLimitTextLength(int limitTextLength) {
+        this.limitTextLength = limitTextLength;
+    }
+
+    public int getLimitTextLength() {
+        return this.limitTextLength;
     }
 
     private void appendTextFitFormat(char c){

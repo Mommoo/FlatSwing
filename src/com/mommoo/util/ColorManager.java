@@ -8,7 +8,7 @@ import java.awt.*;
 public class ColorManager {
     private ColorManager(){}
 
-    private static Color DEFAULT_COLOR = Color.decode("#999999");
+    private static Color DEFAULT_COLOR = Color.decode("#ffffff");
     private static Color COLOR_ACCENT = Color.decode("#E91E63");
 
     public static Color getTransParentColor(){

@@ -53,6 +53,14 @@ abstract class TextFieldProxy {
         setNormalText(text);
     }
 
+    void setLimitTextLength(int limitTextLength) {
+        formattedDocument.setLimitTextLength(limitTextLength);
+    }
+
+    int getLimitTextLength() {
+        return formattedDocument.getLimitTextLength();
+    }
+
     void clear(){
         setNormalText("");
         setHint(this.hint);
